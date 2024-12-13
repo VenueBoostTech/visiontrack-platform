@@ -6,6 +6,7 @@ export type Price = {
 	isSubscribed?: boolean;
 	isCanceled?: boolean;
 	unit_amount: number;
+	displayPrice?: string;
 	nickname: string;
 	description: string;
 	subtitle: string;

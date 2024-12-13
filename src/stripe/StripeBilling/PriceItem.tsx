@@ -6,11 +6,13 @@ import { useSession } from "next-auth/react";
 import { integrations, messages } from "../../../integrations.config";
 import toast from "react-hot-toast";
 import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, AwaitedReactNode, Key } from "react";
+import {useRouter} from "next/navigation";
 
 // @ts-ignore
 const PriceItem = ({plan, isBilling}: Props) => {
 	const {data: session} = useSession();
 	const user = session?.user;
+	const router = useRouter();
 
 	// stripe payment
 	const handleSubscription = async () => {
@@ -49,6 +51,23 @@ const PriceItem = ({plan, isBilling}: Props) => {
 		} catch (err) {
 			console.error((err as Error).message);
 		}
+	};
+
+
+	const handleClick = () => {
+		if (session) {
+			const isSubscribed = user?.priceId &&
+				user?.currentPeriodEnd &&
+				new Date(user.currentPeriodEnd).getTime() + 86_400_000 > Date.now();
+
+			if (isSubscribed) {
+				handleSubscription();
+				return;
+			}
+		}
+
+
+		router.push('/request-demo');
 	};
 
 	const active = plan?.active;
@@ -104,7 +123,8 @@ const PriceItem = ({plan, isBilling}: Props) => {
 			<div className="my-6 h-px w-full bg-gray-200 dark:bg-gray-700"></div>
 
 			<h4 className="mb-4.5 font-bold text-[44px] text-[#1E3A8A] dark:text-white">
-				${plan?.unit_amount / 100}
+				{plan.displayPrice}
+				{/*${plan?.unit_amount / 100}*/}
 				<span className="ml-1 text-xl font-medium text-gray-600 dark:text-gray-300">
                     /monthly
                 </span>
@@ -142,7 +162,7 @@ const PriceItem = ({plan, isBilling}: Props) => {
 			</ul>
 
 			<button
-				onClick={handleSubscription}
+				onClick={handleClick}
 				className={`mt-9 flex w-full justify-center rounded-lg py-4 font-medium transition-all duration-200 ${
 					isSubscribed
 						? "bg-gray-200 text-gray-600 cursor-not-allowed"
