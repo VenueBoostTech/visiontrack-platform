@@ -1,4 +1,6 @@
 // src/components/home/CallToAction.tsx
+import Link from 'next/link';
+
 const CallToAction = () => {
     return (
         <section className="bg-[#1e3a8a] py-20">
@@ -12,12 +14,16 @@ const CallToAction = () => {
                         and drive operational excellence.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
-                        <button className="bg-white text-[#1e3a8a] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                            Schedule Demo
-                        </button>
-                        <button className="border border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors">
-                            Contact Sales
-                        </button>
+                        <Link href="/request-demo">
+                            <button className="bg-white text-[#1e3a8a] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                                Schedule Demo
+                            </button>
+                        </Link>
+                        <Link href="/contact">
+                            <button className="border border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors">
+                                Contact Sales
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -18,14 +18,14 @@ export default function Sidebar({
 			>
 				<Link href='/' className='mb-10 inline-block'>
 					<Image
-						src={"/images/logo/logo.png"}
+						src={"/images/logo/logo.svg"}
 						alt='logo'
 						className='block dark:hidden'
 						width={193}
 						height={34}
 					/>
 					<Image
-						src={"/images/logo/logo-light.png"}
+						src={"/images/logo/logo-light.svg"}
 						alt='logo'
 						className='hidden dark:block'
 						width={193}

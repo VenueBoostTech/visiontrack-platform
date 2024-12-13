@@ -1,5 +1,5 @@
 import React from "react";
-import Support from "../../../components/Contact";
+import Contact from "../../../components/Contact";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const ContactPage = () => {
 	return (
 		<main>
-			<Support />
+			<Contact />
 		</main>
 	);
 };

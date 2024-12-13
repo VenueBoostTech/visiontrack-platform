@@ -1,17 +1,16 @@
-import React from "react";
-import Support from "../../../components/Contact";
+// src/app/request-demo/page.tsx
+import RequestDemoForm from "@/components/RequestDemoForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Request a Demo - ${process.env.SITE_NAME}`,
-	description: `This is request demo for ${process.env.SITE_NAME}`,
-	// other discriptions
+	title: `Request a Demo - VisionTrack`,
+	description: `Experience how VisionTrack's AI-powered video intelligence platform can transform your surveillance system into actionable business insights. Get a personalized demo today.`,
 };
 
 const RequestDemoPage = () => {
 	return (
-		<main>
-
+		<main className="min-h-screen bg-gray-50 pt-20 pb-20 dark:bg-gray-950">
+			<RequestDemoForm />
 		</main>
 	);
 };

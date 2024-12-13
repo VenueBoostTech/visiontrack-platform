@@ -1,4 +1,7 @@
 // src/components/home/Hero.tsx
+import { Play } from 'lucide-react'; // Import play icon
+import Link from 'next/link';
+
 const Hero = () => {
     return (
         <section className="bg-gradient-to-br from-[#0F172A] via-[#1E3A8A] to-[#1E3A8A] min-h-[80vh] flex items-center pt-20 pb-12">
@@ -11,12 +14,14 @@ const Hero = () => {
                         The enterprise video intelligence platform that turns surveillance into actionable insights
                         for Commercial Real Estate, Manufacturing, Multi-family Residential, and Retail operations.
                     </p>
-                    <div className="flex flex-wrap justify-center gap-6 mb-20">
-                        <button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-4 rounded-lg font-semibold transition-colors">
-                            Get Started
-                        </button>
-                        <button className="border-2 border-[#4F46E5] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#4F46E5]/10 transition-colors">
-                            Watch Demo
+                    <div className="flex flex-wrap justify-center gap-6 mb-16">
+                        <Link href="/request-demo">
+                            <button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-4 rounded-lg font-semibold transition-colors">
+                                Get Started
+                            </button>
+                        </Link>
+                        <button className="border-2 border-[#4F46E5] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#4F46E5]/10 transition-colors flex items-center gap-2">
+                            <Play size={20} className="fill-white" /> Watch Demo
                         </button>
                     </div>
 

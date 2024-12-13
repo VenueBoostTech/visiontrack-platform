@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-// import GithubSigninButton from "../GithubSigninButton";
-// import GoogleSigninButton from "../GoogleSigninButton";
 import SigninWithMagicLink from "../SigninWithMagicLink";
 import SignupWithPassword from "../SignupWithPassword";
 
@@ -11,19 +9,10 @@ export default function Signup() {
 
 	return (
 		<>
-			<div className='mx-auto w-full max-w-[400px] px-4 py-10'>
-				<div className='space-y-3 pb-7.5'>
-					{/*// Note: we don't offer these logins for VT for now, maybe in the future*/}
-					{/*<GoogleSigninButton text='Sign up' />*/}
-					{/*<GithubSigninButton text='Sign up' />*/}
-				</div>
-				<div className='mb-7.5 flex items-center justify-center'>
-					<span className='block h-px w-full bg-stroke dark:bg-stroke-dark'></span>
-					<div className='inline-block bg-white px-3 text-base text-body dark:bg-[#151F34] dark:text-gray-5'>
-						OR
-					</div>
-					<span className='block h-px w-full bg-stroke dark:bg-stroke-dark'></span>
-				</div>
+			<div className='mx-auto w-full max-w-[400px] px-4 py-4'>
+				<h1 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">
+					Create your account
+				</h1>
 
 				<div className='mb-4.5 flex w-full items-center justify-between gap-1.5 rounded-10 border border-stroke p-1 dark:border-stroke-dark'>
 					<button

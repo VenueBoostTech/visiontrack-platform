@@ -5,7 +5,7 @@ import SectionHeader from "@/components/Common/SectionHeader";
 
 const industries = [
     {
-        icon: <ShoppingBag className="w-8 h-8 text-primary" />,
+        icon: <ShoppingBag className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-200" />,
         title: "Retail",
         description: "Optimize operations and enhance customer experience",
         features: [
@@ -15,7 +15,7 @@ const industries = [
         ]
     },
     {
-        icon: <Factory className="w-8 h-8 text-primary" />,
+        icon: <Factory className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-200" />,
         title: "Manufacturing",
         description: "Ensure safety and optimize operations efficiency",
         features: [
@@ -25,7 +25,7 @@ const industries = [
         ]
     },
     {
-        icon: <Building2 className="w-8 h-8 text-primary" />,
+        icon: <Building2 className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-200" />,
         title: "Multi-family Residential",
         description: "Enhance security and resident services",
         features: [
@@ -50,7 +50,7 @@ const IndustrySpecific = () => {
                     {industries.map((industry, index) => (
                         <div
                             key={index}
-                            className="wow fadeInUp group relative rounded-lg bg-white p-8 shadow-features dark:bg-dark"
+                            className="wow fadeInUp cursor-pointer group relative rounded-lg bg-white p-8 shadow-features dark:bg-dark"
                             data-wow-delay={`.${index + 1}s`}
                         >
                             <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/[.08] text-primary group-hover:bg-primary group-hover:text-white transition-all duration-200">

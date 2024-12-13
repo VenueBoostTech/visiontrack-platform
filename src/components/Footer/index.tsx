@@ -10,7 +10,7 @@ const Footer = () => {
 					<div className='col-span-1 md:col-span-1'>
 						<Link href='/'>
 							<Image
-								src='/images/logo/logo-light.png'
+								src='/images/logo/logo-footer.svg'
 								alt='VisionTrack'
 								width={214}
 								height={40}

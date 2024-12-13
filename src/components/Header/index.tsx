@@ -1,5 +1,6 @@
 "use client";
-import logo from "@/../public/images/logo/logo.png";
+import logo from "@/../public/images/logo/logo.svg";
+import logoLight from "@/../public/images/logo/logo-light.svg";
 import { Menu } from "@/types/menu";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +9,7 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import Account from "@/components/Header/Account";
+import {useTheme} from "next-themes";
 
 const menuData = [
 	{ title: "Home", path: "/" },
@@ -20,6 +22,7 @@ const Header = () => {
 	const [stickyMenu, setStickyMenu] = useState(false);
 	const { data: session } = useSession();
 	const pathUrl = usePathname();
+	const { theme } = useTheme(); // Add this
 
 	const handleStickyMenu = () => {
 		if (window.scrollY > 0) {
@@ -41,12 +44,16 @@ const Header = () => {
 
 	return (
 		<header className={`fixed left-0 top-0 z-999 w-full transition-all duration-300 ease-in-out ${
-			stickyMenu ? "bg-white py-4 shadow-md xl:py-0" : "bg-white py-4 shadow-md xl:py-0"
+			stickyMenu ? "bg-white dark:bg-gray-900 py-2 shadow-md xl:py-0" : "bg-white dark:bg-gray-900 py-2 shadow-md xl:py-0"
 		}`}>
 			<div className="relative mx-auto max-w-[1170px] items-center justify-between px-4 sm:px-8 xl:flex xl:px-0">
 				<div className="flex w-full items-center justify-between xl:w-4/12">
 					<Link href="/">
-						<Image src={stickyMenu ? logo : logo} alt="VisionTrack" className="w-full"/>
+						<Image
+							src={theme === 'dark' ? logoLight : logo}
+							alt="VisionTrack"
+							className="w-full"
+						/>
 					</Link>
 
 					<button
@@ -90,18 +97,18 @@ const Header = () => {
 
 				<div
 					className={`invisible h-0 w-full items-center justify-between xl:visible xl:flex xl:h-auto xl:w-8/12 ${
-						navbarOpen && "!visible relative mt-4 !h-auto max-h-[400px] overflow-y-scroll rounded-md bg-white p-7.5 shadow-lg"
+						navbarOpen && "!visible relative mt-2 !h-auto max-h-[300px] overflow-y-auto rounded-md bg-white dark:bg-gray-900 p-4 sm:p-7.5 shadow-lg"
 					}`}>
 					<nav>
 						<ul className="flex flex-col gap-5 xl:flex-row xl:items-center xl:gap-2.5">
-							{/* @ts-ignore*/}
+							{/*@ts-ignore*/}
 							{menuData.map((item: Menu, key) => (
 								<li key={key} className={`nav__menu ${stickyMenu ? "xl:py-4" : "xl:py-4"}`}>
 									<Link
-										//@ts-ignore
+										// @ts-ignore
 										href={item.path}
 										className={`flex rounded-full px-[14px] py-[3px] font-medium ${
-											stickyMenu ? "text-gray-900 hover:bg-gray-100" : "text-gray-900 hover:bg-gray-100"
+											stickyMenu ? "text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800" : "text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800"
 										}`}
 									>
 										{item.title}
@@ -121,7 +128,7 @@ const Header = () => {
 								<Link
 									href="/auth/signin"
 									className={`px-5 py-2 font-medium ${
-										stickyMenu ? "text-gray-900 hover:text-gray-600" : "text-white hover:text-gray-200"
+										stickyMenu ? "text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300" : "text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300"
 									}`}
 								>
 									Sign In
