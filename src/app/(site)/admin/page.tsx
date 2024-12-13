@@ -5,7 +5,7 @@ import { dataStats, overviewData } from "@/staticData/statsData";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Dashboard - ${process.env.SITE_NAME}`,
+	title: `Dashboard - ${process.env.PLATFORM_NAME}`,
 	description: `Dashboard Description`,
 };
 

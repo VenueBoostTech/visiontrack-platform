@@ -3,8 +3,8 @@ import Contact from "../../../components/Contact";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Contact - ${process.env.SITE_NAME}`,
-	description: `This is contact page for ${process.env.SITE_NAME}`,
+	title: `Contact - ${process.env.PLATFORM_NAME}`,
+	description: `This is contact page for ${process.env.PLATFORM_NAME}`,
 	// other discriptions
 };
 

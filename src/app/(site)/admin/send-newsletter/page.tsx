@@ -3,7 +3,7 @@ import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Send Newsletter - ${process.env.SITE_NAME}`,
+	title: `Send Newsletter - ${process.env.PLATFORM_NAME}`,
 	description: `Send Newsletter Description`,
 };
 

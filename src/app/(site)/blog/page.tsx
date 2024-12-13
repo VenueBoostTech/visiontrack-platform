@@ -6,8 +6,8 @@ import { Metadata } from "next";
 import { integrations, messages } from "../../../../integrations.config";
 
 export const metadata: Metadata = {
-	title: `Blog - ${process.env.SITE_NAME}`,
-	description: `This is Blog page for ${process.env.SITE_NAME}`,
+	title: `Blog - ${process.env.PLATFORM_NAME}`,
+	description: `This is Blog page for ${process.env.PLATFORM_NAME}`,
 };
 
 const BlogGrid = async () => {

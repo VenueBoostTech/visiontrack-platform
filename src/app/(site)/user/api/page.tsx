@@ -5,8 +5,8 @@ import { Metadata } from "next";
 import { getApiKeys } from "@/actions/api-key";
 
 export const metadata: Metadata = {
-	title: `API - ${process.env.SITE_NAME}`,
-	description: `API Key page for ${process.env.SITE_NAME}`,
+	title: `API - ${process.env.PLATFORM_NAME}`,
+	description: `API Key page for ${process.env.PLATFORM_NAME}`,
 	// other discriptions
 };
 

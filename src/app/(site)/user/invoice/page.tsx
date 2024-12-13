@@ -5,8 +5,8 @@ import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Invoice - ${process.env.SITE_NAME}`,
-	description: `This is Invoice page for ${process.env.SITE_NAME}`,
+	title: `Invoice - ${process.env.PLATFORM_NAME}`,
+	description: `This is Invoice page for ${process.env.PLATFORM_NAME}`,
 	// other discriptions
 };
 

@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import AiIntegration from "@/components/Admin/AiIntegration";
 
 export const metadata: Metadata = {
-	title: `AI Integration - ${process.env.SITE_NAME}`,
+	title: `AI Integration - ${process.env.PLATFORM_NAME}`,
 	description: `AI Integration Description`,
 };
 

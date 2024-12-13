@@ -3,8 +3,8 @@ import Signup from "@/components/Auth/Signup";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Sign up - ${process.env.SITE_NAME}`,
-	description: `This is Sign up page for ${process.env.SITE_NAME}`,
+	title: `Sign up - ${process.env.PLATFORM_NAME}`,
+	description: `This is Sign up page for ${process.env.PLATFORM_NAME}`,
 };
 
 const SignupPage = () => {

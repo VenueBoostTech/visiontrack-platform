@@ -4,7 +4,7 @@ import PasswordChange from "@/components/User/AccountSettings/PasswordChange";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Account Settings - ${process.env.SITE_NAME}`,
+	title: `Account Settings - ${process.env.PLATFORM_NAME}`,
 	description: `Account Settings Description`,
 };
 

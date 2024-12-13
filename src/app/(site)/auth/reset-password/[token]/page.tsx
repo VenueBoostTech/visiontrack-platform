@@ -3,8 +3,8 @@ import ResetPassword from "@/components/Auth/ResetPassword";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Reset Password - ${process.env.SITE_NAME}`,
-	description: `This is Reset Password page for ${process.env.SITE_NAME}`,
+	title: `Reset Password - ${process.env.PLATFORM_NAME}`,
+	description: `This is Reset Password page for ${process.env.PLATFORM_NAME}`,
 };
 
 const ResetPasswordPage = ({ params }: { params: { token: string } }) => {

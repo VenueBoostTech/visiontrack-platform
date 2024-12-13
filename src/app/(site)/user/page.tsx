@@ -4,8 +4,8 @@ import AccountSettings from "@/components/User/AccountSettings";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `User Dashboard - ${process.env.SITE_NAME}`,
-	description: `This is User Dashboard page for ${process.env.SITE_NAME}`,
+	title: `User Dashboard - ${process.env.PLATFORM_NAME}`,
+	description: `This is User Dashboard page for ${process.env.PLATFORM_NAME}`,
 	// other discriptions
 };
 

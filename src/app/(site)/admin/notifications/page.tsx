@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import Notification from "@/components/Common/Notification";
 
 export const metadata: Metadata = {
-	title: `Notifications - ${process.env.SITE_NAME}`,
+	title: `Notifications - ${process.env.PLATFORM_NAME}`,
 	description: `Notifications Description`,
 };
 

@@ -3,8 +3,8 @@ import React from "react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Error - ${process.env.SITE_NAME}`,
-	description: `This is Error page for ${process.env.SITE_NAME}`,
+	title: `Error - ${process.env.PLATFORM_NAME}`,
+	description: `This is Error page for ${process.env.PLATFORM_NAME}`,
 };
 
 const ErrorPage = () => {
