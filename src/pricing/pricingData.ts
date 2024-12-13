@@ -3,38 +3,38 @@ import { Price } from "@/types/priceItem";
 export const pricingData: Price[] = [
 	{
 		priceId: "1212",
-		unit_amount: 499 * 100, // $499
-		nickname: "Starter",
-		description: "Perfect for small properties with basic security needs",
-		subtitle: "For small properties",
+		unit_amount: 15 * 100, // $15 per camera/month
+		nickname: "Basic",
+		description: "Perfect for small deployments with standard video analytics needs",
+		subtitle: "Essential video analytics",
 		includes: [
-			"Up to 10 cameras",
-			"2 properties max",
-			"Basic motion detection",
-			"Real-time alerts",
-			"7-day video storage",
-			"Email support",
-			"Mobile app access",
-			"Basic analytics"
+			"Basic analytics",
+			"Cloud storage",
+			"Mobile access",
+			"Basic alerts",
+			"ONVIF compliance",
+			"RTSP stream access",
+			"Network accessibility",
+			"Basic VMS integration",
+			"Email support"
 		],
 		icon: `/images/pricing/pricing-icon-01.svg`,
 	},
 	{
 		priceId: "price_1OS326K9QDeYHZl0PU6PpQOs",
-		unit_amount: 999 * 100, // $999
+		unit_amount: 30 * 100, // $30 per camera/month
 		nickname: "Professional",
-		description: "Ideal for growing properties requiring advanced security",
-		subtitle: "For growing businesses",
+		description: "Ideal for growing businesses requiring advanced analytics",
+		subtitle: "Advanced analytics & integrations",
 		includes: [
-			"Up to 50 cameras",
-			"5 properties max",
-			"AI-powered detection",
-			"Custom alert rules",
-			"30-day video storage",
-			"24/7 priority support",
 			"Advanced analytics",
-			"Custom reporting",
+			"Custom alerts",
+			"Integration features",
+			"Advanced reporting",
+			"Extended storage",
+			"Priority support",
 			"API access",
+			"Custom alert rules",
 			"Multiple user accounts"
 		],
 		icon: `/images/pricing/pricing-icon-02.svg`,
@@ -46,18 +46,18 @@ export const pricingData: Price[] = [
 		unit_amount: 0, // Custom pricing
 		nickname: "Enterprise",
 		description: "For large-scale operations with specific requirements",
-		subtitle: "For large operations",
+		subtitle: "Full customization & priority support",
 		includes: [
-			"Unlimited cameras",
-			"Unlimited properties",
+			"Full feature set",
+			"Custom development",
+			"Priority support",
+			"SLA guarantees",
 			"Custom AI models",
 			"Advanced integration",
 			"Unlimited storage",
-			"Dedicated support",
-			"Custom features",
-			"SLA guarantee",
 			"Training & onboarding",
-			"Custom development"
+			"Dedicated support team",
+			"Custom deployment options"
 		],
 		icon: `/images/pricing/pricing-icon-03.svg`,
 	},
