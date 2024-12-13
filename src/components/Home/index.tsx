@@ -1,31 +1,24 @@
-import Hero from "./Hero";
-import Features from "./Features";
-import FeaturesWithImage from "./FeaturesWithImage";
-import Counter from "./Counter";
-import CallToAction from "./CallToAction";
-import Testimonials from "./Testimonials";
-import Pricing from "./Pricing";
-import FAQ from "./FAQ";
-import Blog from "./Blog";
-import Newsletter from "./Newsletter";
+// src/app/page.tsx
+import Hero from "@/components/Home/Hero";
+import IndustrySpecific from "@/components/Home/IndustrySpecific";
+import EnterpriseGrade from "@/components/Home/EnterpriseGrade";
+import CoreFeatures from "@/components/Home/CoreFeatures";
+import PowerfulAnalytics from "@/components/Home/PowerfulAnalytics";
+import Integration from "@/components/Home/Integration";
+import CallToAction from "@/components/Home/CallToAction";
+import Pricing from "@/components/Home/Pricing";
 
-import { integrations } from "../../../integrations.config";
-
-const Home = () => {
+export default function HomePage() {
 	return (
-		<>
+		<main className="min-h-screen">
 			<Hero />
-			<Features />
-			<FeaturesWithImage />
-			<Counter />
-			<CallToAction />
-			<Testimonials />
+			<IndustrySpecific />
+			<EnterpriseGrade />
+			<CoreFeatures />
+			<PowerfulAnalytics />
 			<Pricing />
-			<FAQ />
-			<Newsletter />
-			{integrations?.isSanityEnabled && <Blog />}
-		</>
+			<Integration />
+			<CallToAction />
+		</main>
 	);
-};
-
-export default Home;
+}

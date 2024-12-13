@@ -3,35 +3,39 @@ import { Price } from "@/types/priceItem";
 export const pricingData: Price[] = [
 	{
 		priceId: "1212",
-		// priceId: "pri_01hzmcag0dnd53x9kn78bs5vz0",
-		// priceId: "375601",
-		unit_amount: 99 * 100,
-		nickname: "Basic",
-		description:
-			"Lorem ipsum dolor sit amet dolorol met conse ctetur adipiscing elit.",
-		subtitle: "For individuals",
+		unit_amount: 499 * 100, // $499
+		nickname: "Starter",
+		description: "Perfect for small properties with basic security needs",
+		subtitle: "For small properties",
 		includes: [
-			"All basic features",
-			"Up to 1,000,000 tracked visits",
-			"Premium email support",
-			"Up to 03 team members",
+			"Up to 10 cameras",
+			"2 properties max",
+			"Basic motion detection",
+			"Real-time alerts",
+			"7-day video storage",
+			"Email support",
+			"Mobile app access",
+			"Basic analytics"
 		],
 		icon: `/images/pricing/pricing-icon-01.svg`,
 	},
 	{
 		priceId: "price_1OS326K9QDeYHZl0PU6PpQOs",
-		// priceId: "pri_01hzmkbh0ya1zaw2g8cyr3r90f",
-		// priceId: "376599",
-		unit_amount: 199 * 100,
-		nickname: "Pro",
-		description:
-			"Lorem ipsum dolor sit amet dolorol met conse ctetur adipiscing elit.",
-		subtitle: "For startups",
+		unit_amount: 999 * 100, // $999
+		nickname: "Professional",
+		description: "Ideal for growing properties requiring advanced security",
+		subtitle: "For growing businesses",
 		includes: [
-			"All basic features",
-			"Up to 1,000,000 tracked visits",
-			"Premium email support",
-			"Up to 10 team members",
+			"Up to 50 cameras",
+			"5 properties max",
+			"AI-powered detection",
+			"Custom alert rules",
+			"30-day video storage",
+			"24/7 priority support",
+			"Advanced analytics",
+			"Custom reporting",
+			"API access",
+			"Multiple user accounts"
 		],
 		icon: `/images/pricing/pricing-icon-02.svg`,
 		icon2: `/images/pricing/pricing-icon-02-2.svg`,
@@ -39,18 +43,21 @@ export const pricingData: Price[] = [
 	},
 	{
 		priceId: "price_1ObHcXLtGdPVhGLejTMpdiT8",
-		// priceId: "pri_01hzmkcdbb3kdvvqjgt259nds1",
-		// priceId: "376601",
-		unit_amount: 399 * 100,
+		unit_amount: 0, // Custom pricing
 		nickname: "Enterprise",
-		description:
-			"Lorem ipsum dolor sit amet dolorol met conse ctetur adipiscing elit.",
-		subtitle: "For big companies",
+		description: "For large-scale operations with specific requirements",
+		subtitle: "For large operations",
 		includes: [
-			"All basic features",
-			"Up to 1,000,000 tracked visits",
-			"Premium email support",
-			"Up to 50 team members",
+			"Unlimited cameras",
+			"Unlimited properties",
+			"Custom AI models",
+			"Advanced integration",
+			"Unlimited storage",
+			"Dedicated support",
+			"Custom features",
+			"SLA guarantee",
+			"Training & onboarding",
+			"Custom development"
 		],
 		icon: `/images/pricing/pricing-icon-03.svg`,
 	},

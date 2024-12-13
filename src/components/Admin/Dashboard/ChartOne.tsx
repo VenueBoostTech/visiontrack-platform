@@ -10,7 +10,7 @@ const options: ApexOptions = {
 	legend: {
 		show: false,
 	},
-	colors: ["#635BFF"],
+	colors: ["#5577FF"],
 	chart: {
 		fontFamily: "Satoshi, sans-serif",
 		height: 300,
@@ -33,7 +33,7 @@ const options: ApexOptions = {
 			shade: "light",
 			type: "vertical",
 			shadeIntensity: 0.1,
-			gradientToColors: ["#635BFF"],
+			gradientToColors: ["#5577FF"],
 			inverseColors: true,
 			opacityFrom: 0.3,
 			opacityTo: 0,

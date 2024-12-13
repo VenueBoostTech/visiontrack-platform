@@ -71,15 +71,15 @@ const config: Config = {
 					dark: "#394152",
 				},
 				primary: {
-					DEFAULT: "#635BFF",
-					dark: "#3E22E9",
+					DEFAULT: "#5577FF",
+					dark: "#4466EE",
 				},
 				dark: {
-					DEFAULT: "#1C274C",
-					2: "#495270",
-					3: "#606882",
-					4: "#8D93A5",
-					5: "#BBBEC9",
+					DEFAULT: "#0A1628", // Very dark navy
+					2: "#162334",
+					3: "#1E2A3B",
+					4: "#2A384D",
+					5: "#384860",
 				},
 				gray: {
 					DEFAULT: "#F3F5F6",
@@ -90,7 +90,7 @@ const config: Config = {
 					5: "#9CA3AF",
 					6: "#6B7280",
 					7: "#374151",
-					dark: "#272E40",
+					dark: "#1A2436",
 				},
 				red: {
 					...colors.red,

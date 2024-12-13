@@ -31,6 +31,7 @@
 		"bcryptjs": "^2.4.3",
 		"cheerio": "^1.0.0-rc.12",
 		"crypto": "^1.0.1",
+		"lucide-react": "^0.468.0",
 		"next": "14.0.4",
 		"next-auth": "^4.24.5",
 		"next-sanity": "^7.0.8",

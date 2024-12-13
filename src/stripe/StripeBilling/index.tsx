@@ -8,7 +8,7 @@ const Pricing = ({ isBilling }: { isBilling?: boolean }) => {
 		<>
 			<section
 				id='pricing'
-				className='overflow-hidden rounded-10 bg-white py-15 dark:bg-[#131a2b] md:px-15'
+				className='overflow-hidden rounded-10  bg-gray-1 py-15 dark:bg-[#131a2b] md:px-15'
 			>
 				{!isBilling && (
 					<SectionHeader

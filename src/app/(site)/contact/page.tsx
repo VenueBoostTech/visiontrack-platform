@@ -1,14 +1,14 @@
 import React from "react";
-import Support from "@/components/Support";
+import Support from "../../../components/Contact";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Support - ${process.env.SITE_NAME}`,
-	description: `This is Support page for ${process.env.SITE_NAME}`,
+	title: `Contact - ${process.env.SITE_NAME}`,
+	description: `This is contact page for ${process.env.SITE_NAME}`,
 	// other discriptions
 };
 
-const SupportPage = () => {
+const ContactPage = () => {
 	return (
 		<main>
 			<Support />
@@ -16,4 +16,4 @@ const SupportPage = () => {
 	);
 };
 
-export default SupportPage;
+export default ContactPage;

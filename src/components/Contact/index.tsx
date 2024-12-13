@@ -3,11 +3,11 @@ import React from "react";
 import Breadcrumbs from "../Common/Breadcrumbs";
 import Image from "next/image";
 
-const Support = () => {
+const Contact = () => {
 	return (
 		<section className='lg:ub-pb-22.5 overflow-hidden pb-17.5 pt-35 xl:pb-27.5'>
 			{/* <!-- ===== Breadcrumb Section Start ===== --> */}
-			<Breadcrumbs title={"Support"} pages={["Home", "Support"]} />
+			<Breadcrumbs title={"Contact"} pages={["Home", "Contact"]} />
 			{/* <!-- ===== Breadcrumb Section End ===== --> */}
 
 			<div className='mx-auto w-full max-w-[1170px] px-4 sm:px-8 xl:px-0'>
@@ -126,4 +126,4 @@ const Support = () => {
 	);
 };
 
-export default Support;
+export default Contact;

@@ -3,17 +3,17 @@ import Support from "../../../components/Contact";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Contact - ${process.env.SITE_NAME}`,
-	description: `This is contact page for ${process.env.SITE_NAME}`,
+	title: `Request a Demo - ${process.env.SITE_NAME}`,
+	description: `This is request demo for ${process.env.SITE_NAME}`,
 	// other discriptions
 };
 
-const ContactPage = () => {
+const RequestDemoPage = () => {
 	return (
 		<main>
-			<Support />
+
 		</main>
 	);
 };
 
-export default ContactPage;
+export default RequestDemoPage;

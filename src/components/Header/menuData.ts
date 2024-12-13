@@ -53,7 +53,7 @@ export const menuData: Menu[] = [
 				id: 303,
 				title: "Support",
 				newTab: false,
-				path: "/support",
+				path: "/contact",
 			},
 			{
 				id: 301,
