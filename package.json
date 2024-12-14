@@ -16,7 +16,8 @@
 		"fix-format": "prettier --write .",
 		"fix-lint": "eslint --fix .",
 		"fix-style": "npm run fix-format && npm run fix-lint",
-		"test-build": "npm run check-style && npm run build"
+		"test-build": "npm run check-style && npm run build",
+		"db:seed": "ts-node prisma/seeds/initial-setup.ts"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.515.0",
@@ -55,7 +56,7 @@
 	"devDependencies": {
 		"@types/bcrypt": "^5.0.2",
 		"@types/bcryptjs": "^2.4.6",
-		"@types/node": "^20",
+		"@types/node": "^22.10.2",
 		"@types/nodemailer": "^6.4.14",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",

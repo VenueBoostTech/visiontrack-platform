@@ -7,6 +7,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum UserRole {
+  ADMIN           // Can manage everything on the platform (VisionTrack admins)
+  BUSINESS_OWNER  // Owner of a business, can manage their business entirely 
+  STAFF          // Staff of a business with limited permissions
+}
+
 model Account {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   userId            String
@@ -29,7 +35,7 @@ model Account {
 model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String   @unique
-  userId       String
+  userId       String   
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -43,44 +49,150 @@ model ApiKey {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Invitation {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  email     String   @unique
-  role      String?  @default("USER")
-  token     String   @unique
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  accepted  Boolean  @default(false)
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model User {
   id                    String       @id @default(auto()) @map("_id") @db.ObjectId
   name                  String?
   email                 String?      @unique
-  emailVerified         DateTime?
+  emailVerified        DateTime?
   image                 String?
   password              String?
   passwordResetToken    String?      @unique
   passwordResetTokenExp DateTime?
-  role                  String?      @default("USER")
+  role                  UserRole     @default(STAFF)
   customerId            String?      @unique @map(name: "customer_id")
   subscriptionId        String?      @unique @map(name: "subscription_id")
   priceId               String?      @map(name: "price_id")
-  currentPeriodEnd      DateTime?    @map(name: "current_period_end")
-  createdAt             DateTime     @default(now())
-  accounts              Account[]
-  sessions              Session[]
-  apiKeys               ApiKey[]
-  invitation            Invitation[]
+  currentPeriodEnd     DateTime?    @map(name: "current_period_end")
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  accounts             Account[]
+  sessions             Session[]
+  apiKeys              ApiKey[]
+  ownedBusiness        Business?    @relation("BusinessOwner")
+  workingAt            BusinessStaff?
 }
 
 model VerificationToken {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  identifier String
-  token      String   @unique
-  expires    DateTime
+ id         String   @id @default(auto()) @map("_id") @db.ObjectId
+ identifier String
+ token      String   @unique
+ expires    DateTime
 
-  @@unique([identifier, token])
+ @@unique([identifier, token])
+}
+
+model Business {
+ id          String    @id @default(auto()) @map("_id") @db.ObjectId
+ name        String
+ email       String?
+ phone       String?
+ address     String?
+ createdAt   DateTime  @default(now())
+ updatedAt   DateTime  @updatedAt
+
+ // Relations
+ ownerId     String    @db.ObjectId @unique  // One owner per business
+ owner       User      @relation("BusinessOwner", fields: [ownerId], references: [id])
+ staff       BusinessStaff[]
+ properties  Property[]
+}
+
+model BusinessStaff {
+ id          String    @id @default(auto()) @map("_id") @db.ObjectId
+ businessId  String    @db.ObjectId
+ userId      String    @unique @db.ObjectId  // Each user can only be staff at one business
+ business    Business  @relation(fields: [businessId], references: [id])
+ user        User      @relation(fields: [userId], references: [id])
+ createdAt   DateTime  @default(now())
+}
+
+model Property {
+ id          String    @id @default(auto()) @map("_id") @db.ObjectId
+ name        String
+ type        PropertyType
+ address     String
+ createdAt   DateTime  @default(now())
+ updatedAt   DateTime  @updatedAt
+
+ // Relations
+ businessId  String    @db.ObjectId
+ business    Business  @relation(fields: [businessId], references: [id])
+ buildings   Building[]
+ zones       Zone[]
+}
+
+enum PropertyType {
+ RESIDENTIAL
+ COMMERCIAL
+ MIXED
+ RETAIL
+}
+
+model Building {
+ id          String    @id @default(auto()) @map("_id") @db.ObjectId
+ name        String
+ floorCount  Int
+ createdAt   DateTime  @default(now())
+ updatedAt   DateTime  @updatedAt
+
+ // Relations
+ propertyId  String    @db.ObjectId
+ property    Property  @relation(fields: [propertyId], references: [id])
+ zones       Zone[]
+}
+
+model Zone {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  type        ZoneType
+  floor       Int?
+  coordinates Json?     // Store polygon coordinates for the zone
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  propertyId  String    @db.ObjectId
+  property    Property  @relation(fields: [propertyId], references: [id])
+  buildingId  String?   @db.ObjectId
+  building    Building? @relation(fields: [buildingId], references: [id])
+  cameras     Camera[]
+}
+
+enum ZoneType {
+  ENTRANCE
+  LOBBY
+  PARKING
+  COMMON_AREA
+  GARAGE
+  RETAIL
+  SERVICE
+  OUTDOOR
+}
+
+model Camera {
+ id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  rtspUrl     String
+  status      CameraStatus @default(ACTIVE)
+  type        CameraType
+  direction   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  zoneId      String    @db.ObjectId
+  zone        Zone      @relation(fields: [zoneId], references: [id])
+}
+
+enum CameraStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum CameraType {
+  INDOOR
+  OUTDOOR
+  THERMAL
 }
