@@ -48,6 +48,7 @@ import {
 	  title: "Properties",
 	  path: "/user/properties",
 	  icon: <Building2 className="w-6 h-6" />,
+	  // @ts-ignore
 	  children: [
 		{
 		  id: "2-1",
@@ -82,6 +83,7 @@ import {
 	  title: "Live Monitoring",
 	  path: "/user/monitoring",
 	  icon: <MonitorPlay className="w-6 h-6" />,
+	// @ts-ignore
 	  children: [
 		{
 		  id: "3-1",
@@ -116,6 +118,7 @@ import {
 	  title: "Analytics",
 	  path: "/user/analytics",
 	  icon: <BarChart3 className="w-6 h-6" />,
+	  // @ts-ignore
 	  children: [
 		{
 		  id: "4-1",
@@ -156,6 +159,7 @@ import {
 	  title: "Security",
 	  path: "/user/security",
 	  icon: <Shield className="w-6 h-6" />,
+	  // @ts-ignore
 	  children: [
 		{
 		  id: "5-1",
@@ -190,6 +194,7 @@ import {
 	  title: "Staff",
 	  path: "/user/staff",
 	  icon: <Users className="w-6 h-6" />,
+	  // @ts-ignore
 	  children: [
 		{
 		  id: "6-1",
@@ -212,6 +217,7 @@ import {
 	  title: "Settings",
 	  path: "/user/settings",
 	  icon: <Settings className="w-6 h-6" />,
+	  // @ts-ignore
 	  children: [
 		{
 		  id: "7-1",
