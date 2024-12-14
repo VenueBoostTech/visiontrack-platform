@@ -5,18 +5,18 @@ import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: `Invoice - ${process.env.PLATFORM_NAME}`,
+	title: `Settings Invoice - ${process.env.PLATFORM_NAME}`,
 	description: `This is Invoice page for ${process.env.PLATFORM_NAME}`,
 	// other discriptions
 };
 
-const PurchseHistoryPage = () => {
+const SettingsInvoicePage = () => {
 	return (
 		<>
-			<Breadcrumb pageTitle='Invoice' />
+			<Breadcrumb pageTitle='Settings Invoice' />
 			<PurchaseHistory />
 		</>
 	);
 };
 
-export default PurchseHistoryPage;
+export default SettingsInvoicePage;

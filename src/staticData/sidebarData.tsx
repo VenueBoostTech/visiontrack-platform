@@ -33,225 +33,219 @@ import {
 	CreditCard
    } from "lucide-react";
    
-   export const userSidebarData: Sidebar[] = [
-	// Dashboard
-	{
-	  id: 1,
-	  title: "Dashboard",
-	  path: "/user",
-	  icon: <LayoutDashboard className="w-6 h-6" />
-	},
-   
-	// Property Infrastructure 
-	{
-	  id: 2,
-	  title: "Properties",
-	  path: "/user/properties",
-	  icon: <Building2 className="w-6 h-6" />,
-	  // @ts-ignore
-	  children: [
-		{
-		  id: "2-1",
-		  title: "Properties",
-		  path: "/user/properties",
-		  icon: <Building className="w-4 h-4" />
-		},
-		{
-		  id: "2-2",
-		  title: "Buildings",
-		  path: "/user/properties/buildings",
-		  icon: <BuildingIcon className="w-4 h-4" />
-		},
-		{
-		  id: "2-3",
-		  title: "Zones",
-		  path: "/user/properties/zones",
-		  icon: <Boxes className="w-4 h-4" />
-		},
-		{
-		  id: "2-4",
-		  title: "Cameras",
-		  path: "/user/properties/cameras",
-		  icon: <Camera className="w-4 h-4" />
-		}
-	  ]
-	},
-   
-	// Live Monitoring
-	{
-	  id: 3,
-	  title: "Live Monitoring",
-	  path: "/user/monitoring",
-	  icon: <MonitorPlay className="w-6 h-6" />,
+export const userSidebarData: Sidebar[] = [
+// Dashboard
+{
+	id: 1,
+	title: "Dashboard",
+	path: "/user/dashboard",
+	icon: <LayoutDashboard className="w-6 h-6" />
+},
+
+// Property Infrastructure 
+{
+	id: 2,
+	title: "Properties",
+	path: "/user/properties",
+	icon: <Building2 className="w-6 h-6" />,
 	// @ts-ignore
-	  children: [
-		{
-		  id: "3-1",
-		  title: "Live View",
-		  path: "/user/monitoring/live",
-		  icon: <MonitorDot className="w-4 h-4" />
-		},
-		{
-		  id: "3-2",
-		  title: "Recordings",
-		  path: "/user/monitoring/recordings",
-		  icon: <Video className="w-4 h-4" />
-		},
-		{
-		  id: "3-3",
-		  title: "Video Wall",
-		  path: "/user/monitoring/wall",
-		  icon: <LayoutPanelTop className="w-4 h-4" />
-		},
-		{
-		  id: "3-4",
-		  title: "PTZ Control",
-		  path: "/user/monitoring/ptz",
-		  icon: <CameraControl className="w-4 h-4" />
-		}
-	  ]
-	},
-   
-	// Building Analytics
+	children: [
 	{
-	  id: 4,
-	  title: "Analytics",
-	  path: "/user/analytics",
-	  icon: <BarChart3 className="w-6 h-6" />,
-	  // @ts-ignore
-	  children: [
-		{
-		  id: "4-1",
-		  title: "People Counter",
-		  path: "/user/analytics/people",
-		  icon: <Users2 className="w-4 h-4" />
-		},
-		{
-		  id: "4-2",
-		  title: "Heatmaps",
-		  path: "/user/analytics/heatmaps",
-		  icon: <Activity className="w-4 h-4" />
-		},
-		{
-		  id: "4-3",
-		  title: "Demographics",
-		  path: "/user/analytics/demographics",
-		  icon: <Users className="w-4 h-4" />
-		},
-		{
-		  id: "4-4",
-		  title: "Parking",
-		  path: "/user/analytics/parking",
-		  icon: <MapPin className="w-4 h-4" />
-		},
-		{
-		  id: "4-5",
-		  title: "License Plates",
-		  path: "/user/analytics/plates",
-		  icon: <Car className="w-4 h-4" />
-		}
-	  ]
+		id: "2-1",
+		title: "Properties",
+		path: "/user/properties",
+		icon: <Building className="w-4 h-4" />
 	},
-   
-	// Security Features
 	{
-	  id: 5,
-	  title: "Security",
-	  path: "/user/security",
-	  icon: <Shield className="w-6 h-6" />,
-	  // @ts-ignore
-	  children: [
-		{
-		  id: "5-1",
-		  title: "Access Control",
-		  path: "/user/security/access",
-		  icon: <KeyRound className="w-4 h-4" />
-		},
-		{
-		  id: "5-2",
-		  title: "Visitor Management",
-		  path: "/user/security/visitors",
-		  icon: <UserCheck className="w-4 h-4" />
-		},
-		{
-		  id: "5-3",
-		  title: "Alert Rules",
-		  path: "/user/security/alerts",
-		  icon: <Bell className="w-4 h-4" />
-		},
-		{
-		  id: "5-4",
-		  title: "Incident Reports",
-		  path: "/user/security/incidents",
-		  icon: <FileText className="w-4 h-4" />
-		}
-	  ]
+		id: "2-2",
+		title: "Buildings",
+		path: "/user/properties/buildings",
+		icon: <BuildingIcon className="w-4 h-4" />
 	},
-   
-	// Staff Management
 	{
-	  id: 6,
-	  title: "Staff",
-	  path: "/user/staff",
-	  icon: <Users className="w-6 h-6" />,
-	  // @ts-ignore
-	  children: [
-		{
-		  id: "6-1",
-		  title: "Staff Members",
-		  path: "/user/staff",
-		  icon: <UserCog className="w-4 h-4" />
-		},
-		{
-		  id: "6-2",
-		  title: "Permissions",
-		  path: "/user/staff/permissions",
-		  icon: <Key className="w-4 h-4" />
-		}
-	  ]
+		id: "2-3",
+		title: "Zones",
+		path: "/user/properties/zones",
+		icon: <Boxes className="w-4 h-4" />
 	},
-   
-	// Settings
 	{
-	  id: 7,
-	  title: "Settings",
-	  path: "/user/settings",
-	  icon: <Settings className="w-6 h-6" />,
-	  // @ts-ignore
-	  children: [
-		{
-		  id: "7-1",
-		  title: "Business Profile",
-		  path: "/user/settings/profile",
-		  icon: <Building2 className="w-4 h-4" />
-		},
-		{
-		  id: "7-2",
-		  title: "Notifications",
-		  path: "/user/settings/notifications",
-		  icon: <BellIcon className="w-4 h-4" />
-		},
-		{
-		  id: "7-3",
-		  title: "Reports",
-		  path: "/user/settings/reports",
-		  icon: <ScrollText className="w-4 h-4" />
-		},
-		{
-		  id: "7-4",
-		  title: "Billing",
-		  path: "/user/settings/billing",
-		  icon: <CreditCard className="w-4 h-4" />
-		}
-	  ]
+		id: "2-4",
+		title: "Cameras",
+		path: "/user/properties/cameras",
+		icon: <Camera className="w-4 h-4" />
 	}
-   ];
+	]
+},
+
+// Live Monitoring
+{
+	id: 3,
+	title: "Live Monitoring",
+	path: "/user/monitoring",
+	icon: <MonitorPlay className="w-6 h-6" />,
+// @ts-ignore
+	children: [
+	{
+		id: "3-1",
+		title: "Live View",
+		path: "/user/monitoring/live",
+		icon: <MonitorDot className="w-4 h-4" />
+	},
+	{
+		id: "3-2",
+		title: "Recordings",
+		path: "/user/monitoring/recordings",
+		icon: <Video className="w-4 h-4" />
+	},
+	{
+		id: "3-3",
+		title: "Video Wall",
+		path: "/user/monitoring/wall",
+		icon: <LayoutPanelTop className="w-4 h-4" />
+	},
+	{
+		id: "3-4",
+		title: "PTZ Control",
+		path: "/user/monitoring/ptz",
+		icon: <CameraControl className="w-4 h-4" />
+	}
+	]
+},
+
+// Building Analytics
+{
+	id: 4,
+	title: "Analytics",
+	path: "/user/analytics",
+	icon: <BarChart3 className="w-6 h-6" />,
+	// @ts-ignore
+	children: [
+	{
+		id: "4-1",
+		title: "People Counter",
+		path: "/user/analytics/people",
+		icon: <Users2 className="w-4 h-4" />
+	},
+	{
+		id: "4-2",
+		title: "Heatmaps",
+		path: "/user/analytics/heatmaps",
+		icon: <Activity className="w-4 h-4" />
+	},
+	{
+		id: "4-3",
+		title: "Demographics",
+		path: "/user/analytics/demographics",
+		icon: <Users className="w-4 h-4" />
+	},
+	{
+		id: "4-4",
+		title: "Parking",
+		path: "/user/analytics/parking",
+		icon: <MapPin className="w-4 h-4" />
+	},
+	{
+		id: "4-5",
+		title: "License Plates",
+		path: "/user/analytics/plates",
+		icon: <Car className="w-4 h-4" />
+	}
+	]
+},
+
+// Security Features
+{
+	id: 5,
+	title: "Security",
+	path: "/user/security",
+	icon: <Shield className="w-6 h-6" />,
+	// @ts-ignore
+	children: [
+	{
+		id: "5-1",
+		title: "Access Control",
+		path: "/user/security/access",
+		icon: <KeyRound className="w-4 h-4" />
+	},
+	{
+		id: "5-2",
+		title: "Visitor Management",
+		path: "/user/security/visitors",
+		icon: <UserCheck className="w-4 h-4" />
+	},
+	{
+		id: "5-3",
+		title: "Alert Rules",
+		path: "/user/security/alerts",
+		icon: <Bell className="w-4 h-4" />
+	},
+	{
+		id: "5-4",
+		title: "Incident Reports",
+		path: "/user/security/incidents",
+		icon: <FileText className="w-4 h-4" />
+	}
+	]
+},
+
+// Staff Management
+{
+	id: 6,
+	title: "Staff",
+	path: "/user/staff",
+	icon: <Users className="w-6 h-6" />,
+	// @ts-ignore
+	children: [
+	{
+		id: "6-1",
+		title: "Staff Members",
+		path: "/user/staff",
+		icon: <UserCog className="w-4 h-4" />
+	},
+	{
+		id: "6-2",
+		title: "Permissions",
+		path: "/user/staff/permissions",
+		icon: <Key className="w-4 h-4" />
+	}
+	]
+},
+
+// Settings
+{
+	id: 7,
+	title: "Settings",
+	path: "/user/settings",
+	icon: <Settings className="w-6 h-6" />,
+	// @ts-ignore
+	children: [
+	{
+		id: "7-2",
+		title: "Notifications",
+		path: "/user/settings/notifications",
+		icon: <BellIcon className="w-4 h-4" />
+	},
+	{
+		id: "7-3",
+		title: "Reports",
+		path: "/user/settings/reports",
+		icon: <ScrollText className="w-4 h-4" />
+	},
+	{
+		id: "7-4",
+		title: "Billing",
+		path: "/user/settings/billing",
+		icon: <CreditCard className="w-4 h-4" />
+	}
+	]
+}
+];
 
 export const userMenuData: Sidebar[] = [
 	{
 		id: 1,
 		title: "Account Settings",
-		path: "/user",
+		path: "/user/account",
 		icon: (
 			<svg
 				width='18'
@@ -277,8 +271,8 @@ export const userMenuData: Sidebar[] = [
 	},
 	{
 		id: 2, 
-		title: "Business Profile",
-		path: "/user/settings/profile",
+		title: "Billing Information",
+		path: "/user/settings/billing",
 		icon: (
 		  <svg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
 			<path fillRule='evenodd' clipRule='evenodd' d='M12 8.25C9.92894 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92894 15.75 12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25ZM9.75 12C9.75 10.7574 10.7574 9.75 12 9.75C13.2426 9.75 14.25 10.7574 14.25 12C14.25 13.2426 13.2426 14.25 12 14.25C10.7574 14.25 9.75 13.2426 9.75 12Z' fill='currentColor'/>

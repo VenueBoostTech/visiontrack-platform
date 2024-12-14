@@ -6,14 +6,39 @@ export default withAuth(
         const pathname = req.nextUrl?.pathname;
         const role = req.nextauth.token?.role;
 
-        // Check if admin trying to access user routes
-        if (pathname.includes("/user") && role === "ADMIN") {
-            return NextResponse.redirect(new URL("/admin", req.url));
+        // If logged in and accessing root, redirect based on role
+        if (pathname === "/") {
+            if (role === "ADMIN") {
+                return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+            } else if (role === "BUSINESS_OWNER" || role === "STAFF") {
+                return NextResponse.redirect(new URL("/user/dashboard", req.url));
+            }
         }
 
-        // Check if staff/business owner trying to access admin routes
-        if (pathname.includes("/admin") && role !== "ADMIN") {
-            return NextResponse.redirect(new URL("/user", req.url));
+        // Handle /user routes
+        if (pathname.startsWith("/user")) {
+            // Redirect admins away from /user routes
+            if (role === "ADMIN") {
+                return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+            }
+            
+            // Redirect /user to /user/dashboard
+            if (pathname === "/user") {
+                return NextResponse.redirect(new URL("/user/dashboard", req.url));
+            }
+        }
+
+        // Handle /admin routes
+        if (pathname.startsWith("/admin")) {
+            // Redirect non-admins away from /admin routes
+            if (role !== "ADMIN") {
+                return NextResponse.redirect(new URL("/user/dashboard", req.url));
+            }
+            
+            // Redirect /admin to /admin/dashboard
+            if (pathname === "/admin") {
+                return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+            }
         }
 
         return NextResponse.next();
@@ -22,10 +47,16 @@ export default withAuth(
         callbacks: {
             authorized: ({ token }) => !!token
         },
-        secret: process.env.SECRET // THIS WAS MISSING!
+        secret: process.env.SECRET
     }
 );
 
 export const config = {
-    matcher: ["/user/:path*", "/admin/:path*"]
+    matcher: [
+        "/",
+        "/user",
+        "/user/:path*",
+        "/admin",
+        "/admin/:path*"
+    ]
 };

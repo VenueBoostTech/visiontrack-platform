@@ -1,21 +1,16 @@
-import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import AccountSettings from "@/components/User/AccountSettings";
 import { Metadata } from "next";
 
+// app/(site)/user/page.tsx
+import { redirect } from 'next/navigation';
+
 export const metadata: Metadata = {
-	title: `User Dashboard - ${process.env.PLATFORM_NAME}`,
-	description: `This is User Dashboard page for ${process.env.PLATFORM_NAME}`,
-	// other discriptions
+    title: "User Dashboard - VisionTrack",
+    description: "VisionTrack enterprise property management and security platform.",
 };
 
-const page = () => {
-	return (
-		<>
-			<Breadcrumb pageTitle='Account Settings' />
-			<AccountSettings />
-		</>
-	);
-};
+export default function UserPage() {
+    redirect('/user/dashboard');
 
-export default page;
+    // This won't be rendered due to redirect
+    return null;
+}
