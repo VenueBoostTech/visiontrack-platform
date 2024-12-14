@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 const AccountMenu = ({ user }: any) => {
 	const pathname = usePathname();
-	const sidebarData = user?.role === "USER" ? userMenuData : adminMenuData;
+	const sidebarData = user?.role === "ADMIN" ? adminMenuData : userMenuData;
 
 	const profilePic = user?.image
 		? user.image.includes("http")
