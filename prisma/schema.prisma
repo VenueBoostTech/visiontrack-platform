@@ -59,8 +59,8 @@ model User {
   passwordResetToken    String?
   passwordResetTokenExp DateTime?
   role                  UserRole     @default(STAFF)
-  customerId            String?      @unique @map(name: "customer_id")
-  subscriptionId        String?      @unique @map(name: "subscription_id")
+  customerId            String?      @map(name: "customer_id")
+  subscriptionId        String?      @map(name: "subscription_id")
   priceId               String?      @map(name: "price_id")
   currentPeriodEnd     DateTime?    @map(name: "current_period_end")
   createdAt            DateTime     @default(now())
