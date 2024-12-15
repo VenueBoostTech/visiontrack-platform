@@ -5,18 +5,24 @@ const { hash } = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function cleanDatabase() {
-    // Delete in reverse order of dependencies
-    await prisma.zone.deleteMany({});
-    await prisma.building.deleteMany({});
-    await prisma.property.deleteMany({});
-    await prisma.staff.deleteMany({});
-    await prisma.business.deleteMany({});
-    await prisma.user.deleteMany({});
-    
-    console.log('Database cleaned');
-}
+    if (process.env.NODE_ENV === 'production') {
+      console.log('Cleaning database before seeding...');
+      // Delete in reverse order of dependencies
+      await prisma.zone.deleteMany({});
+      await prisma.building.deleteMany({});
+      await prisma.property.deleteMany({});
+      await prisma.staff.deleteMany({});
+      await prisma.business.deleteMany({});
+      await prisma.user.deleteMany({});
+      console.log('Database cleaned');
+    }
+  }
+  
 
 async function main() {
+
+    await cleanDatabase();
+    
     // Create Admin user
     const adminUser = await prisma.user.create({
         data: {
