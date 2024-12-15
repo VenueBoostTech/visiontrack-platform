@@ -8,39 +8,37 @@ async function cleanDatabase() {
     try {
       console.log('Cleaning database before seeding...');
       
-      // Delete in correct order based on relationships
-      await prisma.camera.deleteMany({});
+      // Only delete what we're going to seed
+      await prisma.camera.deleteMany();
       console.log('Deleted cameras');
       
-      await prisma.zone.deleteMany({});
+      await prisma.zone.deleteMany();
       console.log('Deleted zones');
       
-      await prisma.building.deleteMany({});
+      await prisma.building.deleteMany();
       console.log('Deleted buildings');
       
-      await prisma.property.deleteMany({});
+      await prisma.property.deleteMany();
       console.log('Deleted properties');
       
-      await prisma.businessStaff.deleteMany({});
+      await prisma.businessStaff.deleteMany();
       console.log('Deleted business staff');
       
-      await prisma.business.deleteMany({});
+      await prisma.business.deleteMany();
       console.log('Deleted businesses');
       
-      await prisma.account.deleteMany({});
-      console.log('Deleted accounts');
-      
-      await prisma.session.deleteMany({});
-      console.log('Deleted sessions');
-      
-      await prisma.verificationToken.deleteMany({});
-      console.log('Deleted verification tokens');
-      
-      await prisma.apiKey.deleteMany({});
-      console.log('Deleted API keys');
-      
-      await prisma.user.deleteMany({});
-      console.log('Deleted users');
+      await prisma.user.deleteMany({
+        where: {
+          email: {
+            in: [
+              'admin@visiontrack.xyz',
+              'owner+joindasiy@visiontrack.xyz',
+              'staff+joindasiy@visiontrack.xyz'
+            ]
+          }
+        }
+      });
+      console.log('Deleted seed users');
   
       console.log('Database cleaned successfully');
     } catch (error) {
