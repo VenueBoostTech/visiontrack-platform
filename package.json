@@ -50,8 +50,10 @@
 		"react-quill": "^2.0.0",
 		"react-select": "^5.8.0",
 		"sanity": "^3.23.4",
+		"sonner": "^1.7.1",
 		"stripe": "^14.13.0",
-		"styled-components": "^6.1.13"
+		"styled-components": "^6.1.13",
+		"zod": "^3.24.1"
 	},
 	"devDependencies": {
 		"@types/bcrypt": "^5.0.2",

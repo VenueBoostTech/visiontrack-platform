@@ -1,22 +1,16 @@
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import React from "react";
+// app/user/notifications/page.tsx
 import { Metadata } from "next";
-import Notification from "@/components/Common/Notification";
+import NotificationsContent from "@/components/User/NotificationsContent";
 
 export const metadata: Metadata = {
-	title: `Settings Notifications - ${process.env.PLATFORM_NAME}`,
-	description: `Settings Notifications Description`,
+  title: `Notifications - ${process.env.PLATFORM_NAME}`,
+  description: `View all your notifications`,
 };
 
-const SettingsNotificationsPage = () => {
-	const data = [1, 2, 3, 4, 5, 6, 7];
-
-	return (
-		<div className='md:px-20'>
-			<Breadcrumb pageTitle='Settings Notifications' />
-			{data?.map((data) => <Notification key={data} />)}
-		</div>
-	);
-};
-
-export default SettingsNotificationsPage;
+export default function NotificationsPage() {
+  return (
+    <div className='px-5'>
+      <NotificationsContent />
+    </div>
+  );
+}

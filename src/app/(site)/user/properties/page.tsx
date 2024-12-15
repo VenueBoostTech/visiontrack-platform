@@ -1,22 +1,34 @@
-import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
+// app/user/properties/page.tsx
 import { Metadata } from "next";
+import PropertiesContent from "@/components/User/PropertiesContent";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export const metadata: Metadata = {
-	title: `Properties - ${process.env.PLATFORM_NAME}`,
-	description: `This is Properties page for ${process.env.PLATFORM_NAME}`,
-	// other discriptions
+  title: `Properties - ${process.env.PLATFORM_NAME}`,
+  description: `Manage your properties`,
 };
 
-const PropertiesPage = () => {
-	return (
-		<>
-			<Breadcrumb pageTitle='Properties' />
-			<div>
-				<h1>PropertiesPage</h1>
-			</div>
-		</>
-	);
-};
+async function getProperties() {
+  const properties = await prisma.property.findMany({
+    include: {
+      buildings: true
+    },
+	orderBy: {
+		createdAt: 'desc'
+	}
+  });
+  
+  return properties;
+}
 
-export default PropertiesPage;
+export default async function PropertiesPage() {
+  const properties = await getProperties();
+
+  return (
+    <div className="px-5">
+      <PropertiesContent initialProperties={properties} />
+    </div>
+  );
+}
