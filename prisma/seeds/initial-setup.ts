@@ -61,29 +61,36 @@ async function main() {
             password: await hash('admin123', 12),
             role: UserRole.ADMIN,
             emailVerified: new Date(),
+            passwordResetToken: null, // explicitly set to null
+            passwordResetTokenExp: null // also set expiry to null
         },
     });
-   // Create Business Owner
-   const businessOwner = await prisma.user.create({
-       data: {
-           name: 'Daisy Owner',
-           email: 'owner+joindasiy@visiontrack.xyz',
-           password: await hash('owner123', 12),
-           role: UserRole.BUSINESS_OWNER,
-           emailVerified: new Date(),
-       },
-   });
 
-   // Create Staff Member
-   const staffMember = await prisma.user.create({
-       data: {
-           name: 'Daisy Staff',
-           email: 'staff+joindasiy@visiontrack.xyz',
-           password: await hash('staff123', 12),
-           role: UserRole.STAFF,
-           emailVerified: new Date(),
-       },
-   });
+    // Create Business Owner
+    const businessOwner = await prisma.user.create({
+        data: {
+            name: 'Daisy Owner',
+            email: 'owner+joindasiy@visiontrack.xyz',
+            password: await hash('owner123', 12),
+            role: UserRole.BUSINESS_OWNER,
+            emailVerified: new Date(),
+            passwordResetToken: null,
+            passwordResetTokenExp: null
+        },
+    });
+
+    // Create Staff Member
+    const staffMember = await prisma.user.create({
+        data: {
+            name: 'Daisy Staff',
+            email: 'staff+joindasiy@visiontrack.xyz',
+            password: await hash('staff123', 12),
+            role: UserRole.STAFF,
+            emailVerified: new Date(),
+            passwordResetToken: null,
+            passwordResetTokenExp: null
+        },
+    });
 
    // Create Daisy Business
    const business = await prisma.business.create({
