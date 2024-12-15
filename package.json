@@ -7,7 +7,7 @@
 	},
 	"scripts": {
 		"dev": "next dev",
-		"build": "prisma generate && NODE_ENV=production ts-node --transpile-only prisma/seeds/initial-setup.ts && next build",
+		"build": "npm install -g ts-node && prisma generate && NODE_ENV=production ts-node --transpile-only prisma/seeds/initial-setup.ts && next build",
 		"start": "next start",
 		"stripe:listen": "stripe listen --forward-to http://localhost:3000/api/stripe/webhook",
 		"check-format": "prettier --check .",
