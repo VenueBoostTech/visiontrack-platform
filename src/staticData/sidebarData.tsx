@@ -163,6 +163,12 @@ export const userSidebarData: Sidebar[] = [
 	children: [
 	{
 		id: "5-1",
+		title: "Overview",
+		path: "/user/security",
+		icon: <Shield className="w-4 h-4" />
+},
+	{
+		id: "5-1",
 		title: "Access Control",
 		path: "/user/security/access",
 		icon: <KeyRound className="w-4 h-4" />
@@ -181,8 +187,8 @@ export const userSidebarData: Sidebar[] = [
 	},
 	{
 		id: "5-4",
-		title: "Incident Reports",
-		path: "/user/security/incidents",
+		title: "Reports",
+		path: "/user/security/reports",
 		icon: <FileText className="w-4 h-4" />
 	}
 	]
