@@ -54,59 +54,65 @@ async function main() {
     await cleanDatabase();
 
     // Create Admin user
-    const adminUser = await prisma.user.create({
-        data: {
+    const adminUser = await prisma.user.upsert({
+        where: { email: 'admin@visiontrack.xyz' },
+        update: {}, // If user exists, no update is needed
+        create: {
             name: 'VisionTrack Admin',
             email: 'admin@visiontrack.xyz',
             password: await hash('admin123', 12),
             role: UserRole.ADMIN,
             emailVerified: new Date(),
-            passwordResetToken: null, // explicitly set to null
-            passwordResetTokenExp: null // also set expiry to null
+            passwordResetToken: null,
+            passwordResetTokenExp: null,
         },
     });
 
-    // Create Business Owner
-    const businessOwner = await prisma.user.create({
-        data: {
+   // Create Business Owner
+    const businessOwner = await prisma.user.upsert({
+        where: { email: 'owner+joindasiy@visiontrack.xyz' },
+        update: {},
+        create: {
             name: 'Daisy Owner',
             email: 'owner+joindasiy@visiontrack.xyz',
             password: await hash('owner123', 12),
             role: UserRole.BUSINESS_OWNER,
             emailVerified: new Date(),
             passwordResetToken: null,
-            passwordResetTokenExp: null
+            passwordResetTokenExp: null,
         },
     });
 
-    // Create Staff Member
-    const staffMember = await prisma.user.create({
-        data: {
+   // Create Staff Member
+    const staffMember = await prisma.user.upsert({
+        where: { email: 'staff+joindasiy@visiontrack.xyz' },
+        update: {},
+        create: {
             name: 'Daisy Staff',
             email: 'staff+joindasiy@visiontrack.xyz',
             password: await hash('staff123', 12),
             role: UserRole.STAFF,
             emailVerified: new Date(),
             passwordResetToken: null,
-            passwordResetTokenExp: null
+            passwordResetTokenExp: null,
         },
     });
 
-   // Create Daisy Business
-   const business = await prisma.business.create({
-       data: {
-           name: 'Daisy',
-           email: 'info+joindasiy@visiontrack.xyz',
-           phone: '+1 (212) 555-0123',
-           address: '385 5th Avenue New York, NY 10016',
-           ownerId: businessOwner.id,
-           staff: {
-               create: {
-                   userId: staffMember.id,
-               }
-           }
-       },
-   });
+    // Create Daisy Business
+    const business = await prisma.business.create({
+    data: {
+        name: 'Daisy',
+        email: 'info+joindasiy@visiontrack.xyz',
+        phone: '+1 (212) 555-0123',
+        address: '385 5th Avenue New York, NY 10016',
+        ownerId: businessOwner.id, // Use the ID from the upserted user
+        staff: {
+            create: {
+                userId: staffMember.id, // Use the ID from the upserted user
+            },
+        },
+        },
+    });
 
    // Create 5 Properties with Buildings
    const properties = [
