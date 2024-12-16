@@ -1,18 +1,18 @@
 import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
+// @ts-ignore
+import PermissionsContent from "@/components/User/Staff/PermissionsContent";
 
 export const metadata: Metadata = {
     title: "Staff Permissions - VisionTrack",
-    description: "VisionTrack property management and security dashboard.",
+    description: "VisionTrack staff permissions management.",
 };
 
 const StaffPermissionsPage = () => {
     return (
         <>
-            <Breadcrumb pageTitle="StaffPermissionsPage" />
-            <div>
-                <h1>StaffPermissionsPage</h1>
+            <div className="px-5">
+                <PermissionsContent />
             </div>
         </>
     );

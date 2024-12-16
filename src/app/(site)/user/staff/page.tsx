@@ -1,21 +1,61 @@
-import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/libs/prismaDb";
+import { authOptions } from "@/libs/auth";
+import StaffContent from "@/components/User/Staff/StaffContent";
 
-export const metadata: Metadata = {
-    title: "Staff - VisionTrack",
-    description: "VisionTrack property management and security dashboard.",
-};
+const StaffPage = async () => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect('/auth/signin');
+  }
 
-const StaffPage = () => {
-    return (
-        <>
-            <Breadcrumb pageTitle="StaffPage" />
-            <div>
-                <h1>StaffPage</h1>
-            </div>
-        </>
-    );
+  // Get business owner
+  const owner = await prisma.user.findFirst({
+    where: { 
+      id: session.user.id,
+      role: "BUSINESS_OWNER"
+    },
+    include: {
+      ownedBusiness: true,
+    }
+  });
+
+  if (!owner?.ownedBusiness) {
+    redirect('/dashboard');
+  }
+
+  // Get current staff members
+  const currentStaff = await prisma.businessStaff.findMany({
+    where: {
+      businessId: owner.ownedBusiness.id
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  });
+
+  return (
+    <div className="px-5">
+      <StaffContent
+        // @ts-ignore
+        initialStaff={currentStaff} 
+        businessId={owner.ownedBusiness.id}
+        owner={owner}
+      />
+    </div>
+  );
 };
 
 export default StaffPage;
