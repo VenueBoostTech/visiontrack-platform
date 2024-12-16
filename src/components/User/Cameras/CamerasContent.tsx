@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useCallback, useEffect } from 'react';
-import { Camera, Edit, Power, Plus, Search, Filter, AlertCircle, Trash2 } from 'lucide-react';
+import { Camera, Edit, Power, Plus, Search, Filter, AlertCircle, Trash2, Eye } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Modal from '@/components/Common/Modal';
 import CameraForm from './CameraForm';
 import DeleteModal from '@/components/Common/Modals/DeleteModal';
+import { useRouter } from 'next/navigation';
 
 interface CameraData {
   id: string;
@@ -36,6 +37,8 @@ export default function CamerasContent() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [cameras, setCameras] = useState<CameraData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
+
 
     const fetchCameras = async () => {
       try {
@@ -153,6 +156,10 @@ export default function CamerasContent() {
       } catch (error) {
         toast.error('Failed to update camera status');
       }
+    };
+
+    const handleView = (cameraId: string) => {
+      router.push(`/user/properties/cameras/${cameraId}`);
     };
   
     const handleCloseModal = useCallback(() => {
@@ -306,6 +313,16 @@ export default function CamerasContent() {
                     <td className="px-6 py-4">{camera.zone.building.name}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
+                      <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleView(camera.id);
+                      }}
+                      className="p-1 text-gray-400 hover:text-blue-600"
+                      disabled={isLoading}
+                    >
+                      <Eye className="w-5 h-5" />
+                      </button>
                         <button 
                           onClick={() => {
                             setSelectedCamera(camera);

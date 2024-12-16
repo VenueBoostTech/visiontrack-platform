@@ -16,6 +16,8 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
+import IncidentForm from './IncidentForm';
+import Modal from '@/components/Common/Modal';
 
 const mockData = {
   incidents: [
@@ -64,6 +66,30 @@ const mockData = {
 
 export default function IncidentManagement() {
   const [activeTab, setActiveTab] = useState('all');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleCreateIncident = async (data: any) => {
+    setIsSubmitting(true);
+    try {
+      // Here you would make an API call to create the incident
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
+      
+      // Add the new incident to the list
+      const newIncident = {
+        id: `INC-${String(mockData.incidents.length + 1).padStart(3, '0')}`,
+        ...data
+      };
+      
+      mockData.incidents.unshift(newIncident);
+      setShowCreateModal(false);
+      toast.success('Incident created successfully');
+    } catch (error) {
+      toast.error('Failed to create incident');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -76,6 +102,7 @@ export default function IncidentManagement() {
           </p>
         </div>
         <button 
+          onClick={() => setShowCreateModal(true)}
           className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
@@ -441,6 +468,17 @@ export default function IncidentManagement() {
         </Card>
         </TabsContent>
       </Tabs>
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        title="Create New Incident"
+      >
+        <IncidentForm 
+          onSubmit={handleCreateIncident}
+          onClose={() => setShowCreateModal(false)}
+          isSubmitting={isSubmitting}
+        />
+      </Modal>
     </div>
   );
 }

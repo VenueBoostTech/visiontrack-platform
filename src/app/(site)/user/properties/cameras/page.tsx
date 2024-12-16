@@ -35,6 +35,7 @@ export default async function PropertiesCamerasPage() {
 
   return (
     <div className="px-5">
+      {/* @ts-ignore */}
       <CamerasContent initialCameras={cameras} />
     </div>
   );

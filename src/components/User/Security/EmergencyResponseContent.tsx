@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Bell, Phone, Shield, AlertTriangle, Users, Clock, Radio, MapPin } from 'lucide-react';
+import toast from 'react-hot-toast';
+import EmergencyTriggerForm from './EmergencyTriggerForm';
+import Modal from '@/components/Common/Modal';
 
 const mockData = {
   activeEmergencies: [
@@ -45,6 +48,23 @@ const mockData = {
 export default function EmergencyResponse() {
   const [activeTab, setActiveTab] = useState('current');
 
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleEmergencyTrigger = async (data: any) => {
+    setIsSubmitting(true);
+    try {
+      // Make API call here
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
+      toast.success('Emergency alert triggered successfully');
+      setShowEmergencyModal(false);
+    } catch (error) {
+      toast.error('Failed to trigger emergency alert');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -55,7 +75,8 @@ export default function EmergencyResponse() {
             Monitor and manage emergency situations
           </p>
         </div>
-        <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2">
+        <button onClick={() => setShowEmergencyModal(true)}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2">
           <Bell className="w-4 h-4" />
           Trigger Emergency Alert
         </button>
@@ -269,6 +290,17 @@ export default function EmergencyResponse() {
           </Card>
         </TabsContent>
       </Tabs>
+      <Modal
+        isOpen={showEmergencyModal}
+        onClose={() => setShowEmergencyModal(false)}
+        title="Trigger Emergency Alert"
+      >
+        <EmergencyTriggerForm
+          onSubmit={handleEmergencyTrigger}
+          onClose={() => setShowEmergencyModal(false)}
+          isSubmitting={isSubmitting}
+        />
+      </Modal>
     </div>
   );
 }

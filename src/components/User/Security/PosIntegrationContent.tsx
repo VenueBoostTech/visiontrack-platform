@@ -15,6 +15,9 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import POSSettingsModal from './POSSettingsModal';
+import ConfirmSyncModal from './ConfirmSyncModal';
 
 const mockData = {
   posTerminals: [
@@ -85,6 +88,35 @@ const mockData = {
 
 export default function POSIntegrationContent() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [showSyncModal, setShowSyncModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSync = async () => {
+    setIsLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate sync
+      toast.success('POS sync completed successfully');
+      setShowSyncModal(false);
+    } catch (error) {
+      toast.error('Failed to sync POS terminals');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveSettings = async (data: any) => {
+    setIsLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate save
+      toast.success('Settings saved successfully');
+      setShowSettingsModal(false);
+    } catch (error) {
+      toast.error('Failed to save settings');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -97,15 +129,22 @@ export default function POSIntegrationContent() {
           </p>
         </div>
         <div className="flex gap-2">
-          <button className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 flex items-center gap-2">
-            <RefreshCcw className="w-4 h-4" />
-            Sync Now
-          </button>
-          <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center gap-2">
-            <Settings className="w-4 h-4" />
-            Settings
-          </button>
-        </div>
+        <button 
+          onClick={() => setShowSyncModal(true)}
+          className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 flex items-center gap-2"
+        >
+          <RefreshCcw className="w-4 h-4" />
+          Sync Now
+        </button>
+        <button 
+          onClick={() => setShowSettingsModal(true)}
+          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center gap-2"
+        >
+          <Settings className="w-4 h-4" />
+          Settings
+        </button>
+      </div>
+
       </div>
 
       {/* Stats Overview */}
@@ -378,6 +417,19 @@ export default function POSIntegrationContent() {
   </Card>
   </TabsContent>
     </Tabs>
+    <ConfirmSyncModal 
+  isOpen={showSyncModal}
+  onClose={() => setShowSyncModal(false)}
+  onConfirm={handleSync}
+  isLoading={isLoading}
+/>
+
+<POSSettingsModal
+  isOpen={showSettingsModal}
+  onClose={() => setShowSettingsModal(false)}
+  onSave={handleSaveSettings}
+  isSubmitting={isLoading}
+/>
   </div>
 );
 }

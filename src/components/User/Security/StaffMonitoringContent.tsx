@@ -16,8 +16,10 @@ import {
   CalendarClock,
   ArrowUp,
   ArrowDown,
-  AlertCircle
+  AlertCircle,
 } from 'lucide-react';
+import CameraFeedModal from './CameraFeed/CameraFeedModal';
+import Link from 'next/link';  // Add this import
 
 const mockData = {
   staffLocations: [
@@ -81,6 +83,7 @@ const mockData = {
 
 export default function StaffMonitoring() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [selectedCamera, setSelectedCamera] = useState(null);
 
   return (
     <div className="p-6 space-y-6">
@@ -91,16 +94,6 @@ export default function StaffMonitoring() {
           <p className="text-sm text-gray-500 mt-1">
             Monitor staff activity and motion detection
           </p>
-        </div>
-        <div className="flex gap-2">
-          <button className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 flex items-center gap-2">
-            <LayoutGrid className="w-4 h-4" />
-            Camera Grid
-          </button>
-          <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center gap-2">
-            <CalendarClock className="w-4 h-4" />
-            Schedule View
-          </button>
         </div>
       </div>
 
@@ -378,14 +371,21 @@ export default function StaffMonitoring() {
                 </div>
               </div>
 
-              <div className="mt-4 flex gap-2">
-                <button className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300">
-                  View Feed
-                </button>
-                <button className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300">
-                  Settings
-                </button>
-              </div>
+<div className="mt-4 flex gap-2">
+  <button 
+    // @ts-ignore
+    onClick={() => setSelectedCamera(camera)}
+    className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+  >
+    View Feed
+  </button>
+  <Link 
+    href={`/user/properties/cameras/${camera.id}`}
+    className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-center"
+  >
+    Settings
+  </Link>
+</div>
             </CardContent>
           </Card>
         ))}
@@ -394,6 +394,12 @@ export default function StaffMonitoring() {
   </Card>
 </TabsContent>
     </Tabs>
+<CameraFeedModal
+  isOpen={selectedCamera !== null}
+  onClose={() => setSelectedCamera(null)}
+  // @ts-ignore
+  camera={selectedCamera}
+/>
   </div>
 );
 }

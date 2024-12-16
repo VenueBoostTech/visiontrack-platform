@@ -30,7 +30,11 @@ import {
 	Wallet,
 	Bell as BellIcon,
 	ScrollText,
-	CreditCard
+	CreditCard,
+	AlertTriangle,
+	Terminal,
+	Siren,
+	ShieldAlert
    } from "lucide-react";
    
 export const userSidebarData: Sidebar[] = [
@@ -194,33 +198,33 @@ export const userSidebarData: Sidebar[] = [
 	{
 		id: "5-5",
 		title: "Loss Prevention",
-		path: "/user/security/lost-prevention",
-		icon: <FileText className="w-4 h-4" />
-	},
-	{
+		path: "/user/security/loss-prevention",
+		icon: <ShieldAlert className="w-4 h-4" />
+	  },
+	  {
 		id: "5-6",
 		title: "Emergency Response",
 		path: "/user/security/emergency-response",
-		icon: <FileText className="w-4 h-4" />
-	},
-	{
+		icon: <Siren className="w-4 h-4" />
+	  },
+	  {
 		id: "5-7",
 		title: "POS Integration",
 		path: "/user/security/pos-integration",
-		icon: <FileText className="w-4 h-4" />
-	},
-	{
+		icon: <Terminal className="w-4 h-4" />
+	  },
+	  {
 		id: "5-8",
 		title: "Incident Management",
 		path: "/user/security/incident-management",
-		icon: <FileText className="w-4 h-4" />
-	},
-	{
+		icon: <AlertTriangle className="w-4 h-4" />
+	  },
+	  {
 		id: "5-9",
 		title: "Staff Monitoring",
 		path: "/user/security/staff-monitoring",
-		icon: <FileText className="w-4 h-4" />
-	}
+		icon: <UserCog className="w-4 h-4" />
+	  }	
 	]
 
 },
