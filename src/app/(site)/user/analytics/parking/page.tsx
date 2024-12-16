@@ -1,6 +1,6 @@
 import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
+import ParkingContent from "@/components/User/Analytics/ParkingContent";
 
 export const metadata: Metadata = {
     title: "Analytics Parking - VisionTrack",
@@ -10,10 +10,7 @@ export const metadata: Metadata = {
 const AnalyticsParkingPage = () => {
     return (
         <>
-            <Breadcrumb pageTitle="AnalyticsParkingPage" />
-            <div>
-                <h1>AnalyticsParkingPage</h1>
-            </div>
+            <ParkingContent />
         </>
     );
 };

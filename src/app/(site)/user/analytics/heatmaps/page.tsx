@@ -1,19 +1,16 @@
 import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
+import HeatmapContent from "@/components/User/Analytics/HeatmapContent";
 
 export const metadata: Metadata = {
-    title: "Analytics Heatmaps - VisionTrack",
-    description: "VisionTrack property management and security dashboard.",
+    title: "Heatmap Analytics - VisionTrack",
+    description: "Analyze movement patterns and high-traffic areas in your properties.",
 };
 
 const AnalyticsHeatmapsPage = () => {
     return (
         <>
-            <Breadcrumb pageTitle="AnalyticsHeatmapsPage" />
-            <div>
-                <h1>AnalyticsHeatmapsPage</h1>
-            </div>
+            <HeatmapContent />
         </>
     );
 };
