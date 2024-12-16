@@ -190,8 +190,39 @@ export const userSidebarData: Sidebar[] = [
 		title: "Reports",
 		path: "/user/security/reports",
 		icon: <FileText className="w-4 h-4" />
+	},
+	{
+		id: "5-5",
+		title: "Loss Prevention",
+		path: "/user/security/lost-prevention",
+		icon: <FileText className="w-4 h-4" />
+	},
+	{
+		id: "5-6",
+		title: "Emergency Response",
+		path: "/user/security/emergency-response",
+		icon: <FileText className="w-4 h-4" />
+	},
+	{
+		id: "5-7",
+		title: "POS Integration",
+		path: "/user/security/pos-integration",
+		icon: <FileText className="w-4 h-4" />
+	},
+	{
+		id: "5-8",
+		title: "Incident Management",
+		path: "/user/security/incident-management",
+		icon: <FileText className="w-4 h-4" />
+	},
+	{
+		id: "5-9",
+		title: "Staff Monitoring",
+		path: "/user/security/staff-monitoring",
+		icon: <FileText className="w-4 h-4" />
 	}
 	]
+
 },
 
 // Staff Management
