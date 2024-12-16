@@ -186,7 +186,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Monitored Zones</p>
               <h3 className="text-xl font-bold">
-                {zones.filter(zone => zone.cameras.length > 0).length}
+                {zones.filter(zone => zone.cameras?.length > 0).length}
               </h3>
             </div>
           </div>
@@ -264,9 +264,9 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{zone.floor || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {zone.building.property.name} - {zone.building.name}
+                      {zone.building.property?.name} - {zone.building.name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{zone.cameras.length}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{zone.cameras?.length}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex gap-2">
                         <button
