@@ -2,11 +2,12 @@
 "use client";
 
 import { useState } from 'react';
-import { Building2, Edit, Trash2, Plus } from 'lucide-react';
+import { Building2, Edit, Trash2, Plus, Eye } from 'lucide-react';
 import Modal from '@/components/Common/Modal';
 import DeleteModal from '@/components/Common/Modals/DeleteModal';
 import BuildingForm from '@/components/User/BuldingForm';
 import toast from "react-hot-toast";
+import { useRouter } from 'next/navigation';
 
 interface Building {
   id: string;
@@ -32,11 +33,13 @@ export default function BuildingsContent({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
 
   const handleCreate = async (data: { name: string; floorCount: number; propertyId: string }) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/buildings', {
+      const response = await fetch('/api/user/buildings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -57,12 +60,16 @@ export default function BuildingsContent({
     }
   };
 
+  const handleView = (buildingId: string) => {
+    router.push(`/user/properties/buildings/${buildingId}`);
+  };
+
   const handleUpdate = async (data: { name: string; floorCount: number; propertyId: string }) => {
     if (!selectedBuilding) return;
     
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/buildings/${selectedBuilding.id}`, {
+      const response = await fetch(`/api/user/buildings/${selectedBuilding.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -96,7 +103,7 @@ export default function BuildingsContent({
     
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/buildings/${selectedBuilding.id}`, {
+      const response = await fetch(`/api/user/buildings/${selectedBuilding.id}`, {
         method: 'DELETE',
       });
       
@@ -157,7 +164,11 @@ export default function BuildingsContent({
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {buildings.map((building) => (
-                <tr key={building.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                <tr 
+                  key={building.id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                  onClick={() => handleView(building.id)}
+                >
                   <td className="px-6 py-4 whitespace-nowrap font-medium">{building.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{building.property.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{building.floorCount}</td>
@@ -167,8 +178,19 @@ export default function BuildingsContent({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex gap-3">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleView(building.id);
+                      }}
+                      className="p-1 text-gray-400 hover:text-blue-600"
+                      disabled={isLoading}
+                    >
+                      <Eye className="w-5 h-5" />
+                      </button>
                       <button 
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent row click
                           setSelectedBuilding(building);
                           setShowEditModal(true);
                         }}
@@ -178,7 +200,10 @@ export default function BuildingsContent({
                         <Edit className="w-5 h-5" />
                       </button>
                       <button 
-                        onClick={() => handleDeleteClick(building)}
+                       onClick={(e) => {
+                        e.stopPropagation(); // Prevent row click
+                        handleDeleteClick(building);
+                      }}
                         className="p-1 text-gray-400 hover:text-red-600"
                         disabled={isLoading}
                       >

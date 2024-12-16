@@ -80,9 +80,12 @@ export async function GET() {
     }
 
     const properties = await prisma.property.findMany({
-      select: {
-        id: true,
-        name: true
+      include: {
+        buildings: {
+          include: {
+            zones: true
+          }
+        }
       }
     });
     

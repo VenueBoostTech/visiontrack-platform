@@ -1,22 +1,41 @@
-import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
+// app/user/properties/cameras/page.tsx
 import { Metadata } from "next";
+import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
+import CamerasContent from "@/components/User/Cameras/CamerasContent";
+import { prisma } from "@/libs/prismaDb";
 
 export const metadata: Metadata = {
-	title: `Properties Cameras - ${process.env.PLATFORM_NAME}`,
-	description: `This is Properties Cameras page for ${process.env.PLATFORM_NAME}`,
-	// other discriptions
+  title: `Cameras Management - ${process.env.PLATFORM_NAME}`,
+  description: `Manage and monitor all security cameras across properties`
 };
 
-const PropertiesCamerasPage = () => {
-	return (
-		<>
-			<Breadcrumb pageTitle='Properties Cameras' />
-			<div>
-				<h1>PropertiesCamerasPage</h1>
-			</div>
-		</>
-	);
-};
+async function getCameras() {
+  const cameras = await prisma.camera.findMany({
+    include: {
+      zone: {
+        include: {
+          building: {
+            include: {
+              property: true
+            }
+          }
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  });
+  
+  return cameras;
+}
 
-export default PropertiesCamerasPage;
+export default async function PropertiesCamerasPage() {
+  const cameras = await getCameras();
+
+  return (
+    <div className="px-5">
+      <CamerasContent initialCameras={cameras} />
+    </div>
+  );
+}

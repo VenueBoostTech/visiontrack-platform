@@ -147,7 +147,7 @@ model Zone {
   name        String
   type        ZoneType
   floor       Int?
-  coordinates Json?     // Store polygon coordinates for the zone
+  coordinates Json?     
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -171,18 +171,21 @@ enum ZoneType {
 }
 
 model Camera {
- id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  rtspUrl     String
-  status      CameraStatus @default(ACTIVE)
-  type        CameraType
-  direction   String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  location      String?
+  rtspUrl       String
+  status        CameraStatus @default(ACTIVE)
+  type          CameraType
+  direction     String?
+  coverageArea  Json?
+  capabilities  Json?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   // Relations
-  zoneId      String    @db.ObjectId
-  zone        Zone      @relation(fields: [zoneId], references: [id])
+  zoneId        String      @db.ObjectId
+  zone          Zone        @relation(fields: [zoneId], references: [id])
 }
 
 enum CameraStatus {
