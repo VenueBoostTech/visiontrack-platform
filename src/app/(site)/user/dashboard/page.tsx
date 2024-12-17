@@ -1,21 +1,17 @@
-import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
+// app/user/dashboard/page.tsx
 import { Metadata } from "next";
+import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
+import RetailDashboardContent from "@/components/User/RetailDashboard/RetailDashboardContent";
 
 export const metadata: Metadata = {
     title: "Dashboard - VisionTrack",
-    description: "VisionTrack property management and security dashboard.",
+    description: "Real-time computer vision analytics for retail operations, customer insights, and security monitoring.",
 };
 
-const DashboardPage = () => {
+export default function DashboardPage() {
     return (
-        <>
-            <Breadcrumb pageTitle="Dashboard" />
-            <div>
-                <h1>Dashboard</h1>
-            </div>
-        </>
+        <div className="px-5">
+            <RetailDashboardContent />
+        </div>
     );
-};
-
-export default DashboardPage;
+}
