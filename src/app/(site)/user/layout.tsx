@@ -2,10 +2,20 @@
 import { useState } from "react";
 import Sidebar from "@/components/Common/Dashboard/Sidebar";
 import Header from "@/components/Common/Dashboard/Header";
-import { userSidebarData } from "@/staticData/sidebarData";
+import { getUserSidebarData, userSidebarData } from "@/staticData/sidebarData";
+import { useSession } from "next-auth/react";
 
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+
+const UserLayout = ({ children }: { children: React.ReactNode }) => {
 	const [openSidebar, setOpenSidebar] = useState(false);
+	const { data: session } = useSession();
+
+	// Get business type from session
+	const businessType = session?.user?.business?.vt_use_scenario || 'RETAIL';
+  
+	// Generate sidebar data using business type from session
+	const sidebarData = getUserSidebarData(businessType);
+  
 
 	return (
 		<>
@@ -15,8 +25,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 						openSidebar ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
 					}`}
 				>
-					<Sidebar sidebarData={userSidebarData} />
-				</aside>
+					<Sidebar sidebarData={sidebarData} />
+				</aside> 
 				<div
 					onClick={() => setOpenSidebar(false)}
 					className={`fixed inset-0 z-[99] h-screen w-full bg-dark/80 lg:hidden ${
@@ -32,4 +42,4 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 	);
 };
 
-export default AdminLayout;
+export default UserLayout;

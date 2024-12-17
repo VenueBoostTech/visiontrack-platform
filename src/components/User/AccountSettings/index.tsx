@@ -7,6 +7,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import DeleteModal from "@/components/Common/Modals/DeleteModal";
+import EditBusiness from "./EditBusiness";
 
 const AccountSettings = () => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -37,6 +38,7 @@ const AccountSettings = () => {
 	return (
 		<>
 			<div className='flex flex-col gap-y-10 lg:gap-x-10  xl:flex-row'>
+				<EditBusiness />
 				<EditProfile />
 				<PasswordChange />
 

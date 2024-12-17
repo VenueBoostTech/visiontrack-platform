@@ -11,9 +11,15 @@ import { User } from "@prisma/client";
 
 declare module "next-auth" {
 	interface Session extends DefaultSession {
-		user: User & DefaultSession["user"];
+	  user: User & DefaultSession["user"] & {
+		business?: {
+		  id: string;
+		  name: string;
+		  vt_use_scenario: string;
+		}
+	  };
 	}
-}
+  }
 
 export const authOptions: NextAuthOptions = {
 	pages: {
@@ -168,55 +174,70 @@ export const authOptions: NextAuthOptions = {
 
 	callbacks: {
 		jwt: async (payload: any) => {
-			const { token, trigger, session } = payload;
-			const user: User = payload.user;
-
-			if (trigger === "update") {
-				// console.log(token.picture, session.user);
-				return {
-					...token,
-					...session.user,
-					picture: session.user.image,
-					image: session.user.image,
-					priceId: session.user.priceId,
-					currentPeriodEnd: session.user.currentPeriodEnd,
-					subscriptionId: session.user.subscriptionId,
-					customerId: session.user.customerId,
-				};
-			}
-
-			if (user) {
-				return {
-					...token,
-					uid: user.id,
-					priceId: user.priceId,
-					currentPeriodEnd: user.currentPeriodEnd,
-					subscriptionId: user.subscriptionId,
-					role: user.role,
-					picture: user.image,
-					image: user.image,
-				};
-			}
-			return token;
+		  const { token, trigger, session } = payload;
+		  const user: User = payload.user;
+	  
+		  if (trigger === "update") {
+			return {
+			  ...token,
+			  ...session.user,
+			  picture: session.user.image,
+			  image: session.user.image,
+			  priceId: session.user.priceId,
+			  currentPeriodEnd: session.user.currentPeriodEnd,
+			  subscriptionId: session.user.subscriptionId,
+			  customerId: session.user.customerId,
+			  business: session.user.business
+			};
+		  }
+	  
+		  if (user) {
+			// Fetch business info when creating JWT
+			const business = await prisma.business.findFirst({
+			  where: {
+				ownerId: user.id
+			  },
+			  select: {
+				id: true,
+				name: true,
+				// @ts-ignore
+				vt_use_scenario: true,
+			  }
+			});
+	  
+			return {
+			  ...token,
+			  uid: user.id,
+			  priceId: user.priceId,
+			  currentPeriodEnd: user.currentPeriodEnd,
+			  subscriptionId: user.subscriptionId,
+			  role: user.role,
+			  picture: user.image,
+			  image: user.image,
+			  business: business
+			};
+		  }
+		  return token;
 		},
-
+	  
 		session: async ({ session, token }) => {
-			if (session?.user) {
-				return {
-					...session,
-					user: {
-						...session.user,
-						id: token.sub,
-						priceId: token.priceId,
-						currentPeriodEnd: token.currentPeriodEnd,
-						subscriptionId: token.subscriptionId,
-						role: token.role,
-						image: token.picture,
-					},
-				};
-			}
-			return session;
-		},
+		  if (session?.user) {
+			return {
+			  ...session,
+			  user: {
+				...session.user,
+				id: token.sub,
+				priceId: token.priceId,
+				currentPeriodEnd: token.currentPeriodEnd,
+				subscriptionId: token.subscriptionId,
+				role: token.role,
+				image: token.picture,
+				business: token.business
+				},
+			};
+		}
+		return session;
+	},
 	},
 
 	// debug: process.env.NODE_ENV === "developement",

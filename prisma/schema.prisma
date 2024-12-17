@@ -83,19 +83,20 @@ model VerificationToken {
 }
 
 model Business {
- id          String    @id @default(auto()) @map("_id") @db.ObjectId
- name        String
- email       String?
- phone       String?
- address     String?
- createdAt   DateTime  @default(now())
- updatedAt   DateTime  @updatedAt
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String?
+  phone           String?
+  address         String?
+  vt_use_scenario BusinessType @default(RETAIL)  // Added this field
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
- // Relations
- ownerId     String    @db.ObjectId @unique  // One owner per business
- owner       User      @relation("BusinessOwner", fields: [ownerId], references: [id])
- staff       BusinessStaff[]
- properties  Property[]
+  // Relations
+  ownerId         String    @db.ObjectId @unique
+  owner           User      @relation("BusinessOwner", fields: [ownerId], references: [id])
+  staff           BusinessStaff[]
+  properties      Property[]
 }
 
 model BusinessStaff {
@@ -198,4 +199,11 @@ enum CameraType {
   INDOOR
   OUTDOOR
   THERMAL
+}
+
+enum BusinessType {
+  COMMERCIAL_REAL_ESTATE
+  MANUFACTURING_WAREHOUSING
+  MULTI_FAMILY_RESIDENTIAL
+  RETAIL
 }
