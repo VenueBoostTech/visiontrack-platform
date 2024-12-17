@@ -1,6 +1,7 @@
 import { Sidebar } from "@/types/sidebar";
 import { getSecurityMenuItems } from '@/utils/getSecurityMenuItems';
 import { getAnalyticsMenuItems } from '@/utils/getAnalyticsMenuItems';
+import { getOperationsMenuItems } from '@/utils/getOperationsMenuItems';
 import { 
 	LayoutDashboard, 
 	Building2, 
@@ -35,7 +36,8 @@ import {
 	AlertTriangle,
 	Terminal,
 	Siren,
-	ShieldAlert
+	ShieldAlert,
+	Store
    } from "lucide-react";
    
    export const getUserSidebarData = (businessType: string = 'RETAIL'): Sidebar[] => {
@@ -138,6 +140,15 @@ import {
 	children: getSecurityMenuItems(businessType)
 
 },
+
+{
+	id: 8,
+	title: "Operations",
+	path: "/user/operations",
+	icon: <Store className="w-6 h-6" />,
+	// @ts-ignore
+	children: businessType === 'RETAIL' ? getOperationsMenuItems(businessType) : []
+  },
 
 // Staff Management
 {

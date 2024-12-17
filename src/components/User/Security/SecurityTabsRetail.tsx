@@ -7,7 +7,8 @@ import {
   ShieldAlert, 
   UserCheck, 
   Terminal,
-  Camera
+  Camera,
+  Menu
 } from 'lucide-react';
 
 // Component imports
@@ -48,6 +49,7 @@ const RETAIL_SECURITY_TABS = [
 
 export default function SecurityTabsRetail() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -71,21 +73,62 @@ export default function SecurityTabsRetail() {
       {/* Tab Navigation */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         <div className="border-b border-gray-200 dark:border-gray-700">
-          <div className="flex gap-2 p-4">
-            {RETAIL_SECURITY_TABS.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeTab === tab.id
-                    ? 'bg-primary text-white'
-                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
+          {/* Mobile View */}
+          <div className="md:hidden p-4">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300"
+            >
+              <div className="flex items-center gap-2">
+                {RETAIL_SECURITY_TABS.find(tab => tab.id === activeTab)?.icon}
+                {RETAIL_SECURITY_TABS.find(tab => tab.id === activeTab)?.label}
+              </div>
+              <Menu className="w-4 h-4" />
+            </button>
+            
+            {isMobileMenuOpen && (
+              <div className="absolute z-10 w-full mt-2 bg-white rounded-lg shadow-lg dark:bg-gray-800 left-0 px-4">
+                <div className="py-2 space-y-1">
+                  {RETAIL_SECURITY_TABS.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        setActiveTab(tab.id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`flex items-center gap-2 px-4 py-2 w-full rounded-lg text-sm font-medium transition-colors ${
+                        activeTab === tab.id
+                          ? 'bg-primary text-white'
+                          : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {tab.icon}
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Desktop View */}
+          <div className="hidden md:block">
+            <div className="flex flex-wrap gap-2 p-4">
+              {RETAIL_SECURITY_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-primary text-white'
+                      : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 

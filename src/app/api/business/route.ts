@@ -1,7 +1,13 @@
+// app/api/business/route.ts
 import { authOptions } from "@/libs/auth";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/libs/prismaDb";
 import { NextResponse } from "next/server";
+
+export const dynamic = 'force-dynamic'; // This tells Next.js this is a dynamic route
+
+// or
+export const revalidate = 0; // This will disable static generation for this route
 
 export async function GET() {
   try {

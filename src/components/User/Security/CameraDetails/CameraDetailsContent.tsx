@@ -200,33 +200,37 @@ interface CameraData {
   
         {/* Tabs */}
         <Tabs defaultValue="overview">
-        <TabsList>
-            <TabsTrigger 
+        <TabsList className="flex flex-wrap w-full">
+          <TabsTrigger 
+            className="flex-1 min-w-[120px]"
             isActive={activeTab === 'overview'}
             onClick={() => setActiveTab('overview')}
-            >
+          >
             Overview
-            </TabsTrigger>
-            <TabsTrigger 
+          </TabsTrigger>
+          <TabsTrigger 
+            className="flex-1 min-w-[120px]"
             isActive={activeTab === 'settings'}
             onClick={() => setActiveTab('settings')}
-            >
+          >
             Settings
-            </TabsTrigger>
-            <TabsTrigger 
+          </TabsTrigger>
+          <TabsTrigger 
+            className="flex-1 min-w-[120px]"
             isActive={activeTab === 'recording'}
             onClick={() => setActiveTab('recording')}
-            >
+          >
             Recording
-            </TabsTrigger>
-            <TabsTrigger 
+          </TabsTrigger>
+          <TabsTrigger 
+            className="flex-1 min-w-[120px]"
             isActive={activeTab === 'detection'}
             onClick={() => setActiveTab('detection')}
-            >
+          >
             Detection Models
-            </TabsTrigger>
-        </TabsList>
-  
+          </TabsTrigger>
+      </TabsList>
+      
           {/* Overview Tab */}
           <TabsContent value="overview" activeTab={activeTab}>
             <Card>

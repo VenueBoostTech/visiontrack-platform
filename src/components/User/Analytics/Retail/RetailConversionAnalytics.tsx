@@ -64,34 +64,34 @@ export default function RetailConversionAnalytics() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Controls */}
-      <div className="flex justify-between items-start">
-        <div>
-          <h2 className="text-2xl font-bold">Conversion Analytics</h2>
-          <p className="text-sm text-gray-500 mt-1">Track and analyze customer conversion metrics</p>
-        </div>
-        <div className="flex gap-3">
-          <select 
-            className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
-            value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value)}
-          >
-            <option value="day">Today</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
-          </select>
-          <select
-            className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
-            value={selectedZone}
-            onChange={(e) => setSelectedZone(e.target.value)}
-          >
-            <option value="all">All Zones</option>
-            <option value="electronics">Electronics</option>
-            <option value="apparel">Apparel</option>
-            <option value="homegoods">Home Goods</option>
-          </select>
-        </div>
+     {/* Conversion Analytics Header */}
+    <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+      <div>
+        <h2 className="text-2xl font-bold">Conversion Analytics</h2>
+        <p className="text-sm text-gray-500 mt-1">Track and analyze customer conversion metrics</p>
       </div>
+      <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <select 
+          className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
+          value={timeRange}
+          onChange={(e) => setTimeRange(e.target.value)}
+        >
+          <option value="day">Today</option>
+          <option value="week">This Week</option>
+          <option value="month">This Month</option>
+        </select>
+        <select
+          className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
+          value={selectedZone}
+          onChange={(e) => setSelectedZone(e.target.value)}
+        >
+          <option value="all">All Zones</option>
+          <option value="electronics">Electronics</option>
+          <option value="apparel">Apparel</option>
+          <option value="homegoods">Home Goods</option>
+        </select>
+      </div>
+    </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

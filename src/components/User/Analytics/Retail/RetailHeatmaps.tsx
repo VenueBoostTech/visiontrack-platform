@@ -45,35 +45,35 @@ export default function RetailHeatmaps() {
   
     return (
       <div className="space-y-6">
-        {/* Header with Controls */}
-        <div className="flex justify-between items-start">
-          <div>
-            <h2 className="text-2xl font-bold">Store Heatmap Analytics</h2>
-            <p className="text-sm text-gray-500 mt-1">
-              Analyze customer movement patterns and engagement areas
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <select
-              className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
-              value={viewType}
-              onChange={(e) => setViewType(e.target.value)}
-            >
-              <option value="dwell">Dwell Time</option>
-              <option value="interaction">Product Interaction</option>
-              <option value="traffic">Traffic Flow</option>
-            </select>
-            <select
-              className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-            >
-              <option value="today">Today</option>
-              <option value="week">This Week</option>
-              <option value="month">This Month</option>
-            </select>
-          </div>
+       {/* Store Heatmap Analytics Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+        <div>
+          <h2 className="text-2xl font-bold">Store Heatmap Analytics</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Analyze customer movement patterns and engagement areas
+          </p>
         </div>
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <select
+            className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
+            value={viewType}
+            onChange={(e) => setViewType(e.target.value)}
+          >
+            <option value="dwell">Dwell Time</option>
+            <option value="interaction">Product Interaction</option>
+            <option value="traffic">Traffic Flow</option>
+          </select>
+          <select
+            className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value)}
+          >
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+          </select>
+        </div>
+      </div>
   
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
