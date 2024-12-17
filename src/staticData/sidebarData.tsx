@@ -1,6 +1,6 @@
 import { Sidebar } from "@/types/sidebar";
 import { getSecurityMenuItems } from '@/utils/getSecurityMenuItems';
-
+import { getAnalyticsMenuItems } from '@/utils/getAnalyticsMenuItems';
 import { 
 	LayoutDashboard, 
 	Building2, 
@@ -125,38 +125,7 @@ import {
 	path: "/user/analytics",
 	icon: <BarChart3 className="w-6 h-6" />,
 	// @ts-ignore
-	children: [
-	{
-		id: "4-1",
-		title: "People Counter",
-		path: "/user/analytics/people",
-		icon: <Users2 className="w-4 h-4" />
-	},
-	{
-		id: "4-2",
-		title: "Heatmaps",
-		path: "/user/analytics/heatmaps",
-		icon: <Activity className="w-4 h-4" />
-	},
-	{
-		id: "4-3",
-		title: "Demographics",
-		path: "/user/analytics/demographics",
-		icon: <Users className="w-4 h-4" />
-	},
-	{
-		id: "4-4",
-		title: "Parking",
-		path: "/user/analytics/parking",
-		icon: <MapPin className="w-4 h-4" />
-	},
-	{
-		id: "4-5",
-		title: "License Plates",
-		path: "/user/analytics/plates",
-		icon: <Car className="w-4 h-4" />
-	}
-	]
+	children: getAnalyticsMenuItems(businessType)
 },
 
 // Security Features
