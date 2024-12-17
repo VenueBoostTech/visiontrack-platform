@@ -1,6 +1,6 @@
 import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
+import LiveViewContent from "@/components/User/LiveMonitoring/LiveViewContent";
 
 export const metadata: Metadata = {
 	title: `Monitoring Live - ${process.env.PLATFORM_NAME}`,
@@ -11,9 +11,8 @@ export const metadata: Metadata = {
 const MonitoringLivePage = () => {
 	return (
 		<>
-			<Breadcrumb pageTitle='Monitoring Live' />
-			<div>
-				<h1>MonitoringLivePage</h1>
+			<div className="px-5">
+				<LiveViewContent />
 			</div>
 		</>
 	);

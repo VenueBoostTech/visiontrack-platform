@@ -1,6 +1,6 @@
 import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
+import VideoWallContent from "@/components/User/LiveMonitoring/VideoWallContent";
 
 export const metadata: Metadata = {
 	title: `Monitoring Wall - ${process.env.PLATFORM_NAME}`,
@@ -11,9 +11,8 @@ export const metadata: Metadata = {
 const MonitoringWallPage = () => {
 	return (
 		<>
-			<Breadcrumb pageTitle='Monitoring Wall' />
-			<div>
-				<h1>MonitoringWallPage</h1>
+			<div className="px-5">
+				<VideoWallContent />
 			</div>
 		</>
 	);

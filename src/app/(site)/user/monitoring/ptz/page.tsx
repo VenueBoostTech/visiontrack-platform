@@ -1,6 +1,6 @@
 import React from "react";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
+import PTZControlContent from "@/components/User/LiveMonitoring/PTZControlContent";
 
 export const metadata: Metadata = {
 	title: `Monitoring PTZ - ${process.env.PLATFORM_NAME}`,
@@ -11,9 +11,8 @@ export const metadata: Metadata = {
 const MonitoringPTZPage = () => {
 	return (
 		<>
-			<Breadcrumb pageTitle='Monitoring PTZ' />
-			<div>
-				<h1>MonitoringPTZPage</h1>
+			<div className="px-5">
+				<PTZControlContent />			
 			</div>
 		</>
 	);
