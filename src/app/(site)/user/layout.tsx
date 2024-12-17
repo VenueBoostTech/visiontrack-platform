@@ -12,7 +12,6 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
 
 	// Get business type from session
 	const businessType = session?.user?.business?.vt_use_scenario || 'RETAIL';
-  
 	// Generate sidebar data using business type from session
 	const sidebarData = getUserSidebarData(businessType);
   

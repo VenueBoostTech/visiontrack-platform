@@ -39,7 +39,8 @@ export default function EditBusiness() {
             name: businessData.name || "",
             email: businessData.email || "",
             phone: businessData.phone || "",
-            address: businessData.address || ""
+            address: businessData.address || "",
+            vt_use_scenario: businessData.vt_use_scenario || "RETAIL"
           });
         }
       } catch (error) {

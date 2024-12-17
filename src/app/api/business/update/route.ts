@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, phone, address } = body;
+    const { name, email, phone, address, vt_use_scenario } = body;
 
     // First get the business where user is owner
     const business = await prisma.business.findFirst({
@@ -33,7 +33,9 @@ export async function POST(req: Request) {
         name,
         email,
         phone,
-        address
+        address,
+        // @ts-ignore
+        vt_use_scenario: vt_use_scenario
       }
     });
 

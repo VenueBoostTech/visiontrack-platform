@@ -166,7 +166,7 @@ import {
 	path: "/user/security",
 	icon: <Shield className="w-6 h-6" />,
 	// @ts-ignore
-	children: getSecurityMenuItems('RETAIL')
+	children: getSecurityMenuItems(businessType)
 
 },
 
