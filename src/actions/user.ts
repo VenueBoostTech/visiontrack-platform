@@ -1,24 +1,43 @@
 "use server";
 import { prisma } from "@/libs/prismaDb";
 import { isAuthorized } from "@/libs/isAuthorized";
+import { UserRole } from "@prisma/client";
 
-export async function getUsers(filter: any) {
+
+export async function getUsers(filter?: string) {
 	const currentUser = await isAuthorized();
-
-	const res = await prisma.user.findMany({
-		where: {
-			role: filter,
-		},
+	
+	// Convert filter for specific role queries
+	const roleFilter = (filter && filter !== "all" && filter !== "undefined") 
+	  ? { role: filter as UserRole }
+	  : {};
+	
+	const users = await prisma.user.findMany({
+	  where: roleFilter,
+	  include: {
+		ownedBusiness: true,
+		workingAt: {
+		  include: {
+			business: true
+		  }
+		}
+	  }
 	});
-
-	const filtredUsers = res.filter(
-		(user) =>
-			user.email !== currentUser?.email && !user.email?.includes("demo-")
-	);
-
-	return filtredUsers;
-}
-
+  
+	// Only filter out demo users and keep everyone else when showing all users
+	return users.filter(user => {
+	  // Always filter out demo users
+	  if (user.email?.includes("demo-")) return false;
+  
+	  // If we're viewing all users or admins, show current user
+	  if (!filter || filter === "all" || filter === "undefined" || filter === "ADMIN") {
+		return true;
+	  }
+  
+	  // For other filtered views, exclude current user
+	  return user.email !== currentUser?.email;
+	});
+  }
 export async function updateUser(data: any) {
 	const { email } = data;
 	return await prisma.user.update({

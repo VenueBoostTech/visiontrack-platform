@@ -9,18 +9,22 @@ export const metadata: Metadata = {
 
 export default function UsersPage({
 	searchParams,
-}: {
+  }: {
 	searchParams: { filter: string; search: string };
-}) {
+  }) {
 	const { filter, search } = searchParams;
-	const validFilter =
-		filter === "USER" || filter === "ADMIN" ? filter : undefined;
-
+	
+	// Update this to check for valid roles
+	const validFilter = filter === "ADMIN" || 
+					   filter === "BUSINESS_OWNER" || 
+					   filter === "STAFF" 
+					   ? filter 
+					   : undefined;
+  
 	return (
-		<>
-			<Breadcrumb pageTitle='Manage Users' />
-
-			<UsersListContainer filter={validFilter} search={search} />
-		</>
+	  <>
+		<Breadcrumb pageTitle="Manage Users" />
+		<UsersListContainer filter={validFilter} search={search} />
+	  </>
 	);
-}
+  }
