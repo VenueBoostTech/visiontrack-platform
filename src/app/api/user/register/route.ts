@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 		name,
 		email: formatedEmail,
 		password: hashedPassword,
-		role: "USER",
+		role: "ADMIN",
 	};
 
 	if (isAdminEmail(formatedEmail)) {
@@ -51,6 +51,7 @@ export async function POST(request: Request) {
 
 		return NextResponse.json(user);
 	} catch (error) {
+		console.log("🚀 ~ POST ~ error:", error)
 		return new NextResponse("Something went wrong", { status: 500 });
 	}
 }

@@ -10,7 +10,6 @@ import {
 	Shield,
 	Users,
 	Settings,
-	ArrowRight,
 	Building,
 	Boxes,
 	Camera,
@@ -18,25 +17,12 @@ import {
 	Video,
 	LayoutPanelTop,
 	Camera as CameraControl,
-	Users2,
-	Activity,
-	MapPin,
-	Car,
-	KeyRound,
-	UserCheck,
-	Bell,
-	FileText,
 	UserCog,
 	Key,
 	Building as BuildingIcon,
-	Wallet,
 	Bell as BellIcon,
 	ScrollText,
 	CreditCard,
-	AlertTriangle,
-	Terminal,
-	Siren,
-	ShieldAlert,
 	Store
    } from "lucide-react";
    
@@ -78,6 +64,12 @@ import {
 	},
 	{
 		id: "2-4",
+		title: "Stores",
+		path: "/user/properties/stores",
+		icon: <Store className="w-4 h-4" />
+	},
+	{
+		id: "2-5",
 		title: "Cameras",
 		path: "/user/properties/cameras",
 		icon: <Camera className="w-4 h-4" />
