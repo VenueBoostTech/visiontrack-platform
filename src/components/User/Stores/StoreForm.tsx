@@ -1,23 +1,7 @@
 // components/User/Zones/ZoneForm.tsx
 "use client";
 
-import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
-
-interface Property {
-  id: string;
-  name: string;
-  buildings: Building[];
-}
-
-interface Building {
-  id: string;
-  name: string;
-  property: {
-    id: string;
-    name: string;
-  };
-}
+import { useState } from "react";
 
 interface StoreFormProps {
   initialData?: any;
@@ -39,8 +23,8 @@ export default function StoreForm({
   isSubmitting,
 }: StoreFormProps) {
 
-  const [isLoading, setIsLoading] = useState(true);
-  
+  const [isLoading, setIsLoading] = useState(false);
+
   if (isLoading) {
     return <div className="text-center py-4">Loading...</div>;
   }
