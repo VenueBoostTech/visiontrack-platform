@@ -1,77 +1,63 @@
-# OmniStack - Enterprise SaaS Boilerplate
+# VisionTrack Platform Testing Guide
 
-Welcome to OmniStack, a comprehensive full-stack SaaS boilerplate designed for rapidly building enterprise-grade applications. Based on the robust foundation of SaaSBold, this toolkit enables quick deployment of feature-rich SaaS solutions across multiple domains.
+## Overview
 
-## 🚀 Quick Start
+This directory contains end-to-end tests for VisionTrack Platform using [Shortest](https://shortest.com) - an AI-powered testing framework built on Playwright.
+
+## Setup
+
+1. Install required dependencies:
 
 ```bash
-npm install
-npm run dev
+npm add -D @antiwork/shortest
 ```
 
-## 🛠 Tech Stack
+2. Add testing artifacts directory to .gitignore:
 
-- **Framework**: Next.js 14+ with App Router
-- **Database**: MongoDB with Prisma ORM
-- **Authentication**: NextAuth.js
-- **Styling**: Tailwind CSS
-- **Payment Processing**: Stripe, LemonSqueezy, Paddle
-- **Email**: Custom SMTP/Resend integration
-- **Analytics**: [Your analytics integration]
-
-## 🎯 Core Features
-
-- 🔐 Multi-tenant Authentication & Authorization
-- 💳 Multiple Payment Gateway Integrations
-- 👥 User/Admin Dashboards
-- 📧 Email Integration
-- 🎨 Responsive Landing Page
-- 📊 Analytics Dashboard
-- 🔑 API Key Management
-- 📨 Invitation System
-- 👤 User Impersonation
-
-## 📝 Recent Updates
-
-### November 30, 2024
-- Used saasBold Boilerplate as the foundation
-- Launched OmniStack as our comprehensive SaaS toolkit
-
-
-## 🏢 Implementations
-
-This boilerplate serves as the foundation for:
-- VenueBoost
-- SnapFood
-- GlobalEcho
-- Pixelbreeze Labs
-- [Future Projects]
-
-## 🔧 Configuration
-
-1. Clone the repository
-2. Copy `.env.example` to `.env`
-3. Update environment variables
-4. Run database migrations:
 ```bash
-npx prisma generate
-npx prisma db push
+echo ".shortest/" >> .gitignore
 ```
 
-## 📚 Documentation
+3. Add Anthropic API key to .env:
 
-For detailed documentation, visit:
-- VenueBoost - [NotionDocumentation](#)
+```bash
+ANTHROPIC_API_KEY=your_key_here
+```
 
-## 🤝 Support
+## Configuration
 
-For support, reach out to:
-- Email: [contact@venueboost.io]
+Create `shortest.config.ts` in project root:
 
-## 📜 License
+```typescript
+import type { ShortestConfig } from "@antiwork/shortest";
 
-[Your License] - See LICENSE file for details
+const config: ShortestConfig = {
+  headless: false,
+  baseUrl: "http://localhost:3000",
+  testDir: "./src/app/__tests__",
+  anthropicKey: process.env.ANTHROPIC_API_KEY || "",
+};
 
----
+export default config;
+```
 
-Built with ❤️ by Pixelbreeze Labs
+## Writing Tests
+
+### Authentication Tests
+
+Example login test (`login.test.ts`):
+
+```typescript
+import { shortest } from "@antiwork/shortest";
+
+shortest("Login to the app using email and password", {
+  email: "placeholder@visiontrack.xyz",
+  password: "owner123",
+}).after(async ({ page }) => {
+  const isAuthenticated = await page.evaluate(() => {
+    return document.cookie.includes("next-auth.session-token");
+  });
+
+  expect(isAuthenticated).toBeTruthy();
+});
+```
