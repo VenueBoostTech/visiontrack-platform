@@ -157,7 +157,22 @@ model Zone {
   property    Property  @relation(fields: [propertyId], references: [id])
   buildingId  String?   @db.ObjectId
   building    Building? @relation(fields: [buildingId], references: [id])
+  storeId     String?   @db.ObjectId
+  store       Store?    @relation(fields: [storeId], references: [id])
   cameras     Camera[]
+}
+
+model Store {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  sale_associate  String
+  brand_manager   String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  cameras Camera[]
+  zones    Zone[]
 }
 
 enum ZoneType {
@@ -187,6 +202,8 @@ model Camera {
   // Relations
   zoneId        String      @db.ObjectId
   zone          Zone        @relation(fields: [zoneId], references: [id])
+  storeId       String      @db.ObjectId
+  store         Store       @relation(fields: [storeId], references: [id])
 }
 
 enum CameraStatus {
@@ -207,3 +224,4 @@ enum BusinessType {
   MULTI_FAMILY_RESIDENTIAL
   RETAIL
 }
+
