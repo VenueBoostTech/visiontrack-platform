@@ -11,15 +11,25 @@ import StoreForm from "./StoreForm";
 interface Store {
   id: string;
   name: string;
-  brand_manager: string;
-  sale_associate: string;
+  brandManager: {
+    id: string;
+    name: string;
+  };
+  saleAssociate: {
+    id: string;
+    name: string;
+  };
+  saleAssociateId: string;
+  brandManagerId: string;
   cameras: any[];
 }
 
 export default function StoreContent({
   initialStores,
+  businessStaffs,
 }: {
   initialStores: Store[];
+  businessStaffs: any[];
 }) {
   const [stores, setStores] = useState<Store[]>(initialStores);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -119,21 +129,6 @@ export default function StoreContent({
     }
   }, [isSubmitting]);
 
-  const getStoreList = useCallback(async () => {
-    try {
-      const response = await fetch("/api/user/stores");
-      if (!response.ok) throw new Error("Failed to fetch stores");
-      const data = await response.json();
-      setStores(data);
-    } catch (error) {
-      console.error("Error fetching stores:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    getStoreList().then(() => {});
-  }, []);
-
   return (
     <div>
       {/* Header */}
@@ -222,43 +217,45 @@ export default function StoreContent({
                   </td>
                 </tr>
               ) : (
-                stores.map((store) => (
-                  <tr key={store.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap font-medium">
-                      {store.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {store.sale_associate}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {store.brand_manager}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedStore(store);
-                            setShowEditModal(true);
-                          }}
-                          className="p-1 text-gray-400 hover:text-gray-600"
-                          disabled={isLoading}
-                        >
-                          <Edit className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedStore(store);
-                            setShowDeleteModal(true);
-                          }}
-                          className="p-1 text-gray-400 hover:text-red-600"
-                          disabled={isLoading}
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                stores.map((store: Store) => {
+                  return (
+                    <tr key={store.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap font-medium">
+                        {store.name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {store.saleAssociate?.name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {store.brandManager?.name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setSelectedStore(store);
+                              setShowEditModal(true);
+                            }}
+                            className="p-1 text-gray-400 hover:text-gray-600"
+                            disabled={isLoading}
+                          >
+                            <Edit className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedStore(store);
+                              setShowDeleteModal(true);
+                            }}
+                            className="p-1 text-gray-400 hover:text-red-600"
+                            disabled={isLoading}
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -274,6 +271,7 @@ export default function StoreContent({
         <StoreForm
           onSubmit={handleCreate}
           onClose={handleCloseModal}
+          businessStaffs={businessStaffs}
           isSubmitting={isSubmitting}
         />
       </Modal>
@@ -287,6 +285,7 @@ export default function StoreContent({
         <StoreForm
           initialData={selectedStore}
           onSubmit={handleUpdate}
+          businessStaffs={businessStaffs}
           onClose={handleCloseModal}
           isSubmitting={isSubmitting}
         />

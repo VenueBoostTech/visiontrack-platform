@@ -8,12 +8,13 @@ interface StoreFormProps {
   onSubmit: (data: StoreFormData) => void;
   onClose: () => void;
   isSubmitting?: boolean;
+  businessStaffs: any[];
 }
 
 interface StoreFormData {
   name: string;
-  sale_associate: string;
-  brand_manager: string;
+  saleAssociateId: string;
+  brandManagerId: string;
 }
 
 export default function StoreForm({
@@ -21,6 +22,7 @@ export default function StoreForm({
   onSubmit,
   onClose,
   isSubmitting,
+  businessStaffs,
 }: StoreFormProps) {
 
   const [isLoading, setIsLoading] = useState(false);
@@ -36,8 +38,8 @@ export default function StoreForm({
         const formData = new FormData(e.currentTarget);
         onSubmit({
           name: formData.get("name") as string,
-          sale_associate: formData.get("sale_associate") as string,
-          brand_manager: formData.get("brand_manager") as string,
+          saleAssociateId: formData.get("saleAssociateId") as string,
+          brandManagerId: formData.get("brandManagerId") as string,
         });
       }}
     >
@@ -59,16 +61,15 @@ export default function StoreForm({
             Sale Associate
           </label>
           <select
-            name="sale_associate"
-            defaultValue={initialData?.sale_associate}
+            name="saleAssociateId"
+            defaultValue={initialData?.saleAssociateId}
             className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
             required
           >
             <option value="">Select Sale Associate</option>
-            <option value="John Doe">John Doe</option>
-            <option value="Jane Smith">Jane Smith</option>
-            <option value="Bob Johnson">Bob Johnson</option>
-            <option value="Alice Brown">Alice Brown</option>
+            {
+               businessStaffs.filter((staff: any) => staff.user.department === "SALES_ASSOCIATE").map((staff: any) => (<option key={staff.user.id} value={staff.user.id}>{staff.user.name}</option>))
+            }
           </select>
         </div>
 
@@ -77,16 +78,15 @@ export default function StoreForm({
             Brand Manager
           </label>
           <select
-            name="brand_manager"
-            defaultValue={initialData?.brand_manager}
+            name="brandManagerId"
+            defaultValue={initialData?.brandManagerId}
             className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
             required
           >
             <option value="">Select Brand Manager</option>
-            <option value="John Doe">John Doe</option>
-            <option value="Jane Smith">Jane Smith</option>
-            <option value="Bob Johnson">Bob Johnson</option>
-            <option value="Alice Brown">Alice Brown</option>
+            {
+               businessStaffs.filter((staff: any) => staff.user.department === "BRAND_MANAGER").map((staff: any) => (<option key={staff.user.id} value={staff.user.id}>{staff.user.name}</option>))
+            }
           </select>
         </div>
 
