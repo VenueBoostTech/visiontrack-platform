@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { StaffMember, CreateStaffData, UpdateStaffData } from '@/types/staff';
+import { useState } from "react";
+import { StaffMember, CreateStaffData, UpdateStaffData } from "@/types/staff";
 
 interface StaffFormProps {
   initialData?: StaffMember;
@@ -14,22 +14,24 @@ export default function StaffForm({
   businessId,
   onSubmit,
   onClose,
-  isSubmitting
+  isSubmitting,
 }: StaffFormProps) {
   const [formData, setFormData] = useState({
-    name: initialData?.user.name || '',
-    email: initialData?.user.email || '',
-    password: ''
+    name: initialData?.user.name || "",
+    email: initialData?.user.email || "",
+    password: "",
+    department: initialData?.department || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (initialData) {
       // Update existing staff
       onSubmit({
         name: formData.name,
-        email: formData.email
+        email: formData.email,
+        department: formData.department,
       });
     } else {
       // Create new staff
@@ -37,7 +39,8 @@ export default function StaffForm({
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        businessId
+        businessId,
+        department: formData.department,
       });
     }
   };
@@ -49,7 +52,9 @@ export default function StaffForm({
         <input
           type="text"
           value={formData.name}
-          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, name: e.target.value }))
+          }
           className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
           required
         />
@@ -60,10 +65,27 @@ export default function StaffForm({
         <input
           type="email"
           value={formData.email}
-          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, email: e.target.value }))
+          }
           className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
           required
         />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Department</label>
+        <select
+          name="department"
+          defaultValue={initialData?.department || ""}
+          className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+          required
+          onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+        >
+          <option value="">Select Department</option>
+          <option value="BRAND_MANAGER">Brand Manager</option>
+          <option value="SALES_ASSOCIATE">Sales Associate</option>
+        </select>
       </div>
 
       {!initialData && (
@@ -72,7 +94,9 @@ export default function StaffForm({
           <input
             type="password"
             value={formData.password}
-            onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, password: e.target.value }))
+            }
             className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
             required
             minLength={6}
@@ -83,7 +107,9 @@ export default function StaffForm({
 
       <div>
         <label className="block text-sm font-medium mb-1">Role</label>
-        <p className="text-sm text-gray-600">Staff Member (Default permissions)</p>
+        <p className="text-sm text-gray-600">
+          Staff Member (Default permissions)
+        </p>
       </div>
 
       {/* Permissions preview */}
@@ -112,12 +138,11 @@ export default function StaffForm({
           className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90"
           disabled={isSubmitting}
         >
-          {isSubmitting 
-            ? 'Saving...' 
-            : initialData 
-              ? 'Update Staff Member' 
-              : 'Add Staff Member'
-          }
+          {isSubmitting
+            ? "Saving..."
+            : initialData
+              ? "Update Staff Member"
+              : "Add Staff Member"}
         </button>
       </div>
     </form>

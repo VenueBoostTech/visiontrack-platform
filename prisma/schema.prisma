@@ -13,6 +13,11 @@ enum UserRole {
   STAFF          // Staff of a business with limited permissions
 }
 
+enum UserDepartment {
+  BRAND_MANAGER
+  SALES_ASSOCIATE
+}
+
 model Account {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   userId            String
@@ -59,6 +64,7 @@ model User {
   passwordResetToken    String?
   passwordResetTokenExp DateTime?
   role                  UserRole     @default(STAFF)
+  department            UserDepartment?  
   customerId            String?      @map(name: "customer_id")
   subscriptionId        String?      @map(name: "subscription_id")
   priceId               String?      @map(name: "price_id")
@@ -71,6 +77,10 @@ model User {
   apiKeys              ApiKey[]
   ownedBusiness        Business?    @relation("BusinessOwner")
   workingAt            BusinessStaff?
+  // Relations with unique names
+  saleAssociate         Store[]      @relation("saleAssociate")
+  brandManager          Store[]      @relation("brandManager")
+  businessOwner         Store[]      @relation("businessOwner")
 }
 
 model VerificationToken {
@@ -165,12 +175,16 @@ model Zone {
 model Store {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
   name            String
-  sale_associate  String
-  brand_manager   String
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
-
+  
   // Relations
+  businessOwnerId   String    @db.ObjectId
+  businessOwner     User      @relation(name: "businessOwner", fields: [businessOwnerId], references: [id])
+  saleAssociateId   String    @db.ObjectId
+  saleAssociate     User      @relation(name: "saleAssociate", fields: [saleAssociateId], references: [id])
+  brandManagerId    String    @db.ObjectId
+  brandManager      User      @relation(name: "brandManager", fields: [brandManagerId], references: [id])
   cameras Camera[]
   zones    Zone[]
 }
@@ -224,4 +238,5 @@ enum BusinessType {
   MULTI_FAMILY_RESIDENTIAL
   RETAIL
 }
+
 
