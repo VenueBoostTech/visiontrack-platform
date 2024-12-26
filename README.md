@@ -2,7 +2,7 @@
 
 ## Overview
 
-This directory contains end-to-end tests for VisionTrack Platform using [Shortest](https://shortest.com) - an AI-powered testing framework built on Playwright.
+This directory contains end-to-end tests for VisionTrack Platform using [Shortest](https://shortest.com) (https://github.com/anti-work/shortest) - an AI-powered testing framework built on Playwright.
 
 ## Setup
 
