@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email } = body;
+    const { name, email, department } = body;
 
     if (!name || !email) {
       return new NextResponse("Missing required fields", { status: 400 });
@@ -85,6 +85,7 @@ export async function POST(req: Request) {
         name,
         email,
         role: "STAFF",
+        department: department,
         emailVerified: new Date(), // Auto verify since created by business owner
       }
     });
@@ -93,7 +94,7 @@ export async function POST(req: Request) {
     const businessStaff = await prisma.businessStaff.create({
       data: {
         businessId: user.ownedBusiness.id,
-        userId: newStaffUser.id
+        userId: newStaffUser.id,
       },
       include: {
         user: {

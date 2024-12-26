@@ -38,7 +38,10 @@ export async function POST(request: Request) {
     const data  = await request.json();
 
     const store = await prisma.store.create({
-      data: data,
+      data: {
+        businessOwnerId: session?.user.id,
+        ...data
+      },
       include: {
         cameras: true,
       },
