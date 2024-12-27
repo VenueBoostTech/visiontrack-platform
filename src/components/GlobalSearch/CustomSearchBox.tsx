@@ -1,4 +1,4 @@
-import { connectSearchBox } from "react-instantsearch-dom";
+import { connectSearchBox } from "react-instantsearch";
 
 function CustomSearchBox({ refine }: any) {
 	return (

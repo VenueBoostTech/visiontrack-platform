@@ -13,11 +13,6 @@ enum UserRole {
   STAFF          // Staff of a business with limited permissions
 }
 
-enum UserDepartment {
-  BRAND_MANAGER
-  SALES_ASSOCIATE
-}
-
 model Account {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   userId            String
@@ -64,7 +59,6 @@ model User {
   passwordResetToken    String?
   passwordResetTokenExp DateTime?
   role                  UserRole     @default(STAFF)
-  department            UserDepartment?  
   customerId            String?      @map(name: "customer_id")
   subscriptionId        String?      @map(name: "subscription_id")
   priceId               String?      @map(name: "price_id")
@@ -107,6 +101,7 @@ model Business {
   owner           User      @relation("BusinessOwner", fields: [ownerId], references: [id])
   staff           BusinessStaff[]
   properties      Property[]
+  departments     Department[]
 }
 
 model BusinessStaff {
@@ -116,6 +111,22 @@ model BusinessStaff {
  business    Business  @relation(fields: [businessId], references: [id])
  user        User      @relation(fields: [userId], references: [id])
  createdAt   DateTime  @default(now())
+
+  // Relations
+ departmentId  String       @db.ObjectId
+ department    Department   @relation(fields: [departmentId], references: [id])
+}
+
+model Department {
+ id          String    @id @default(auto()) @map("_id") @db.ObjectId
+ name        String
+ createdAt   DateTime  @default(now())
+ updatedAt   DateTime  @updatedAt
+
+ // Relations
+ businessId  String    @db.ObjectId
+ business    Business  @relation(fields: [businessId], references: [id])
+ staff       BusinessStaff[]
 }
 
 model Property {
