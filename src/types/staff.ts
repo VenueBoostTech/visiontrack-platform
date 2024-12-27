@@ -9,7 +9,7 @@ export interface StaffMember {
       role: string;
       createdAt: Date;
     };
-    department: string;
+    departmentId: string;
   }
   
   export interface CreateStaffData {
@@ -17,11 +17,11 @@ export interface StaffMember {
     email: string;
     password: string;
     businessId: string;
-    department: string;
+    departmentId: string;
   }
   
   export interface UpdateStaffData {
     name: string;
     email: string;
-    department: string;
+    departmentId: string;
   }
