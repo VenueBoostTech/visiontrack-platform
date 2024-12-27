@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { StaffMember, CreateStaffData, UpdateStaffData } from "@/types/staff";
+import { Department } from "@/types/department";
 
 interface StaffFormProps {
   initialData?: StaffMember;
+  departmentList: Department[];
   businessId: string;
   onSubmit: (data: CreateStaffData | UpdateStaffData) => void;
   onClose: () => void;
@@ -11,6 +13,7 @@ interface StaffFormProps {
 
 export default function StaffForm({
   initialData,
+  departmentList,
   businessId,
   onSubmit,
   onClose,
@@ -20,7 +23,7 @@ export default function StaffForm({
     name: initialData?.user.name || "",
     email: initialData?.user.email || "",
     password: "",
-    department: initialData?.department || "",
+    departmentId: initialData?.departmentId || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,7 +34,7 @@ export default function StaffForm({
       onSubmit({
         name: formData.name,
         email: formData.email,
-        department: formData.department,
+        departmentId: formData.departmentId,
       });
     } else {
       // Create new staff
@@ -40,7 +43,7 @@ export default function StaffForm({
         email: formData.email,
         password: formData.password,
         businessId,
-        department: formData.department,
+        departmentId: formData.departmentId,
       });
     }
   };
@@ -76,15 +79,22 @@ export default function StaffForm({
       <div>
         <label className="block text-sm font-medium mb-1">Department</label>
         <select
-          name="department"
-          defaultValue={initialData?.department || ""}
+          name="departmentId"
+          defaultValue={initialData?.departmentId || ""}
           className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
           required
-          onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, departmentId: e.target.value })
+          }
         >
           <option value="">Select Department</option>
-          <option value="BRAND_MANAGER">Brand Manager</option>
-          <option value="SALES_ASSOCIATE">Sales Associate</option>
+          {
+            departmentList.map((department) => (
+              <option key={department.id} value={department.id}>
+                {department.name}
+              </option>
+            ))
+          }
         </select>
       </div>
 

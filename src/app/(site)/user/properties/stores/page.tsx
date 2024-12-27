@@ -68,13 +68,13 @@ async function getBusinessStaffs() {
         businessId: owner.ownedBusiness.id,
       },
       include: {
+        department: true,
         user: {
           select: {
             id: true,
             name: true,
             email: true,
             role: true,
-            department: true,
             createdAt: true,
           },
         },

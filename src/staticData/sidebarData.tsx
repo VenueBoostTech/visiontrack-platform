@@ -158,6 +158,12 @@ import {
 	},
 	{
 		id: "6-2",
+		title: "Department",
+		path: "/user/staff/department",
+		icon: <Users className="w-4 h-4" />
+	},
+	{
+		id: "6-3",
 		title: "Permissions",
 		path: "/user/staff/permissions",
 		icon: <Key className="w-4 h-4" />

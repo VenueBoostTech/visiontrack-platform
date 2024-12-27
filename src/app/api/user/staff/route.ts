@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, department } = body;
+    const { name, email, departmentId } = body;
 
     if (!name || !email) {
       return new NextResponse("Missing required fields", { status: 400 });
@@ -85,7 +85,6 @@ export async function POST(req: Request) {
         name,
         email,
         role: "STAFF",
-        department: department,
         emailVerified: new Date(), // Auto verify since created by business owner
       }
     });
@@ -95,6 +94,7 @@ export async function POST(req: Request) {
       data: {
         businessId: user.ownedBusiness.id,
         userId: newStaffUser.id,
+        departmentId: departmentId,
       },
       include: {
         user: {

@@ -10,17 +10,19 @@ import Modal from '@/components/Common/Modal';
 import DeleteModal from '@/components/Common/Modals/DeleteModal';
 import StaffForm from '@/components/User/Staff/StaffForm';
 import { CreateStaffData, StaffMember, UpdateStaffData } from '@/types/staff';
-import { User } from '@prisma/client';
+import { Department } from '@/types/department';
 
 interface StaffContentProps {
   initialStaff: StaffMember[];
   businessId: string;
-  owner: User;
+  departmentList: Department[];
+  owner:any;
 }
 
 export default function StaffContent({ 
   initialStaff,
   businessId,
+  departmentList,
   owner
 }: StaffContentProps) {
   const router = useRouter();
@@ -283,6 +285,7 @@ export default function StaffContent({
           // @ts-ignore
           onSubmit={handleCreate}
           onClose={() => setShowCreateModal(false)}
+          departmentList={departmentList}
           isSubmitting={isLoading}
         />
       </Modal>
@@ -297,6 +300,7 @@ export default function StaffContent({
           initialData={selectedStaff}
           businessId={businessId}
           onSubmit={handleUpdate}
+          departmentList={departmentList}
           onClose={() => setShowEditModal(false)}
           isSubmitting={isLoading}
         />
