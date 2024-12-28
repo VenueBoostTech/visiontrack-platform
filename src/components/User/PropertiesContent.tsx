@@ -83,7 +83,7 @@ export default function PropertiesContent({
   const handleCreate = async (data: PropertyFormData) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/properties', {
+      const response = await fetch('/api/user/properties', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

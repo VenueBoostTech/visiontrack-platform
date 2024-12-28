@@ -15,11 +15,21 @@ interface Zone {
   floor: number | null;
   coordinates: any;
   building: {
+    id: string;
     name: string;
     property: {
+      id: string;
       name: string;
     }
   }
+  property: {
+    id: string;
+    name: string;
+  }
+  store?: {
+    id: string;
+    name: string;
+  } | null;
   cameras: any[];
 }
 
@@ -236,6 +246,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Type</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Floor</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Building</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Store</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Cameras</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Actions</th>
               </tr>
@@ -265,6 +276,9 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
                     <td className="px-6 py-4 whitespace-nowrap">{zone.floor || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {zone.building.property?.name} - {zone.building.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {zone.store?.name || 'No Store'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{zone.cameras?.length}</td>
                     <td className="px-6 py-4 whitespace-nowrap">

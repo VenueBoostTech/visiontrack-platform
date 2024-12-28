@@ -40,8 +40,10 @@ export async function GET() {
               role: true,
               createdAt: true
             }
-          }
-        }
+          },
+          department: true
+        },
+        
       });
       return NextResponse.json(staff);
     }
@@ -94,7 +96,7 @@ export async function POST(req: Request) {
       data: {
         businessId: user.ownedBusiness.id,
         userId: newStaffUser.id,
-        departmentId: departmentId,
+        ...(departmentId ? { departmentId } : {}) // Only include departmentId if it exists
       },
       include: {
         user: {

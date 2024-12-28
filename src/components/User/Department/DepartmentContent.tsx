@@ -201,7 +201,7 @@ export default function DepartmentContent({
                     </div>
                   </td>
                 </tr>
-              ) : department.length === 0 ? (
+              ) : department?.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
@@ -217,7 +217,7 @@ export default function DepartmentContent({
                   </td>
                 </tr>
               ) : (
-                department.map((department: any) => (
+                department?.map((department: any) => (
                   <tr
                     key={department.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700/50"

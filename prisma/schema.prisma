@@ -113,8 +113,8 @@ model BusinessStaff {
  createdAt   DateTime  @default(now())
 
   // Relations
- departmentId  String       @db.ObjectId
- department    Department   @relation(fields: [departmentId], references: [id])
+  departmentId  String?       @db.ObjectId
+  department    Department?   @relation(fields: [departmentId], references: [id])
 }
 
 model Department {

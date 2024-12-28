@@ -26,7 +26,7 @@ async function getDepartment() {
     },
   });
   if (owner?.ownedBusiness) {
-    departments = await prisma.department.findMany({
+    departments = await prisma.department?.findMany({
       where: {
         businessId: owner.ownedBusiness.id,
       },
@@ -75,8 +75,9 @@ const StaffPage = async () => {
           email: true,
           role: true,
           createdAt: true,
-        }
-      }
+        },
+      },
+      department: true
     },
     orderBy: {
       createdAt: 'desc'

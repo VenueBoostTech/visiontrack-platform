@@ -6,11 +6,11 @@ export default withAuth(
         const pathname = req.nextUrl?.pathname;
         const role = req.nextauth.token?.role;
 
-        // If logged in and accessing root, redirect based on role
-        if (pathname === "/") {
+        // If logged in and accessing auth routes, redirect based on role
+        if (pathname.startsWith("/auth") && role) {
             if (role === "ADMIN") {
                 return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-            } else if (role === "BUSINESS_OWNER" || role === "STAFF") {
+            } else {
                 return NextResponse.redirect(new URL("/user/dashboard", req.url));
             }
         }
@@ -47,15 +47,23 @@ export default withAuth(
         callbacks: {
             authorized: ({ token, req }) => {
                 const publicPaths = [
+                    "/",
                     "/contact",
+                    // Add other public paths here
                 ];
                 const pathname = req.nextUrl.pathname;
+                
+                // Allow public paths
                 if (publicPaths.some((path) => pathname.startsWith(path))) {
                     return true;
-                }                
-                if(pathname === '/' && token == null) {
-                    return true;
                 }
+
+                // Allow auth paths only if NOT logged in
+                if (pathname.startsWith("/auth")) {
+                    return !token;
+                }
+
+                // Require token for all other paths
                 return !!token;
             }
         },
@@ -66,6 +74,7 @@ export default withAuth(
 export const config = {
     matcher: [
         "/",
+        "/auth/:path*",
         "/user",
         "/user/:path*",
         "/admin",
