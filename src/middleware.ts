@@ -45,7 +45,19 @@ export default withAuth(
     },
     {
         callbacks: {
-            authorized: ({ token }) => !!token
+            authorized: ({ token, req }) => {
+                const publicPaths = [
+                    "/contact",
+                ];
+                const pathname = req.nextUrl.pathname;
+                if (publicPaths.some((path) => pathname.startsWith(path))) {
+                    return true;
+                }                
+                if(pathname === '/' && token == null) {
+                    return true;
+                }
+                return !!token;
+            }
         },
         secret: process.env.SECRET
     }
