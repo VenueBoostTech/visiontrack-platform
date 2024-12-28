@@ -75,6 +75,7 @@ model User {
   saleAssociate         Store[]      @relation("saleAssociate")
   brandManager          Store[]      @relation("brandManager")
   businessOwner         Store[]      @relation("businessOwner")
+  alertRules            AlertRule[]  @relation("UserAlertRules")
 }
 
 model VerificationToken {
@@ -231,6 +232,22 @@ model Camera {
   store         Store       @relation(fields: [storeId], references: [id])
 }
 
+model AlertRule {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  severity    String
+  enabled     Boolean
+  conditions  String[]
+  actions     String[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  userId      String    @db.ObjectId
+  user        User      @relation("UserAlertRules", fields: [userId], references: [id])
+}
+
 enum CameraStatus {
   ACTIVE
   INACTIVE
@@ -249,5 +266,3 @@ enum BusinessType {
   MULTI_FAMILY_RESIDENTIAL
   RETAIL
 }
-
-
