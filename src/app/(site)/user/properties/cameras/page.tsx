@@ -1,8 +1,10 @@
 // app/user/properties/cameras/page.tsx
 import { Metadata } from "next";
-import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import CamerasContent from "@/components/User/Cameras/CamerasContent";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/libs/auth";
 import { prisma } from "@/libs/prismaDb";
+import CamerasContent from "@/components/User/Cameras/CamerasContent";
 
 export const metadata: Metadata = {
   title: `Cameras Management - ${process.env.PLATFORM_NAME}`,
@@ -10,7 +12,35 @@ export const metadata: Metadata = {
 };
 
 async function getCameras() {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect("/auth/signin");
+  }
+
+  // Get business owner and their business
+  const owner = await prisma.user.findFirst({
+    where: {
+      id: session.user.id,
+      role: "BUSINESS_OWNER",
+    },
+    include: {
+      ownedBusiness: true,
+    },
+  });
+
+  if (!owner?.ownedBusiness) {
+    return [];
+  }
+
+  // Get cameras for zones in properties belonging to this business
   const cameras = await prisma.camera.findMany({
+    where: {
+      zone: {
+        property: {
+          businessId: owner.ownedBusiness.id
+        }
+      }
+    },
     include: {
       zone: {
         include: {
@@ -18,9 +48,11 @@ async function getCameras() {
             include: {
               property: true
             }
-          }
+          },
+          store: true
         }
-      }
+      },
+      store: true
     },
     orderBy: {
       createdAt: 'desc'
@@ -35,7 +67,6 @@ export default async function PropertiesCamerasPage() {
 
   return (
     <div className="px-5">
-      {/* @ts-ignore */}
       <CamerasContent initialCameras={cameras} />
     </div>
   );

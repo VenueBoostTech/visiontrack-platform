@@ -10,7 +10,39 @@ export async function GET() {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        // Get user with business relationships
+        const user = await prisma.user.findFirst({
+            where: { 
+                id: session.user.id 
+            },
+            include: {
+                ownedBusiness: true,
+                workingAt: {
+                    include: {
+                        business: true
+                    }
+                }
+            }
+        });
+
+        // Get business ID based on role
+        const businessId = user?.role === 'BUSINESS_OWNER' 
+            ? user.ownedBusiness?.id 
+            // @ts-ignore
+            : user.workingAt?.business?.id;
+
+        if (!businessId) {
+            return NextResponse.json([]);
+        }
+
         const cameras = await prisma.camera.findMany({
+            where: {
+                zone: {
+                    property: {
+                        businessId: businessId
+                    }
+                }
+            },
             include: {
                 zone: {
                     include: {
@@ -45,16 +77,48 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        // Get user with business relationships
+        const user = await prisma.user.findFirst({
+            where: { 
+                id: session.user.id 
+            },
+            include: {
+                ownedBusiness: true,
+                workingAt: {
+                    include: {
+                        business: true
+                    }
+                }
+            }
+        });
+
+        const businessId = user?.role === 'BUSINESS_OWNER' 
+            ? user.ownedBusiness?.id
+            // @ts-ignore
+            : user.workingAt?.business?.id;
+
+        if (!businessId) {
+            return NextResponse.json({ error: "No business found" }, { status: 404 });
+        }
+
         const data = await request.json();
 
-        // First, get the zone to check if it has an associated store
-        const zone = await prisma.zone.findUnique({
-            where: { id: data.zoneId },
-            include: { store: true }
+        // First, get the zone and verify it belongs to the user's business
+        const zone = await prisma.zone.findFirst({
+            where: { 
+                id: data.zoneId,
+                property: {
+                    businessId: businessId
+                }
+            },
+            include: { 
+                store: true,
+                property: true
+            }
         });
 
         if (!zone) {
-            return NextResponse.json({ error: 'Zone not found' }, { status: 404 });
+            return NextResponse.json({ error: 'Zone not found or unauthorized' }, { status: 404 });
         }
 
         // Prepare the camera creation data

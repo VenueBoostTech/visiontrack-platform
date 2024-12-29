@@ -36,6 +36,7 @@ export async function PUT(request: Request) {
       : user.workingAt?.business?.id;
 
     // Verify channel belongs to user's business
+    // @ts-ignore
     const existingChannel = await prisma.notificationChannel.findFirst({
       where: {
         id,

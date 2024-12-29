@@ -9,10 +9,66 @@ const propertySchema = z.object({
   address: z.string().min(1, 'Address is required'),
 });
 
+export async function GET() {
+  try {
+    const session = await getAuthSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Get user with business relationships
+    const user = await prisma.user.findFirst({
+      where: { 
+        id: session.user.id 
+      },
+      include: {
+        ownedBusiness: true,
+        workingAt: {
+          include: {
+            business: true
+          }
+        }
+      }
+    });
+
+    // Get business ID based on role
+    const businessId = user?.role === 'BUSINESS_OWNER' 
+      ? user.ownedBusiness?.id
+      // @ts-ignore 
+      : user.workingAt?.business?.id;
+
+    if (!businessId) {
+      return NextResponse.json([]);
+    }
+
+    const properties = await prisma.property.findMany({
+      where: {
+        businessId: businessId
+      },
+      include: {
+        buildings: {
+          include: {
+            zones: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    
+    return NextResponse.json(properties);
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to fetch properties' }, 
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const session = await getAuthSession();
-    
     if (!session?.user) {
       return NextResponse.json(
         { error: 'You must be logged in' }, 
@@ -20,11 +76,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id as string },
-      include: { ownedBusiness: true }
+    // Get user with business relationships
+    const user = await prisma.user.findFirst({
+      where: { 
+        id: session.user.id 
+      },
+      include: {
+        ownedBusiness: true,
+        workingAt: {
+          include: {
+            business: true
+          }
+        }
+      }
     });
 
+    // For creating properties, we still require BUSINESS_OWNER role
     if (user?.role !== 'BUSINESS_OWNER') {
       return NextResponse.json(
         { error: 'Only business owners can create properties' }, 
@@ -56,31 +123,6 @@ export async function POST(request: Request) {
         businessId: user.ownedBusiness.id,
       },
       include: {
-        buildings: true
-      }
-    });
-    
-    return NextResponse.json(property);
-  } catch (error) {
-    console.error('Property creation error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create property. Please try again.' }, 
-      { status: 500 }
-    );
-  }
-}
-
-
-export async function GET() {
-  try {
-    const session = await getAuthSession();
-    
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const properties = await prisma.property.findMany({
-      include: {
         buildings: {
           include: {
             zones: true
@@ -89,10 +131,11 @@ export async function GET() {
       }
     });
     
-    return NextResponse.json(properties);
+    return NextResponse.json(property);
   } catch (error) {
+    console.error('Property creation error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch properties' }, 
+      { error: 'Failed to create property. Please try again.' }, 
       { status: 500 }
     );
   }
