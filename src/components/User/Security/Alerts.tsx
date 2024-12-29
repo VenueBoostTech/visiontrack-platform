@@ -6,6 +6,8 @@ import Modal from "@/components/Common/Modal";
 import toast from "react-hot-toast";
 import "../../GlobalSearch/switch.css";
 import DeleteModal from "@/components/Common/Modals/DeleteModal";
+import NotificationConfigModal from "@/components/Common/Modals/NotificationConfigModal";
+import { NotificationChannel } from "@/types/notificationChannel";
 
 interface Condition {
   type: string;
@@ -36,18 +38,6 @@ interface AlertRuleProps {
   initialAlerts: AlertRule[];
 }
 
-interface NotificationChannel {
-  id: string;
-  type: "email" | "sms" | "notification" | "logs";
-  name: string;
-  description: string;
-  enabled: boolean;
-  config: {
-    emails?: string[];
-    phone_numbers?: string[];
-    webhookUrl?: string;
-  };
-}
 
 interface Preferences {
   desktopNotifications: boolean;
@@ -313,182 +303,90 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
     }
   };
 
-  // Fetch preferences
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      try {
-        const response = await fetch('/api/business/preferences');
-        if (!response.ok) {
-          throw new Error('Failed to fetch preferences');
+    // Fetch preferences
+    useEffect(() => {
+      const fetchPreferences = async () => {
+        try {
+          const response = await fetch('/api/business/preferences');
+          if (!response.ok) {
+            throw new Error('Failed to fetch preferences');
+          }
+          const data = await response.json();
+          setPreferences(data);
+        } catch (error) {
+          console.error('Fetch preferences error:', error);
+          toast.error('Failed to load preferences');
         }
-        const data = await response.json();
-        setPreferences(data);
+      };
+
+      fetchPreferences();
+    }, []);
+
+    // Update handlers
+    const handleSavePreferences = async () => {
+      try {
+        const response = await fetch('/api/business/preferences', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(preferences),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save preferences');
+        }
+
+        toast.success('Preferences saved successfully');
       } catch (error) {
-        console.error('Fetch preferences error:', error);
-        toast.error('Failed to load preferences');
+        console.error('Save preferences error:', error);
+        toast.error('Failed to save preferences');
       }
     };
 
-    fetchPreferences();
+     // Fetch notification channels
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        const response = await fetch('/api/business/notification-channels');
+        if (!response.ok) {
+          throw new Error('Failed to fetch channels');
+        }
+        const data = await response.json();
+        // Check if the data is not empty before setting the state
+        if (data && Array.isArray(data) && data.length > 0) {
+          setNotificationChannels(data); // Only set if there is valid data
+        } else {
+          // Optional: handle empty response case if necessary
+          console.log('No notification channels found');
+          // You can either leave this empty or show a message to the user
+        }
+      } catch (error) {
+        console.error('Fetch channels error:', error);
+      }
+    };
+
+    fetchChannels();
   }, []);
 
-  // Update handlers
-  const handleSavePreferences = async () => {
+  const handleChannelToggle = async (channelId: string, enabled: boolean) => {
     try {
-      const response = await fetch('/api/business/preferences', {
+      const response = await fetch('/api/business/notification-channels', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(preferences),
+        body: JSON.stringify({ id: channelId, enabled }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save preferences');
+        throw new Error('Failed to update channel');
       }
 
-      toast.success('Preferences saved successfully');
+      setNotificationChannels(channels =>
+        channels.map(c =>
+          c.id === channelId ? { ...c, enabled } : c
+        )
+      );
     } catch (error) {
-      console.error('Save preferences error:', error);
-      toast.error('Failed to save preferences');
+      console.error('Update channel error:', error);
     }
-  };
-
-  // Channel configuration modal component
-  const NotificationConfigModal = ({ 
-    channel, 
-    isOpen, 
-    onClose, 
-    onSave 
-  }: { 
-    channel: NotificationChannel; 
-    isOpen: boolean; 
-    onClose: () => void; 
-    onSave: (updatedChannel: NotificationChannel) => void;
-  }) => {
-    const [config, setConfig] = useState(channel.config);
-    const [newEmail, setNewEmail] = useState("");
-    const [newPhone, setNewPhone] = useState("");
-
-    const handleSave = () => {
-      onSave({ ...channel, config });
-      onClose();
-    };
-
-    return (
-      <Modal isOpen={isOpen} onClose={onClose} title={`Configure ${channel.name}`}>
-        <div className="space-y-4">
-          {channel.type === "email" && (
-            <div>
-              <label className="block text-sm font-medium mb-2">Email Addresses</label>
-              <div className="space-y-2">
-                {config.emails?.map((email, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <span className="flex-1 px-3 py-2 bg-gray-50 rounded-lg">{email}</span>
-                    <button
-                      type="button"
-                      className="p-1 text-red-500 hover:bg-red-50 rounded"
-                      onClick={() => setConfig({
-                        ...config,
-                        emails: config.emails?.filter((_, i) => i !== index)
-                      })}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-                <div className="flex gap-2">
-                  <input
-                    type="email"
-                    className="flex-1 px-3 py-2 border rounded-lg"
-                    placeholder="Add email address"
-                    value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    className="px-3 py-2 bg-primary text-white rounded-lg"
-                    onClick={() => {
-                      if (newEmail) {
-                        setConfig({
-                          ...config,
-                          emails: [...(config.emails || []), newEmail]
-                        });
-                        setNewEmail("");
-                      }
-                    }}
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {channel.type === "sms" && (
-            <div>
-              <label className="block text-sm font-medium mb-2">Phone Numbers</label>
-              <div className="space-y-2">
-                {config.phone_numbers?.map((phone, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <span className="flex-1 px-3 py-2 bg-gray-50 rounded-lg">{phone}</span>
-                    <button
-                      type="button"
-                      className="p-1 text-red-500 hover:bg-red-50 rounded"
-                      onClick={() => setConfig({
-                        ...config,
-                        phone_numbers: config.phone_numbers?.filter((_, i) => i !== index)
-                      })}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-                <div className="flex gap-2">
-                  <input
-                    type="tel"
-                    className="flex-1 px-3 py-2 border rounded-lg"
-                    placeholder="Add phone number"
-                    value={newPhone}
-                    onChange={(e) => setNewPhone(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    className="px-3 py-2 bg-primary text-white rounded-lg"
-                    onClick={() => {
-                      if (newPhone) {
-                        setConfig({
-                          ...config,
-                          phone_numbers: [...(config.phone_numbers || []), newPhone]
-                        });
-                        setNewPhone("");
-                      }
-                    }}
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="flex justify-end gap-2 pt-4 mt-4 border-t">
-            <button
-              type="button"
-              className="px-4 py-2 text-sm border rounded-lg"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="px-4 py-2 text-sm bg-primary text-white rounded-lg"
-              onClick={handleSave}
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </Modal>
-    );
   };
   
   return (
@@ -533,78 +431,72 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
           {/* Notification Channels */}
           {activeTab === "notifications" && (
             <div className="p-6">
-              <div className="space-y-6">
-                {notificationChannels.map((channel) => (
-                  <div key={channel.id} className="border rounded-lg p-4 dark:border-gray-700">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 ${
-                          channel.type === "email" 
-                            ? "bg-blue-100 text-blue-600" 
-                            : "bg-green-100 text-green-600"
-                        } rounded-lg`}>
-                          {channel.type === "email" ? <Mail className="w-5 h-5" /> : <Phone className="w-5 h-5" />}
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{channel.name}</h3>
-                          <p className="text-sm text-gray-500 mt-1">{channel.description}</p>
-                          {channel.enabled && (
-                            <div className="mt-2">
-                              <span className="text-xs text-gray-500">
-                                {channel.type === "email" 
-                                  ? `${channel.config.emails?.length || 0} email(s) configured`
-                                  : `${channel.config.phone_numbers?.length || 0} number(s) configured`
-                                }
-                              </span>
-                            </div>
-                          )}
-                        </div>
+            <div className="space-y-6">
+              {notificationChannels.map((channel) => (
+                <div key={channel.id} className="border rounded-lg p-4 dark:border-gray-700">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 ${
+                        channel.type === "email" 
+                          ? "bg-blue-100 text-blue-600" 
+                          : "bg-green-100 text-green-600"
+                      } rounded-lg`}>
+                        {channel.type === "email" ? <Mail className="w-5 h-5" /> : <Phone className="w-5 h-5" />}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="px-3 py-1 text-sm bg-gray-100 rounded-lg hover:bg-gray-200"
-                          onClick={() => setShowChannelConfig(channel.id)}
-                        >
-                          Configure
-                        </button>
-                        <label className="switch">
-                          <input
-                            type="checkbox"
-                            checked={channel.enabled}
-                            onChange={(e) => {
-                              setNotificationChannels(channels =>
-                                channels.map(c =>
-                                  c.id === channel.id
-                                    ? { ...c, enabled: e.target.checked }
-                                    : c
-                                )
-                              );
-                            }}
-                          />
-                          <span className="slider round"></span>
-                        </label>
+                      <div>
+                        <h3 className="font-medium">{channel.name}</h3>
+                        <p className="text-sm text-gray-500 mt-1">{channel.description}</p>
+                        {channel.enabled && (
+                          <div className="mt-2">
+                            <span className="text-xs text-gray-500">
+                              {channel.type === "email" 
+                                ? `${channel.config.emails?.length || 0} email(s) configured`
+                                : `${channel.config.phone_numbers?.length || 0} number(s) configured`
+                              }
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="px-3 py-1 text-sm bg-gray-100 rounded-lg hover:bg-gray-200"
+                        onClick={() => setShowChannelConfig(channel.id)}
+                      >
+                        Configure
+                      </button>
+                      <label className="switch">
+                        <input
+                          type="checkbox"
+                          checked={channel.enabled}
+                          onChange={(e) => {
+                            handleChannelToggle(channel.id, e.target.checked);
+                          }}
+                        />
+                        <span className="slider round"></span>
+                      </label>
+                    </div>
                   </div>
-                ))}
-              </div>
-
-              {/* Channel Configuration Modal */}
-              {showChannelConfig && (
-                <NotificationConfigModal
-                  channel={notificationChannels.find(c => c.id === showChannelConfig)!}
-                  isOpen={!!showChannelConfig}
-                  onClose={() => setShowChannelConfig(null)}
-                  onSave={(updatedChannel) => {
-                    setNotificationChannels(channels =>
-                      channels.map(c =>
-                        c.id === updatedChannel.id ? updatedChannel : c
-                      )
-                    );
-                  }}
-                />
-              )}
+                </div>
+              ))}
             </div>
+      
+            {/* Channel Configuration Modal */}
+            {showChannelConfig && (
+              <NotificationConfigModal
+                channel={notificationChannels.find(c => c.id === showChannelConfig)!}
+                isOpen={!!showChannelConfig}
+                onClose={() => setShowChannelConfig(null)}
+                onSave={(updatedChannel) => {
+                  setNotificationChannels(channels =>
+                    channels.map(c =>
+                      c.id === updatedChannel.id ? updatedChannel : c
+                    )
+                  );
+                }}
+              />
+            )}
+          </div>
           )}
 
           {activeTab === "rules" && (

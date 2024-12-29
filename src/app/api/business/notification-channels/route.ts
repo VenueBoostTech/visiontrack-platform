@@ -1,48 +1,6 @@
-// app/api/business/notification-channels/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/libs/prismaDb";
 import { getAuthSession } from "@/libs/auth";
-
-export async function GET() {
-  try {
-    const session = await getAuthSession();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Get user's business
-    const user = await prisma.user.findFirst({
-      where: { id: session.user.id },
-      include: {
-        ownedBusiness: true,
-        workingAt: {
-          include: { business: true }
-        }
-      }
-    });
-
-    const businessId = user?.role === 'BUSINESS_OWNER' 
-      ? user.ownedBusiness?.id
-      // @ts-ignore
-      : user.workingAt?.business?.id;
-
-    if (!businessId) {
-      return NextResponse.json({ error: "No business found" }, { status: 404 });
-    }
-
-    const channels = await prisma.notificationChannel.findMany({
-      where: { businessId }
-    });
-
-    return NextResponse.json(channels);
-  } catch (error) {
-    console.error('Get channels error:', error);
-    return NextResponse.json(
-      { error: "Failed to fetch notification channels" },
-      { status: 500 }
-    );
-  }
-}
 
 export async function PUT(request: Request) {
   try {
@@ -89,11 +47,17 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Channel not found" }, { status: 404 });
     }
 
+    // Ensure config has emails and phone_numbers initialized
+    const updatedConfig = {
+      emails: config.emails || [],
+      phone_numbers: config.phone_numbers || [],
+    };
+
     const channel = await prisma.notificationChannel.update({
       where: { id },
       data: {
         enabled: enabled !== undefined ? enabled : undefined,
-        config: config !== undefined ? config : undefined,
+        config: updatedConfig,
         updatedBy: session.user.id
       }
     });
