@@ -36,6 +36,31 @@ interface AlertRuleProps {
   initialAlerts: AlertRule[];
 }
 
+interface NotificationChannel {
+  id: string;
+  type: "email" | "sms" | "notification" | "logs";
+  name: string;
+  description: string;
+  enabled: boolean;
+  config: {
+    emails?: string[];
+    phone_numbers?: string[];
+    webhookUrl?: string;
+  };
+}
+
+interface Preferences {
+  desktopNotifications: boolean;
+  soundAlerts: boolean;
+  minimumPriority: "all" | "low" | "medium" | "high";
+  businessHours: {
+    start: string;
+    end: string;
+  };
+  retentionDays: number;
+}
+
+
 const formatCondition = (condition: Condition) => {
   switch (condition.type) {
     case 'time':
@@ -53,6 +78,8 @@ const formatCondition = (condition: Condition) => {
   }
 };
 
+
+
 const Alerts = ({ initialAlerts }: AlertRuleProps) => {
   const [activeTab, setActiveTab] = useState("notifications");
   const [showCreateRuleModal, setShowCreateRuleModal] = useState(false);
@@ -61,7 +88,43 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [notificationChannels, setNotificationChannels] = useState<NotificationChannel[]>([
+    {
+      id: "1",
+      type: "email",
+      name: "Email Notifications",
+      description: "Send alerts to specified email addresses",
+      enabled: true,
+      config: {
+        emails: []
+      }
+    },
+    {
+      id: "2",
+      type: "sms",
+      name: "SMS Alerts",
+      description: "Send alerts via SMS to security personnel",
+      enabled: false,
+      config: {
+        phone_numbers: []
+      }
+    }
+  ]);
+  
+  const [preferences, setPreferences] = useState<Preferences>({
+    desktopNotifications: true,
+    soundAlerts: false,
+    minimumPriority: "all",
+    businessHours: {
+      start: "09:00",
+      end: "17:00"
+    },
+    retentionDays: 30
+  });
+  
+  const [showChannelConfig, setShowChannelConfig] = useState<string | null>(null);
 
+  
   const defaultFormData: AlertRule = {
     id: "",
     name: "",
@@ -249,6 +312,184 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
       setSelectedRule(null);
     }
   };
+
+  // Fetch preferences
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const response = await fetch('/api/business/preferences');
+        if (!response.ok) {
+          throw new Error('Failed to fetch preferences');
+        }
+        const data = await response.json();
+        setPreferences(data);
+      } catch (error) {
+        console.error('Fetch preferences error:', error);
+        toast.error('Failed to load preferences');
+      }
+    };
+
+    fetchPreferences();
+  }, []);
+
+  // Update handlers
+  const handleSavePreferences = async () => {
+    try {
+      const response = await fetch('/api/business/preferences', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(preferences),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save preferences');
+      }
+
+      toast.success('Preferences saved successfully');
+    } catch (error) {
+      console.error('Save preferences error:', error);
+      toast.error('Failed to save preferences');
+    }
+  };
+
+  // Channel configuration modal component
+  const NotificationConfigModal = ({ 
+    channel, 
+    isOpen, 
+    onClose, 
+    onSave 
+  }: { 
+    channel: NotificationChannel; 
+    isOpen: boolean; 
+    onClose: () => void; 
+    onSave: (updatedChannel: NotificationChannel) => void;
+  }) => {
+    const [config, setConfig] = useState(channel.config);
+    const [newEmail, setNewEmail] = useState("");
+    const [newPhone, setNewPhone] = useState("");
+
+    const handleSave = () => {
+      onSave({ ...channel, config });
+      onClose();
+    };
+
+    return (
+      <Modal isOpen={isOpen} onClose={onClose} title={`Configure ${channel.name}`}>
+        <div className="space-y-4">
+          {channel.type === "email" && (
+            <div>
+              <label className="block text-sm font-medium mb-2">Email Addresses</label>
+              <div className="space-y-2">
+                {config.emails?.map((email, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <span className="flex-1 px-3 py-2 bg-gray-50 rounded-lg">{email}</span>
+                    <button
+                      type="button"
+                      className="p-1 text-red-500 hover:bg-red-50 rounded"
+                      onClick={() => setConfig({
+                        ...config,
+                        emails: config.emails?.filter((_, i) => i !== index)
+                      })}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    className="flex-1 px-3 py-2 border rounded-lg"
+                    placeholder="Add email address"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="px-3 py-2 bg-primary text-white rounded-lg"
+                    onClick={() => {
+                      if (newEmail) {
+                        setConfig({
+                          ...config,
+                          emails: [...(config.emails || []), newEmail]
+                        });
+                        setNewEmail("");
+                      }
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {channel.type === "sms" && (
+            <div>
+              <label className="block text-sm font-medium mb-2">Phone Numbers</label>
+              <div className="space-y-2">
+                {config.phone_numbers?.map((phone, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <span className="flex-1 px-3 py-2 bg-gray-50 rounded-lg">{phone}</span>
+                    <button
+                      type="button"
+                      className="p-1 text-red-500 hover:bg-red-50 rounded"
+                      onClick={() => setConfig({
+                        ...config,
+                        phone_numbers: config.phone_numbers?.filter((_, i) => i !== index)
+                      })}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                <div className="flex gap-2">
+                  <input
+                    type="tel"
+                    className="flex-1 px-3 py-2 border rounded-lg"
+                    placeholder="Add phone number"
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="px-3 py-2 bg-primary text-white rounded-lg"
+                    onClick={() => {
+                      if (newPhone) {
+                        setConfig({
+                          ...config,
+                          phone_numbers: [...(config.phone_numbers || []), newPhone]
+                        });
+                        setNewPhone("");
+                      }
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-2 pt-4 mt-4 border-t">
+            <button
+              type="button"
+              className="px-4 py-2 text-sm border rounded-lg"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="px-4 py-2 text-sm bg-primary text-white rounded-lg"
+              onClick={handleSave}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </Modal>
+    );
+  };
   
   return (
     <div>
@@ -293,286 +534,357 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
           {activeTab === "notifications" && (
             <div className="p-6">
               <div className="space-y-6">
-                {/* Email */}
-                <div className="border rounded-lg p-4 dark:border-gray-700">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 rounded-lg dark:bg-blue-900">
-                        <Mail className="w-5 h-5 text-blue-600" />
+                {notificationChannels.map((channel) => (
+                  <div key={channel.id} className="border rounded-lg p-4 dark:border-gray-700">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 ${
+                          channel.type === "email" 
+                            ? "bg-blue-100 text-blue-600" 
+                            : "bg-green-100 text-green-600"
+                        } rounded-lg`}>
+                          {channel.type === "email" ? <Mail className="w-5 h-5" /> : <Phone className="w-5 h-5" />}
+                        </div>
+                        <div>
+                          <h3 className="font-medium">{channel.name}</h3>
+                          <p className="text-sm text-gray-500 mt-1">{channel.description}</p>
+                          {channel.enabled && (
+                            <div className="mt-2">
+                              <span className="text-xs text-gray-500">
+                                {channel.type === "email" 
+                                  ? `${channel.config.emails?.length || 0} email(s) configured`
+                                  : `${channel.config.phone_numbers?.length || 0} number(s) configured`
+                                }
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-medium">Email Notifications</h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Send alerts to specified email addresses
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button className="px-3 py-1 text-sm bg-gray-100 rounded-lg dark:bg-gray-700">
-                        Configure
-                      </button>
-                      <div className="w-12 h-6 bg-green-200 rounded-full relative">
-                        <div className="absolute right-0 w-6 h-6 bg-green-600 rounded-full" />
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="px-3 py-1 text-sm bg-gray-100 rounded-lg hover:bg-gray-200"
+                          onClick={() => setShowChannelConfig(channel.id)}
+                        >
+                          Configure
+                        </button>
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            checked={channel.enabled}
+                            onChange={(e) => {
+                              setNotificationChannels(channels =>
+                                channels.map(c =>
+                                  c.id === channel.id
+                                    ? { ...c, enabled: e.target.checked }
+                                    : c
+                                )
+                              );
+                            }}
+                          />
+                          <span className="slider round"></span>
+                        </label>
                       </div>
                     </div>
                   </div>
-                </div>
+                ))}
+              </div>
 
-                {/* SMS */}
-                <div className="border rounded-lg p-4 dark:border-gray-700">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-green-100 rounded-lg dark:bg-green-900">
-                        <Phone className="w-5 h-5 text-green-600" />
+              {/* Channel Configuration Modal */}
+              {showChannelConfig && (
+                <NotificationConfigModal
+                  channel={notificationChannels.find(c => c.id === showChannelConfig)!}
+                  isOpen={!!showChannelConfig}
+                  onClose={() => setShowChannelConfig(null)}
+                  onSave={(updatedChannel) => {
+                    setNotificationChannels(channels =>
+                      channels.map(c =>
+                        c.id === updatedChannel.id ? updatedChannel : c
+                      )
+                    );
+                  }}
+                />
+              )}
+            </div>
+          )}
+
+          {activeTab === "rules" && (
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-lg font-semibold">Alert Rules</h3>
+                  <p className="text-sm text-gray-500">Configure and manage alert rules for your system</p>
+                </div>
+                {/* Create button */}
+                <button
+                  className="px-4 py-2 bg-primary text-white rounded-lg text-sm flex items-center gap-2"
+                  onClick={handleCreateClick}
+                >
+                  <Plus className="w-4 h-4" />
+                  Create New Rule
+                </button>
+              </div>
+
+              <div className="grid gap-4">
+                {alertRules.map((rule) => (
+                  <div
+                    key={rule.id}
+                    className="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700"
+                  >
+                    <div className="p-4">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <div className="flex items-center gap-3">
+                            <h4 className="text-lg font-medium">{rule.name}</h4>
+                            <span
+                              className={`capitalize inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                rule.severity === "high"
+                                  ? "bg-red-100 text-red-800"
+                                  : rule.severity === "medium"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-green-100 text-green-800"
+                              }`}
+                            >
+                              {rule.severity} priority
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1">{rule.description}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                        <label className="switch">
+                    <input
+                      type="checkbox"
+                      checked={rule.enabled}
+                      onChange={(e) => handleToggle(rule, e.target.checked)}
+                    />
+                    <span className="slider round"></span>
+                  </label>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-medium">SMS Alerts</h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Send alerts via SMS to security personnel
-                        </p>
-                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                      <h5 className="text-sm font-medium text-gray-700">Trigger Conditions</h5>
+                      <ul className="space-y-1">
+                        {/* Parse conditions if they're stored as strings */}
+                        {rule.conditions.map((condition, index) => {
+                          const parsedCondition = typeof condition === 'string' 
+                            ? JSON.parse(condition) 
+                            : condition;
+                          
+                          return (
+                            <li key={index} className="text-sm text-gray-600 flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-primary"></span>
+                              {formatCondition(parsedCondition)}
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button className="px-3 py-1 text-sm bg-gray-100 rounded-lg dark:bg-gray-700">
-                        Configure
-                      </button>
-                      <div className="w-12 h-6 bg-gray-200 rounded-full relative">
-                        <div className="absolute left-0 w-6 h-6 bg-gray-400 rounded-full" />
+
+                        <div className="space-y-2">
+                          <h5 className="text-sm font-medium text-gray-700">Actions</h5>
+                          <ul className="space-y-1">
+                            {rule.actions.map((action, index) => (
+                              <li key={index} className="text-sm text-gray-600 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                                {action}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
+                        {/* Edit button */}
+                        <button
+                          className="p-2 text-gray-500 hover:text-gray-700"
+                          onClick={() => {
+                            setSelectedRule(rule);
+                            setShowCreateRuleModal(true);
+                          }}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        {/* Delete button */}
+                        <button
+                          className="p-2 text-gray-500 hover:text-red-600"
+                          onClick={() => {
+                            setSelectedRule(rule);
+                            setShowDeleteConfirm(true);
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
                   </div>
-                </div>
+                ))}
 
-                {/* More channels */}
+                {alertRules.length === 0 && (
+                  <div className="text-center py-12 bg-gray-50 rounded-lg dark:bg-gray-800">
+                    <div className="flex justify-center mb-4">
+                      <Bell className="w-12 h-12 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No Alert Rules</h3>
+                    <p className="mt-1 text-sm text-gray-500">Get started by creating a new alert rule.</p>
+                    <button
+                      className="mt-4 px-4 py-2 bg-primary text-white rounded-lg text-sm"
+                      onClick={() => setShowCreateRuleModal(true)}
+                    >
+                      Create First Rule
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
-        {activeTab === "rules" && (
-          <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h3 className="text-lg font-semibold">Alert Rules</h3>
-                <p className="text-sm text-gray-500">Configure and manage alert rules for your system</p>
-              </div>
-              {/* Create button */}
-              <button
-                className="px-4 py-2 bg-primary text-white rounded-lg text-sm flex items-center gap-2"
-                onClick={handleCreateClick}
-              >
-                <Plus className="w-4 h-4" />
-                Create New Rule
-              </button>
-            </div>
-
-            <div className="grid gap-4">
-              {alertRules.map((rule) => (
-                <div
-                  key={rule.id}
-                  className="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700"
-                >
-                  <div className="p-4">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <div className="flex items-center gap-3">
-                          <h4 className="text-lg font-medium">{rule.name}</h4>
-                          <span
-                            className={`capitalize inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              rule.severity === "high"
-                                ? "bg-red-100 text-red-800"
-                                : rule.severity === "medium"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-green-100 text-green-800"
-                            }`}
-                          >
-                            {rule.severity} priority
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-600 mt-1">{rule.description}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                      <label className="switch">
-                  <input
-                    type="checkbox"
-                    checked={rule.enabled}
-                    onChange={(e) => handleToggle(rule, e.target.checked)}
-                  />
-                  <span className="slider round"></span>
-                </label>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                    <h5 className="text-sm font-medium text-gray-700">Trigger Conditions</h5>
-                    <ul className="space-y-1">
-                      {/* Parse conditions if they're stored as strings */}
-                      {rule.conditions.map((condition, index) => {
-                        const parsedCondition = typeof condition === 'string' 
-                          ? JSON.parse(condition) 
-                          : condition;
-                        
-                        return (
-                          <li key={index} className="text-sm text-gray-600 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-primary"></span>
-                            {formatCondition(parsedCondition)}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-
-                      <div className="space-y-2">
-                        <h5 className="text-sm font-medium text-gray-700">Actions</h5>
-                        <ul className="space-y-1">
-                          {rule.actions.map((action, index) => (
-                            <li key={index} className="text-sm text-gray-600 flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                              {action}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
-                      {/* Edit button */}
-                      <button
-                        className="p-2 text-gray-500 hover:text-gray-700"
-                        onClick={() => {
-                          setSelectedRule(rule);
-                          setShowCreateRuleModal(true);
-                        }}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      {/* Delete button */}
-                      <button
-                        className="p-2 text-gray-500 hover:text-red-600"
-                        onClick={() => {
-                          setSelectedRule(rule);
-                          setShowDeleteConfirm(true);
-                        }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {alertRules.length === 0 && (
-                <div className="text-center py-12 bg-gray-50 rounded-lg dark:bg-gray-800">
-                  <div className="flex justify-center mb-4">
-                    <Bell className="w-12 h-12 text-gray-400" />
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No Alert Rules</h3>
-                  <p className="mt-1 text-sm text-gray-500">Get started by creating a new alert rule.</p>
-                  <button
-                    className="mt-4 px-4 py-2 bg-primary text-white rounded-lg text-sm"
-                    onClick={() => setShowCreateRuleModal(true)}
-                  >
-                    Create First Rule
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
           {/* Preferences */}
           {activeTab === "preferences" && (
-            <div className="p-6">
-              <div className="space-y-6">
-                {/* General Settings */}
-                <div className="border rounded-lg p-4 dark:border-gray-700">
-                  <h3 className="font-medium mb-4">General Settings</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">
-                          Enable Desktop Notifications
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          Show alerts as desktop notifications
-                        </p>
-                      </div>
-                      <div className="w-12 h-6 bg-green-200 rounded-full relative">
-                        <div className="absolute right-0 w-6 h-6 bg-green-600 rounded-full" />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Sound Alerts</p>
-                        <p className="text-sm text-gray-500">
-                          Play sound when new alerts arrive
-                        </p>
-                      </div>
-                      <div className="w-12 h-6 bg-gray-200 rounded-full relative">
-                        <div className="absolute left-0 w-6 h-6 bg-gray-400 rounded-full" />
-                      </div>
-                    </div>
+          <div className="p-6">
+          <div className="space-y-6">
+            {/* General Settings */}
+            <div className="border rounded-lg p-4 dark:border-gray-700">
+              <h3 className="font-medium mb-4">General Settings</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Enable Desktop Notifications</p>
+                    <p className="text-sm text-gray-500">
+                      Show alerts as desktop notifications
+                    </p>
                   </div>
+                  <label className="switch">
+                    <input
+                      type="checkbox"
+                      checked={preferences.desktopNotifications}
+                      onChange={(e) =>
+                        setPreferences({
+                          ...preferences,
+                          desktopNotifications: e.target.checked,
+                        })
+                      }
+                    />
+                    <span className="slider round"></span>
+                  </label>
                 </div>
 
-                {/* Alert Priority */}
-                <div className="border rounded-lg p-4 dark:border-gray-700">
-                  <h3 className="font-medium mb-4">Minimum Alert Priority</h3>
-                  <select className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700">
-                    <option value="all">All Alerts</option>
-                    <option value="low">Low and above</option>
-                    <option value="medium">Medium and above</option>
-                    <option value="high">High priority only</option>
-                  </select>
-                </div>
-
-                {/* Work Hours */}
-                <div className="border rounded-lg p-4 dark:border-gray-700">
-                  <h3 className="font-medium mb-4">Business Hours</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Start Time
-                      </label>
-                      <input
-                        type="time"
-                        defaultValue="09:00"
-                        className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        End Time
-                      </label>
-                      <input
-                        type="time"
-                        defaultValue="17:00"
-                        className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                      />
-                    </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Sound Alerts</p>
+                    <p className="text-sm text-gray-500">
+                      Play sound when new alerts arrive
+                    </p>
                   </div>
+                  <label className="switch">
+                    <input
+                      type="checkbox"
+                      checked={preferences.soundAlerts}
+                      onChange={(e) =>
+                        setPreferences({
+                          ...preferences,
+                          soundAlerts: e.target.checked,
+                        })
+                      }
+                    />
+                    <span className="slider round"></span>
+                  </label>
                 </div>
-
-                {/* Alert Retention */}
-                <div className="border rounded-lg p-4 dark:border-gray-700">
-                  <h3 className="font-medium mb-4">Alert Retention</h3>
-                  <select className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700">
-                    <option value="7">7 days</option>
-                    <option value="30">30 days</option>
-                    <option value="90">90 days</option>
-                    <option value="180">180 days</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Save Button */}
-              <div className="mt-6 flex justify-end">
-                <button className="px-4 py-2 bg-primary text-white rounded-lg">
-                  Save Preferences
-                </button>
               </div>
             </div>
+
+            {/* Alert Priority */}
+            <div className="border rounded-lg p-4 dark:border-gray-700">
+              <h3 className="font-medium mb-4">Minimum Alert Priority</h3>
+              <select
+                className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                value={preferences.minimumPriority}
+                onChange={(e) =>
+                  setPreferences({
+                    ...preferences,
+                    minimumPriority: e.target.value as Preferences['minimumPriority'],
+                  })
+                }
+              >
+                <option value="all">All Alerts</option>
+                <option value="low">Low and above</option>
+                <option value="medium">Medium and above</option>
+                <option value="high">High priority only</option>
+              </select>
+            </div>
+
+            {/* Business Hours */}
+            <div className="border rounded-lg p-4 dark:border-gray-700">
+              <h3 className="font-medium mb-4">Business Hours</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Start Time</label>
+                  <input
+                    type="time"
+                    value={preferences.businessHours.start}
+                    onChange={(e) =>
+                      setPreferences({
+                        ...preferences,
+                        businessHours: {
+                          ...preferences.businessHours,
+                          start: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">End Time</label>
+                  <input
+                    type="time"
+                    value={preferences.businessHours.end}
+                    onChange={(e) =>
+                      setPreferences({
+                        ...preferences,
+                        businessHours: {
+                          ...preferences.businessHours,
+                          end: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Alert Retention */}
+            <div className="border rounded-lg p-4 dark:border-gray-700">
+              <h3 className="font-medium mb-4">Alert Retention</h3>
+              <select
+                className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                value={preferences.retentionDays}
+                onChange={(e) =>
+                  setPreferences({
+                    ...preferences,
+                    retentionDays: Number(e.target.value),
+                  })
+                }
+              >
+                <option value="7">7 days</option>
+                <option value="30">30 days</option>
+                <option value="90">90 days</option>
+                <option value="180">180 days</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Save Button */}
+          <div className="mt-6 flex justify-end">
+            <button
+              className="px-4 py-2 bg-primary text-white rounded-lg"
+              onClick={handleSavePreferences} // Use the handleSavePreferences function here
+            >
+              Save Preferences
+            </button>
+          </div>
+        </div>
           )}
         </div>
 

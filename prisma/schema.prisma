@@ -87,6 +87,37 @@ model VerificationToken {
  @@unique([identifier, token])
 }
 
+
+model NotificationChannel {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  type        String    // "email" | "sms" | "notification" | "logs"
+  name        String
+  description String
+  enabled     Boolean   @default(true)
+  config      Json      // For storing emails, phone numbers, etc.
+  businessId  String    @db.ObjectId
+  business    Business  @relation(fields: [businessId], references: [id])
+  updatedBy   String?   @db.ObjectId // Reference to user who last updated
+  createdBy   String    @db.ObjectId // Reference to user who created
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model BusinessPreferences {
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  businessId            String    @db.ObjectId @unique
+  business              Business  @relation(fields: [businessId], references: [id])
+  desktopNotifications  Boolean   @default(true)
+  soundAlerts           Boolean   @default(false)
+  minimumPriority      String    @default("all") // "all" | "low" | "medium" | "high"
+  businessHours        Json      // { start: string, end: string }
+  retentionDays        Int       @default(30)
+  updatedBy            String?   @db.ObjectId // Reference to user who last updated
+  createdBy            String    @db.ObjectId // Reference to user who created
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
+
 model Business {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
   name            String
@@ -104,6 +135,9 @@ model Business {
   properties      Property[]
   departments     Department[]
   alertRules      AlertRule[]
+
+  notificationChannels NotificationChannel[]
+  preferences         BusinessPreferences?
 }
 
 model BusinessStaff {
