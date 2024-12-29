@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Mail, Phone } from "lucide-react";
+import { Edit, Mail, Phone, Plus, Bell, Trash2 } from "lucide-react";
 import Modal from "@/components/Common/Modal";
 import toast from "react-hot-toast";
 import "../../GlobalSearch/switch.css";
+import DeleteModal from "@/components/Common/Modals/DeleteModal";
 
-interface NotificationChannel {
-  id: string;
-  type: "email" | "sms" | "slack" | "system";
-  name: string;
-  enabled: boolean;
-  config: any;
+interface Condition {
+  type: string;
+  operator: string;
+  value: string | number;
+  secondaryValue?: string | number;
 }
 
 interface AlertRule {
@@ -20,8 +20,16 @@ interface AlertRule {
   description: string;
   severity: "low" | "medium" | "high";
   enabled: boolean;
-  conditions: string[];
+  conditions: Condition[];
   actions: string[];
+  userId: string;
+  businessId: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
 }
 
 interface AlertRuleProps {
@@ -33,60 +41,94 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
   const [showCreateRuleModal, setShowCreateRuleModal] = useState(false);
   const [alertRules, setAlertRules] = useState<AlertRule[]>(initialAlerts);
   const [selectedRule, setSelectedRule] = useState<AlertRule | null>(null);
-  const [alertFormData, setAlertFormData] = useState<AlertRule>({
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const defaultFormData: AlertRule = {
     id: "",
     name: "",
     description: "",
     severity: "low",
     enabled: true,
-    conditions: [""],
+    conditions: [{
+      type: "",
+      operator: "",
+      value: "",
+    }],
     actions: [],
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+    userId: "",
+    businessId: "",
+  };
+
+  const [alertFormData, setAlertFormData] = useState<AlertRule>(defaultFormData);
+
+  const handleSeverityChange = (value: string) => {
+    if (value === "low" || value === "medium" || value === "high") {
+      setAlertFormData({
+        ...alertFormData,
+        severity: value as "low" | "medium" | "high"
+      });
+    }
+  };
 
   useEffect(() => {
     if (selectedRule) {
+      const { 
+        id, 
+        name, 
+        description, 
+        severity, 
+        enabled, 
+        conditions, 
+        actions, 
+        userId, 
+        businessId 
+      } = selectedRule;
+      
       setAlertFormData({
-        id: selectedRule.id,
-        name: selectedRule.name,
-        description: selectedRule.description,
-        severity: selectedRule.severity,
-        enabled: selectedRule.enabled,
-        conditions: selectedRule.conditions,
-        actions: selectedRule.actions,
+        id,
+        name,
+        description,
+        severity,
+        enabled,
+        conditions,
+        actions,
+        userId,
+        businessId
       });
+    } else {
+      setAlertFormData(defaultFormData);
     }
   }, [selectedRule]);
 
-  // Sample data
-  const notificationChannels: NotificationChannel[] = [
-    {
-      id: "1",
-      type: "email",
-      name: "Email Notifications",
-      enabled: true,
-      config: { emails: ["security@company.com"] },
-    },
-  ];
-
-  const handleCreate = async (data: any) => {
+  const handleCreate = async (data: AlertRule) => {
     setIsSubmitting(true);
     try {
       const response = await fetch("/api/user/alert-rule", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          name: data.name,
+          description: data.description,
+          severity: data.severity,
+          conditions: data.conditions,
+          actions: data.actions,
+          enabled: true
+        }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create alert rule");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create alert rule");
       }
 
-      const newZone = await response.json();
-      setAlertRules((prev) => [newZone, ...prev]);
+      const newRule = await response.json();
+      setAlertRules((prev) => [newRule, ...prev]);
       setShowCreateRuleModal(false);
       toast.success("Alert rule created successfully!");
     } catch (error) {
+      console.error("Create error:", error);
       toast.error(
         error instanceof Error ? error.message : "Failed to create alert rule"
       );
@@ -95,40 +137,90 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
     }
   };
 
-  const handleUpdate = async (data: any, id: string | null) => {
-    if (!selectedRule && !id) return;
-
+  const handleUpdate = async (data: Partial<AlertRule>) => {
+    if (!selectedRule?.id) {
+      toast.error("No rule selected");
+      return;
+    }
+  
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        `/api/user/alert-rule/${selectedRule?.id ?? id}`,
+        `/api/user/alert-rule/${selectedRule.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify({
+            ...data,
+            conditions: data.conditions || selectedRule.conditions,
+            actions: data.actions || selectedRule.actions
+          }),
         }
       );
-
+  
       if (!response.ok) {
-        throw new Error("Failed to update alert rule");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update alert rule");
       }
-
-      const updatedZone = await response.json();
+  
+      const updatedRule = await response.json();
       setAlertRules((prev) =>
-        prev.map((z) => (z.id === (selectedRule?.id ?? id) ? updatedZone : z))
+        prev.map((r) => (r.id === selectedRule.id ? { ...r, ...updatedRule } : r))
       );
-      setShowCreateRuleModal(false);
+      
+      // Only close modal if it's a form update, not a toggle
+      if (Object.keys(data).length > 1) {
+        setShowCreateRuleModal(false);
+      }
+      
       toast.success("Alert rule updated successfully!");
     } catch (error) {
+      console.error("Update error:", error);
       toast.error(
         error instanceof Error ? error.message : "Failed to update alert rule"
       );
     } finally {
       setIsSubmitting(false);
-      setSelectedRule(null);
+      if (Object.keys(data).length > 1) {
+        setSelectedRule(null);
+      }
     }
   };
 
+  const handleToggle = async (rule: AlertRule, enabled: boolean) => {
+    setSelectedRule(rule);
+    await handleUpdate({ enabled });
+  };
+
+  const handleDelete = async () => {
+    if (!selectedRule?.id) {
+      toast.error("No rule selected for deletion");
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/user/alert-rule/${selectedRule.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete alert rule');
+      }
+      
+      setAlertRules(prev => prev.filter(rule => rule.id !== selectedRule.id));
+      toast.success('Alert rule deleted successfully');
+      setShowDeleteConfirm(false);
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error(error instanceof Error ? error.message : 'Failed to delete alert rule');
+    } finally {
+      setIsLoading(false);
+      setSelectedRule(null);
+    }
+  };
+  
   return (
     <div>
       {/* Your existing logic remains unchanged */}
@@ -227,58 +319,79 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
             </div>
           )}
 
-          {/* Alert Rules */}
-          {activeTab === "rules" && (
-            <div className="p-6">
+        {activeTab === "rules" && (
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h3 className="text-lg font-semibold">Alert Rules</h3>
+                <p className="text-sm text-gray-500">Configure and manage alert rules for your system</p>
+              </div>
               <button
-                className="mb-6 px-4 py-2 bg-primary text-white rounded-lg text-sm"
+                className="px-4 py-2 bg-primary text-white rounded-lg text-sm flex items-center gap-2"
                 onClick={() => setShowCreateRuleModal(true)}
               >
+                <Plus className="w-4 h-4" />
                 Create New Rule
               </button>
+            </div>
 
-              <div className="space-y-6">
-                {alertRules.map((rule) => (
-                  <div
-                    key={rule.id}
-                    className="border rounded-lg p-4 dark:border-gray-700"
-                  >
-                    <div className="flex items-start justify-between">
+            <div className="grid gap-4">
+              {alertRules.map((rule) => (
+                <div
+                  key={rule.id}
+                  className="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700"
+                >
+                  <div className="p-4">
+                    <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="font-medium">{rule.name}</h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {rule.description}
-                        </p>
+                        <div className="flex items-center gap-3">
+                          <h4 className="text-lg font-medium">{rule.name}</h4>
+                          <span
+                            className={`capitalize inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              rule.severity === "high"
+                                ? "bg-red-100 text-red-800"
+                                : rule.severity === "medium"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-green-100 text-green-800"
+                            }`}
+                          >
+                            {rule.severity} priority
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">{rule.description}</p>
                       </div>
-                      <span
-                        className={`capitalize inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          rule.severity === "high"
-                            ? "bg-red-100 text-red-800"
-                            : rule.severity === "medium"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-green-100 text-green-800"
-                        }`}
-                      >
-                        {rule.severity} priority
-                      </span>
+                      <div className="flex items-center gap-2">
+                      <label className="switch">
+                        <input
+                          type="checkbox"
+                          checked={rule.enabled}
+                          onChange={(e) => handleToggle(rule, e.target.checked)}
+                        />
+                        <span className="slider round"></span>
+                      </label>
+                      </div>
                     </div>
 
-                    <div className="mt-4 space-y-2">
-                      <div className="text-sm text-gray-600">
-                        <p className="font-medium">Conditions:</p>
-                        <ul className="ml-4 list-disc">
-                          {rule?.conditions?.map((condition, index) => (
-                            <li key={index} className="capitalize">
-                              {condition}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <h5 className="text-sm font-medium text-gray-700">Trigger Conditions</h5>
+                        <ul className="space-y-1">
+                          {rule.conditions.map((condition: any, index: number) => (
+                            <li key={index} className="text-sm text-gray-600 flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-primary"></span>
+                              {condition.type} {condition.operator} {condition.value}
+                              {condition.secondaryValue && ` and ${condition.secondaryValue}`}
                             </li>
                           ))}
                         </ul>
                       </div>
-                      <div className="text-sm text-gray-600">
-                        <p className="font-medium">Actions:</p>
-                        <ul className="ml-4 list-disc">
+
+                      <div className="space-y-2">
+                        <h5 className="text-sm font-medium text-gray-700">Actions</h5>
+                        <ul className="space-y-1">
                           {rule.actions.map((action, index) => (
-                            <li key={index} className="capitalize">
+                            <li key={index} className="text-sm text-gray-600 flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                               {action}
                             </li>
                           ))}
@@ -286,50 +399,50 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
                       </div>
                     </div>
 
-                    <div className="mt-4 flex justify-end items-center gap-2">
+                    <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
+                      {/* Edit button */}
                       <button
-                        className="px-3 py-1 text-sm bg-gray-100 rounded-lg dark:bg-gray-700"
+                        className="p-2 text-gray-500 hover:text-gray-700"
                         onClick={() => {
-                          setShowCreateRuleModal(true);
-                          handleUpdate(rule, null);
                           setSelectedRule(rule);
+                          setShowCreateRuleModal(true);
                         }}
                       >
-                        Edit
+                        <Edit className="w-4 h-4" />
                       </button>
-                      {/* <div className="w-12 h-6 bg-green-200 rounded-full relative">
-                          <div className="absolute right-0 w-6 h-6 bg-green-600 rounded-full" />
-                        </div> */}
-                      {/* <Switch
-                        defaultChecked={rule.enabled}
-                        setIsEnabled={setIsEnabled}
-                      /> */}
-                      <label className="switch">
-                        <input
-                          type="checkbox"
-                          defaultChecked={rule.enabled}
-                          onChange={(e) => {
-                            handleUpdate(
-                              { enabled: e.target.checked },
-                              rule.id
-                            ).then(() => {});
-                          }}
-                        />
-                        <span className="slider round"></span>
-                      </label>
+                      {/* Delete button */}
+                      <button
+                        className="p-2 text-gray-500 hover:text-red-600"
+                        onClick={() => {
+                          setSelectedRule(rule);
+                          setShowDeleteConfirm(true);
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
-                ))}
-                {alertRules.length === 0 && (
-                  <div className="border rounded-lg p-4 dark:border-gray-700">
-                    <p className="text-sm text-gray-500">
-                      No active alert rules found
-                    </p>
+                </div>
+              ))}
+
+              {alertRules.length === 0 && (
+                <div className="text-center py-12 bg-gray-50 rounded-lg dark:bg-gray-800">
+                  <div className="flex justify-center mb-4">
+                    <Bell className="w-12 h-12 text-gray-400" />
                   </div>
-                )}
-              </div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No Alert Rules</h3>
+                  <p className="mt-1 text-sm text-gray-500">Get started by creating a new alert rule.</p>
+                  <button
+                    className="mt-4 px-4 py-2 bg-primary text-white rounded-lg text-sm"
+                    onClick={() => setShowCreateRuleModal(true)}
+                  >
+                    Create First Rule
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
+        )}
 
           {/* Preferences */}
           {activeTab === "preferences" && (
@@ -427,23 +540,32 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
           )}
         </div>
 
-        {/* Create Rule Modal */}
         <Modal
           isOpen={showCreateRuleModal}
-          onClose={() => setShowCreateRuleModal(false)}
+          onClose={() => {
+            setShowCreateRuleModal(false);
+            setSelectedRule(null);
+          }}
           title={selectedRule ? "Edit Rule" : "Create Rule"}
         >
-          <form className="space-y-4">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (selectedRule) {
+                handleUpdate(alertFormData);
+              } else {
+                handleCreate(alertFormData);
+              }
+            }}
+            className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Rule Name
-              </label>
+              <label className="block text-sm font-medium mb-1">Rule Name</label>
               <input
                 type="text"
                 className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
                 placeholder="Enter rule name"
                 required
-                defaultValue={alertFormData.name || selectedRule?.name}
+                value={alertFormData.name}
                 onChange={(e) =>
                   setAlertFormData({ ...alertFormData, name: e.target.value })
                 }
@@ -451,16 +573,12 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Description
-              </label>
+              <label className="block text-sm font-medium mb-1">Description</label>
               <textarea
                 className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
                 placeholder="Describe the rule"
                 rows={3}
-                defaultValue={
-                  alertFormData.description || selectedRule?.description
-                }
+                value={alertFormData.description}
                 onChange={(e) =>
                   setAlertFormData({
                     ...alertFormData,
@@ -470,122 +588,139 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
               />
             </div>
 
+            {/* Severity Select */}
             <div>
               <label className="block text-sm font-medium mb-1">Severity</label>
               <select
                 className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                defaultValue={alertFormData.severity || selectedRule?.severity}
-                onChange={(e) =>
-                  setAlertFormData({
-                    ...alertFormData,
-                    severity: e.target.value,
-                  })
-                }
+                value={alertFormData.severity}
+                onChange={(e) => handleSeverityChange(e.target.value)}
               >
-                <option value="">Select severity</option>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
               </select>
             </div>
+<div>
+  <label className="block text-sm font-medium mb-1">Conditions</label>
+  <div className="space-y-3">
+    {alertFormData.conditions.map((condition, index) => (
+      <div key={index} className="flex gap-2 items-start">
+        <div className="grid grid-cols-3 gap-2 flex-1">
+          {/* Condition Type */}
+          <select
+            className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+            value={condition.type || ""}
+            onChange={(e) => {
+              const newConditions = [...alertFormData.conditions];
+              newConditions[index] = {
+                ...condition,
+                type: e.target.value,
+                value: "", // Reset value when type changes
+                operator: "", // Reset operator when type changes
+              };
+              setAlertFormData({ ...alertFormData, conditions: newConditions });
+            }}
+          >
+            <option value="">Select Type</option>
+            <option value="time">Time</option>
+            <option value="access">Access Attempt</option>
+            <option value="location">Location</option>
+            <option value="device">Device Type</option>
+            <option value="user">User Role</option>
+          </select>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Conditions
-              </label>
-              <div className="space-y-2">
-                {/* <div className="flex gap-2">
-                  <select
-                    className="flex-1 px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                    defaultValue={
-                      alertFormData.conditions[0] || selectedRule?.conditions[0]
-                    }
-                    onChange={(e) =>
-                      setAlertFormData({
-                        ...alertFormData,
-                        conditions: [
-                          e.target.value,
-                          ...alertFormData.conditions.slice(1),
-                        ],
-                      })
-                    }
-                  >
-                    <option value="">Select condition</option>
-                    <option value="time">Time</option>
-                    <option value="access">Access Attempt</option>
-                    <option value="location">Location</option>
-                    <option value="device">Device</option>
-                    <option value="user">User Type</option>
-                  </select>
-                  <button
-                    type="button"
-                    className="px-3 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90"
-                    onClick={() =>
-                      setAlertFormData({
-                        ...alertFormData,
-                        conditions: [...alertFormData.conditions, ""],
-                      })
-                    }
-                  >
-                    Add
-                  </button>
-                </div> */}
-                {alertFormData.conditions.map((condition, index) => (
-                  <div key={index} className="flex gap-2">
-                    <select
-                      className="flex-1 px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                      defaultValue={condition}
-                      onChange={(e) =>
-                        setAlertFormData({
-                          ...alertFormData,
-                          conditions: [
-                            ...alertFormData.conditions.slice(0, index),
-                            e.target.value,
-                            ...alertFormData.conditions.slice(index + 1),
-                          ],
-                        })
-                      }
-                    >
-                      <option value="">Select condition</option>
-                      <option value="time">Time</option>
-                      <option value="access">Access Attempt</option>
-                      <option value="location">Location</option>
-                      <option value="device">Device</option>
-                      <option value="user">User Type</option>
-                    </select>
-                    <button
-                      type="button"
-                      className="px-3 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90"
-                      onClick={() =>
-                        setAlertFormData({
-                          ...alertFormData,
-                          conditions: [...alertFormData.conditions, ""],
-                        })
-                      }
-                    >
-                      Add
-                    </button>
-                    {alertFormData.conditions.length > 1 && (
-                      <button
-                        type="button"
-                        className="px-3 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90"
-                        onClick={() =>
-                          setAlertFormData({
-                            ...alertFormData,
-                            conditions: [
-                              ...alertFormData.conditions.slice(0, index),
-                              ...alertFormData.conditions.slice(index + 1),
-                            ],
-                          })
-                        }
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* Operator */}
+          <select
+            className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+            value={condition.operator || ""}
+            onChange={(e) => {
+              const newConditions = [...alertFormData.conditions];
+              newConditions[index] = {
+                ...condition,
+                operator: e.target.value,
+              };
+              setAlertFormData({ ...alertFormData, conditions: newConditions });
+            }}
+          >
+            <option value="">Select Operator</option>
+            <option value="equals">Equals</option>
+            <option value="not_equals">Not Equals</option>
+            <option value="greater_than">Greater Than</option>
+            <option value="less_than">Less Than</option>
+            <option value="between">Between</option>
+            <option value="contains">Contains</option>
+          </select>
+
+          {/* Value Input */}
+          <div className={`flex gap-2 ${condition.operator === 'between' ? 'flex-col md:flex-row' : ''}`}>
+            <input
+                type={condition.type === "time" ? "time" : "text"}
+                className="flex-1 px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                placeholder="Value"
+                value={condition.value || ""}
+                onChange={(e) => {
+                  const newConditions = [...alertFormData.conditions];
+                  newConditions[index] = {
+                    ...condition,
+                    value: e.target.value,
+                  };
+                  setAlertFormData({ ...alertFormData, conditions: newConditions });
+                }}
+              />
+
+{condition.operator === "between" && (
+                <input
+                  type={condition.type === "time" ? "time" : "text"}
+                  className="flex-1 px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                  placeholder="End Value"
+                  value={condition.secondaryValue || ""}
+                  onChange={(e) => {
+                    const newConditions = [...alertFormData.conditions];
+                    newConditions[index] = {
+                      ...condition,
+                      secondaryValue: e.target.value,
+                    };
+                    setAlertFormData({ ...alertFormData, conditions: newConditions });
+                  }}
+                />
+              )}
+          </div>
+        </div>
+
+        {/* Add/Remove buttons */}
+        <div className="flex gap-1">
+          {index === alertFormData.conditions.length - 1 && (
+            <button
+              type="button"
+              className="p-2 text-white bg-primary rounded-lg"
+              onClick={() =>
+                setAlertFormData({
+                  ...alertFormData,
+                  conditions: [...alertFormData.conditions, { type: "", operator: "", value: "" }],
+                })
+              }
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          )}
+          {alertFormData.conditions.length > 1 && (
+            <button
+              type="button"
+              className="p-2 text-white bg-red-500 rounded-lg"
+              onClick={() => {
+                const newConditions = alertFormData.conditions.filter((_, i) => i !== index);
+                setAlertFormData({ ...alertFormData, conditions: newConditions });
+              }}
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
             <div>
               <label className="block text-sm font-medium mb-1">Actions</label>
@@ -681,10 +816,14 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 mt-6 border-t">
+           {/* Form Buttons */}
+           <div className="flex justify-end gap-3 pt-4 mt-6 border-t">
               <button
                 type="button"
-                onClick={() => setShowCreateRuleModal(false)}
+                onClick={() => {
+                  setShowCreateRuleModal(false);
+                  setSelectedRule(null);
+                }}
                 className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50"
               >
                 Cancel
@@ -693,19 +832,23 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
                 type="submit"
                 className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90"
                 disabled={isSubmitting}
-                onClick={() => {
-                  if (selectedRule) {
-                    handleUpdate(alertFormData);
-                  } else {
-                    handleCreate(alertFormData);
-                  }
-                }}
               >
                 {selectedRule ? "Update Rule" : "Create Rule"}
               </button>
             </div>
           </form>
         </Modal>
+       {/* Delete Modal */}
+       {selectedRule && (
+          <DeleteModal
+            showDeleteModal={showDeleteConfirm}
+            setShowDeleteModal={setShowDeleteConfirm}
+            deleteText={`Delete Alert Rule "${selectedRule.name}"`}
+            handleDelete={handleDelete}
+            loading={isLoading}
+          />
+        )}
+
       </div>
     </div>
   );
