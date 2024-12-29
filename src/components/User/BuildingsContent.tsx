@@ -159,7 +159,7 @@ export default function BuildingsContent({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Floors</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Zones</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Created</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Actions</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -177,7 +177,7 @@ export default function BuildingsContent({
                   {formatDate(new Date(building.createdAt))}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex gap-3">
+                    <div className="text-right gap-3">
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();

@@ -276,7 +276,7 @@ export default function CamerasContent() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Status</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Zone</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Building</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Actions</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -312,7 +312,7 @@ export default function CamerasContent() {
                     <td className="px-6 py-4">{camera.zone.name}</td>
                     <td className="px-6 py-4">{camera.zone.building.name}</td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
+                      <div className="text-right items-right gap-2">
                       <button 
                       onClick={(e) => {
                         e.stopPropagation();

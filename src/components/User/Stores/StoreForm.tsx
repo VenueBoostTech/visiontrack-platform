@@ -67,7 +67,7 @@ export default function StoreForm({
           >
             <option value="">Select Sale Associate</option>
             {
-               businessStaffs.map((staff: any) => (<option key={staff.user.id} value={staff.user.id}>{staff.user.name} - {staff.department.name}</option>))
+               businessStaffs?.map((staff: any) => (<option key={staff.user.id} value={staff.user.id}>{staff.user.name} - {staff?.department?.name}</option>))
             }
           </select>
         </div>
@@ -84,7 +84,7 @@ export default function StoreForm({
           >
             <option value="">Select Brand Manager</option>
             {
-               businessStaffs.map((staff: any) => (<option key={staff.user.id} value={staff.user.id}>{staff.user.name} - {staff.department.name}</option>))
+               businessStaffs?.map((staff: any) => (<option key={staff.user.id} value={staff.user.id}>{staff.user.name} - {staff?.department?.name}</option>))
             }
           </select>
         </div>

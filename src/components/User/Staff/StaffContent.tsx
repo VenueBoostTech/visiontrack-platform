@@ -192,7 +192,7 @@ export default function StaffContent({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Position</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Department</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Joined</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Actions</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -255,7 +255,7 @@ export default function StaffContent({
                       {formatDate(member.user.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex gap-2">
+                      <div className="text-right gap-2">
                         <button
                           onClick={() => {
                             setSelectedStaff(member);

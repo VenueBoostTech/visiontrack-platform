@@ -90,7 +90,7 @@ export default function StaffForm({
           {
             departmentList.map((department) => (
               <option key={department.id} value={department.id}>
-                {department.name}
+                {department?.name}
               </option>
             ))
           }

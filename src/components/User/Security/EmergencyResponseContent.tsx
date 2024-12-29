@@ -214,7 +214,7 @@ export default function EmergencyResponse() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Team</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Status</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Location</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Actions</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -231,7 +231,7 @@ export default function EmergencyResponse() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">{team.location}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 text-right whitespace-nowrap">
                           <button className="text-primary hover:text-primary/80">
                             <Radio className="w-4 h-4" />
                           </button>
@@ -259,7 +259,7 @@ export default function EmergencyResponse() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Contact</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Number</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Action</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -276,7 +276,7 @@ export default function EmergencyResponse() {
                             {contact.type}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 text-right whitespace-nowrap">
                           <button className="text-primary hover:text-primary/80">
                             <Phone className="w-4 h-4" />
                           </button>

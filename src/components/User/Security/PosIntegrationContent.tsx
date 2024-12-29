@@ -313,7 +313,7 @@ export default function POSIntegrationContent() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Status</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Last Sync</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Version</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Transactions</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Transactions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -340,7 +340,7 @@ export default function POSIntegrationContent() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           {terminal.version}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 text-right py-4 whitespace-nowrap">
                           {terminal.transactions}
                         </td>
                       </tr>
@@ -369,7 +369,7 @@ export default function POSIntegrationContent() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Type</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Items</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Amount</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Status</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -399,7 +399,7 @@ export default function POSIntegrationContent() {
                 <td className="px-6 py-4 whitespace-nowrap font-medium">
                   ${transaction.amount.toFixed(2)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 text-right whitespace-nowrap">
                   <span className={`px-2 py-1 text-xs rounded-full ${
                     transaction.status === 'Completed'
                       ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'

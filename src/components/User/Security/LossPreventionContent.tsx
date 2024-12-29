@@ -151,7 +151,7 @@ export default function LossPreventionContent() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Location</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Type</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Risk Level</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Risk Level</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -169,7 +169,7 @@ export default function LossPreventionContent() {
                             {alert.status}
                         </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 text-right py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs rounded-full ${
                             alert.risk === 'High' 
                             ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
@@ -202,7 +202,7 @@ export default function LossPreventionContent() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Location</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Type</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Duration/Count</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Risk Level</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Risk Level</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -220,7 +220,7 @@ export default function LossPreventionContent() {
                         <td className="px-6 py-4 whitespace-nowrap">
                         {behavior.duration || behavior.count}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 text-right whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs rounded-full ${
                             behavior.risk === 'High' 
                             ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'

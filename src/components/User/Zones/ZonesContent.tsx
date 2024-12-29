@@ -248,7 +248,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Building</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Store</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Cameras</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Actions</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -282,7 +282,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{zone.cameras?.length}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex gap-2">
+                      <div className="text-right gap-2">
                         <button
                           onClick={() => {
                             setSelectedZone(zone);

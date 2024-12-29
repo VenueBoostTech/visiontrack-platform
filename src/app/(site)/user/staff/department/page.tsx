@@ -32,7 +32,7 @@ async function getDepartment() {
     },
   });
   if (owner?.ownedBusiness) {
-    departments = await prisma.department?.findMany({
+    departments = await prisma.department.findMany({
       where: {
         businessId: owner.ownedBusiness.id,
       },
@@ -41,11 +41,11 @@ async function getDepartment() {
       },
       include: {
         business: true,
+        staff: true  // Add this to include staff count
       },
     });
   }
-  
-  return departments
+  return departments;
 }
 
 export default async function DepartmentPage() {

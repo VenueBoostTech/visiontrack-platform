@@ -263,8 +263,8 @@ model Camera {
   // Relations
   zoneId        String      @db.ObjectId
   zone          Zone        @relation(fields: [zoneId], references: [id])
-  storeId       String      @db.ObjectId
-  store         Store       @relation(fields: [storeId], references: [id])
+  storeId       String?      @db.ObjectId
+  store         Store?       @relation(fields: [storeId], references: [id])
 }
 
 model AlertRule {
