@@ -4,11 +4,9 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/libs/prismaDb";
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
+import { supabase } from "@/lib/supabase";
 
-export const dynamic = 'force-dynamic'; // This tells Next.js this is a dynamic route
-
-// or
-export const revalidate = 0; // This will disable static generation for this route
+// export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -18,7 +16,6 @@ export async function GET() {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    // Get the business where user is owner
     const business = await prisma.business.findFirst({
       where: {
         ownerId: session.user.id
@@ -37,12 +34,11 @@ export async function GET() {
   }
 }
 
-
 export async function POST(req: Request) {
   try {
     const { business, owner } = await req.json();
 
-    // First create the owner user
+    // Create owner user
     const hashedPassword = await hash(owner.password, 12);
     const newOwner = await prisma.user.create({
       data: {
@@ -50,11 +46,11 @@ export async function POST(req: Request) {
         email: owner.email,
         password: hashedPassword,
         role: "BUSINESS_OWNER",
-        emailVerified: new Date(), // You might want to implement email verification instead
+        emailVerified: new Date(),
       },
     });
 
-    // Then create the business with the owner
+    // Create business
     const newBusiness = await prisma.business.create({
       data: {
         name: business.name,
@@ -68,6 +64,20 @@ export async function POST(req: Request) {
         owner: true,
       },
     });
+
+    // Sync to Supabase
+    try {
+      await supabase.auth.admin.createUser({
+        email: owner.email,
+        password: owner.password,
+        email_confirm: true,
+        user_metadata: {  // Changed from options to user_metadata
+          platforms: ['visiontrack']
+        }
+      });
+    } catch (supabaseError) {
+      console.log('Supabase sync failed:', supabaseError);
+    }
 
     return NextResponse.json({ business: newBusiness }, { status: 201 });
   } catch (error) {

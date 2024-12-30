@@ -58,11 +58,16 @@ export default function StaffContent({
     setIsLoading(true);
     try {
       const response = await axios.put(`/api/user/staff/${selectedStaff.id}`, data);
+      if (response.data.error) {
+        throw new Error(response.data.error);
+      }
       setStaff(prev => prev.map(s => s.id === selectedStaff.id ? response.data : s));
       setShowEditModal(false);
       toast.success("Staff member updated successfully!");
     } catch (error: any) {
-      toast.error(error.response?.data || 'Failed to update staff member');
+      // Handle the error message properly
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to update staff member';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
       setSelectedStaff(null);
@@ -185,8 +190,9 @@ export default function StaffContent({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Position</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Department</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Joined</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Actions</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -201,6 +207,9 @@ export default function StaffContent({
                   <span className="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
                     Business Owner
                   </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">
+                  All Departments
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">
                   {formatDate(owner?.createdAt)}
@@ -240,10 +249,13 @@ export default function StaffContent({
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">
+                      {member.department?.name || 'No Department'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">
                       {formatDate(member.user.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex gap-2">
+                      <div className="text-right gap-2">
                         <button
                           onClick={() => {
                             setSelectedStaff(member);

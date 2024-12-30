@@ -1,10 +1,10 @@
 import { Metadata } from "next";
-import { prisma } from "@/libs/prismaDb";
 import DepartmentContent from "@/components/User/Department/DepartmentContent";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 import { redirect } from "next/navigation";
-
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 export const metadata: Metadata = {
   title: `Department - ${process.env.PLATFORM_NAME}`,
   description: `Manage Department`,
@@ -41,11 +41,11 @@ async function getDepartment() {
       },
       include: {
         business: true,
+        staff: true  // Add this to include staff count
       },
     });
   }
-  
-  return departments
+  return departments;
 }
 
 export default async function DepartmentPage() {

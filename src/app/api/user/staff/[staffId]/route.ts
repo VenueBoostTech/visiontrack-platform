@@ -10,7 +10,7 @@ export async function PUT(
   try {
     const session = await getAuthSession();
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const owner = await prisma.user.findFirst({
@@ -24,10 +24,7 @@ export async function PUT(
     });
 
     if (!owner?.ownedBusiness) {
-      return NextResponse.json(
-        { error: 'Only business owners can update staff' }, 
-        { status: 403 }
-      );
+      return new NextResponse("Only business owners can update staff", { status: 403 });
     }
 
     const data = await request.json();
@@ -35,9 +32,17 @@ export async function PUT(
     const staff = await prisma.businessStaff.update({
       where: { 
         id: params.staffId,
-        businessId: owner.ownedBusiness.id // Ensure staff belongs to owner's business
+        businessId: owner.ownedBusiness.id
       },
       data: {
+        department: {
+          // If departmentId is provided, connect to that department
+          // If null, disconnect from current department
+          ...(data.departmentId 
+            ? { connect: { id: data.departmentId } }
+            : { disconnect: true }
+          )
+        },
         user: {
           update: {
             name: data.name,
@@ -55,6 +60,7 @@ export async function PUT(
             createdAt: true,
           }
         },
+        department: true,
         business: {
           select: {
             name: true
@@ -62,14 +68,11 @@ export async function PUT(
         }
       }
     });
-
+    
     return NextResponse.json(staff);
   } catch (error) {
     console.error('Staff update error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update staff member' }, 
-      { status: 500 }
-    );
+    return new NextResponse("Failed to update staff member", { status: 500 });
   }
 }
 

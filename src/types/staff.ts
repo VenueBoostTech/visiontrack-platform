@@ -10,6 +10,10 @@ export interface StaffMember {
       createdAt: Date;
     };
     departmentId: string;
+    department?: {
+      id: string;
+      name: string;
+    };
   }
   
   export interface CreateStaffData {

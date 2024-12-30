@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/libs/prismaDb";
 import { authOptions } from "@/libs/auth";
+import { supabase } from "@/lib/supabase";
 
 
 export async function GET() {
@@ -40,8 +41,10 @@ export async function GET() {
               role: true,
               createdAt: true
             }
-          }
-        }
+          },
+          department: true
+        },
+        
       });
       return NextResponse.json(staff);
     }
@@ -94,7 +97,7 @@ export async function POST(req: Request) {
       data: {
         businessId: user.ownedBusiness.id,
         userId: newStaffUser.id,
-        departmentId: departmentId,
+        ...(departmentId ? { departmentId } : {}) // Only include departmentId if it exists
       },
       include: {
         user: {
@@ -108,6 +111,21 @@ export async function POST(req: Request) {
         }
       }
     });
+
+    // sync to Supabase
+		try {
+			await supabase.auth.admin.createUser({
+			  email: email,
+			  password: '',
+			  email_confirm: true,
+			  user_metadata: {  // Changed from options to user_metadata
+				platforms: ['waitlist']
+			  }
+			});
+		  } catch (supabaseError) {
+			// If Supabase fails, just log it - don't disrupt main flow
+			console.error('Supabase sync failed:', supabaseError);
+		  }
 
     return NextResponse.json(businessStaff);
   } catch (error) {

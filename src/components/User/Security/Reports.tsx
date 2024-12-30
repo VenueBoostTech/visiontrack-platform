@@ -92,7 +92,7 @@ const Reports = () => {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Title</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Generated</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Actions</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -116,7 +116,7 @@ const Reports = () => {
                                             {report.status}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 text-right">
                                         <button className="text-primary hover:text-primary-dark">
                                             <Download className="w-5 h-5" />
                                         </button>

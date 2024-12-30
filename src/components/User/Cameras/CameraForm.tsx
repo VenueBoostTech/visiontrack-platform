@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 interface Property {
   id: string;
@@ -72,7 +73,7 @@ export default function CameraForm({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/properties?include=buildings.zones');
+        const response = await fetch('/api/user/properties?include=buildings.zones');
         if (!response.ok) throw new Error('Failed to fetch properties');
         const data = await response.json();
         setProperties(data);

@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Layers, Edit, Trash2, Plus, Search, Filter } from "lucide-react";
+import { Layers, Edit, Trash2, Plus, Search, Filter, Users, Camera, UserCheck } from "lucide-react";
 import Modal from "@/components/Common/Modal";
 import DeleteModal from "@/components/Common/Modals/DeleteModal";
 import toast from "react-hot-toast";
@@ -149,16 +149,60 @@ export default function StoreContent({
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        {/* Total Stores */}
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-lg dark:bg-blue-900">
               <Layers className="w-6 h-6 text-blue-600 dark:text-blue-300" />
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Total Store
-              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Stores</p>
               <h3 className="text-xl font-bold">{stores.length}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Stores with Cameras */}
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-100 rounded-lg dark:bg-emerald-900">
+              <Camera className="w-6 h-6 text-emerald-600 dark:text-emerald-300" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Monitored Stores</p>
+              <h3 className="text-xl font-bold">
+                {stores.filter(store => store.cameras?.length > 0).length}
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Brand Managers */}
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-purple-100 rounded-lg dark:bg-purple-900">
+              <Users className="w-6 h-6 text-purple-600 dark:text-purple-300" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Brand Managers</p>
+              <h3 className="text-xl font-bold">
+                {new Set(stores.map(store => store.brandManagerId)).size}
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Sales Associates */}
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-amber-100 rounded-lg dark:bg-amber-900">
+              <UserCheck className="w-6 h-6 text-amber-600 dark:text-amber-300" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Sales Associates</p>
+              <h3 className="text-xl font-bold">
+                {new Set(stores.map(store => store.saleAssociateId)).size}
+              </h3>
             </div>
           </div>
         </div>
@@ -198,7 +242,7 @@ export default function StoreContent({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
                   Brand Manager
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500">
                   Actions
                 </th>
               </tr>
@@ -230,7 +274,7 @@ export default function StoreContent({
                         {store.brandManager?.name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex gap-2">
+                        <div className="text-right gap-2">
                           <button
                             onClick={() => {
                               setSelectedStore(store);

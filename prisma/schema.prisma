@@ -75,6 +75,7 @@ model User {
   saleAssociate         Store[]      @relation("saleAssociate")
   brandManager          Store[]      @relation("brandManager")
   businessOwner         Store[]      @relation("businessOwner")
+  alertRules            AlertRule[]  @relation("UserAlertRules")
 }
 
 model VerificationToken {
@@ -84,6 +85,37 @@ model VerificationToken {
  expires    DateTime
 
  @@unique([identifier, token])
+}
+
+
+model NotificationChannel {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  type        String    // "email" | "sms" | "notification" | "logs"
+  name        String
+  description String
+  enabled     Boolean   @default(true)
+  config      Json      // For storing emails, phone numbers, etc.
+  businessId  String    @db.ObjectId
+  business    Business  @relation(fields: [businessId], references: [id])
+  updatedBy   String?   @db.ObjectId // Reference to user who last updated
+  createdBy   String    @db.ObjectId // Reference to user who created
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model BusinessPreferences {
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  businessId            String    @db.ObjectId @unique
+  business              Business  @relation(fields: [businessId], references: [id])
+  desktopNotifications  Boolean   @default(true)
+  soundAlerts           Boolean   @default(false)
+  minimumPriority      String    @default("all") // "all" | "low" | "medium" | "high"
+  businessHours        Json      // { start: string, end: string }
+  retentionDays        Int       @default(30)
+  updatedBy            String?   @db.ObjectId // Reference to user who last updated
+  createdBy            String    @db.ObjectId // Reference to user who created
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 }
 
 model Business {
@@ -102,6 +134,10 @@ model Business {
   staff           BusinessStaff[]
   properties      Property[]
   departments     Department[]
+  alertRules      AlertRule[]
+
+  notificationChannels NotificationChannel[]
+  preferences         BusinessPreferences?
 }
 
 model BusinessStaff {
@@ -113,8 +149,8 @@ model BusinessStaff {
  createdAt   DateTime  @default(now())
 
   // Relations
- departmentId  String       @db.ObjectId
- department    Department   @relation(fields: [departmentId], references: [id])
+  departmentId  String?       @db.ObjectId
+  department    Department?   @relation(fields: [departmentId], references: [id])
 }
 
 model Department {
@@ -227,8 +263,26 @@ model Camera {
   // Relations
   zoneId        String      @db.ObjectId
   zone          Zone        @relation(fields: [zoneId], references: [id])
-  storeId       String      @db.ObjectId
-  store         Store       @relation(fields: [storeId], references: [id])
+  storeId       String?      @db.ObjectId
+  store         Store?       @relation(fields: [storeId], references: [id])
+}
+
+model AlertRule {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  severity    String
+  enabled     Boolean
+  conditions  Json      // Changed from String[] to Json to store condition details
+  actions     String[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  userId      String    @db.ObjectId
+  user        User      @relation("UserAlertRules", fields: [userId], references: [id])
+  businessId  String    @db.ObjectId
+  business    Business  @relation(fields: [businessId], references: [id])
 }
 
 enum CameraStatus {
@@ -249,5 +303,3 @@ enum BusinessType {
   MULTI_FAMILY_RESIDENTIAL
   RETAIL
 }
-
-

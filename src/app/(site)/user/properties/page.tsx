@@ -1,9 +1,10 @@
 // app/user/properties/page.tsx
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/libs/auth";
+import { prisma } from "@/libs/prismaDb";
 import PropertiesContent from "@/components/User/PropertiesContent";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 export const metadata: Metadata = {
   title: `Properties - ${process.env.PLATFORM_NAME}`,
@@ -11,13 +12,37 @@ export const metadata: Metadata = {
 };
 
 async function getProperties() {
-  const properties = await prisma.property.findMany({
-    include: {
-      buildings: true
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect("/auth/signin");
+  }
+
+  // Get business owner and their business
+  const owner = await prisma.user.findFirst({
+    where: {
+      id: session.user.id,
+      role: "BUSINESS_OWNER",
     },
-	orderBy: {
-		createdAt: 'desc'
-	}
+    include: {
+      ownedBusiness: true,
+    },
+  });
+
+  if (!owner?.ownedBusiness) {
+    return [];
+  }
+
+  // Get properties for this specific business
+  const properties = await prisma.property.findMany({
+    where: {
+      businessId: owner.ownedBusiness.id,
+    },
+    include: {
+      buildings: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
   
   return properties;

@@ -9,6 +9,8 @@ import {
   Filter,
   Trash2,
   Edit,
+  Users2,
+  Layers,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
@@ -137,18 +139,67 @@ export default function DepartmentContent({
         )}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+     {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        {/* Total Departments */}
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg dark:bg-blue-900">
+              <Layers className="w-6 h-6 text-blue-600 dark:text-blue-300" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Departments</p>
+              <h3 className="text-xl font-bold">{department?.length}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Departments with Staff */}
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-emerald-100 rounded-lg dark:bg-emerald-900">
-              <UserCheck className="w-6 h-6 text-emerald-600 dark:text-emerald-300" />
+              <Users className="w-6 h-6 text-emerald-600 dark:text-emerald-300" />
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Total Departments
-              </p>
-              <h3 className="text-xl font-bold">{department?.length}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Active Departments</p>
+              <h3 className="text-xl font-bold">
+                {/* @ts-ignore  */}
+                {department?.filter(dept => dept.staff?.length > 0).length}
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Total Staff in Departments */}
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-purple-100 rounded-lg dark:bg-purple-900">
+              <UserCheck className="w-6 h-6 text-purple-600 dark:text-purple-300" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Staff</p>
+              <h3 className="text-xl font-bold">
+                {/* @ts-ignore  */}
+                {department?.reduce((total, dept) => total + (dept.staff?.length || 0), 0)}
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Average Staff per Department */}
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-amber-100 rounded-lg dark:bg-amber-900">
+              <Users2 className="w-6 h-6 text-amber-600 dark:text-amber-300" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Avg Staff per Dept</p>
+              <h3 className="text-xl font-bold">
+                {department?.length > 0
+                  // @ts-ignore 
+                  ? Math.round(department?.reduce((total, dept) => total + (dept.staff?.length || 0), 0) / department?.length)
+                  : 0}
+              </h3>
             </div>
           </div>
         </div>
@@ -187,7 +238,7 @@ export default function DepartmentContent({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
                   Business Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500">
                   Actions
                 </th>
               </tr>
@@ -201,7 +252,7 @@ export default function DepartmentContent({
                     </div>
                   </td>
                 </tr>
-              ) : department.length === 0 ? (
+              ) : department?.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
@@ -217,7 +268,7 @@ export default function DepartmentContent({
                   </td>
                 </tr>
               ) : (
-                department.map((department: any) => (
+                department?.map((department: any) => (
                   <tr
                     key={department.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
@@ -229,7 +280,7 @@ export default function DepartmentContent({
                       {department?.business?.name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex gap-2">
+                      <div className="text-right gap-2">
                         <button
                           onClick={() => {
                             setSelectDepartment(department);

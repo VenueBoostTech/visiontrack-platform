@@ -80,9 +80,8 @@ export default function StaffForm({
         <label className="block text-sm font-medium mb-1">Department</label>
         <select
           name="departmentId"
-          defaultValue={initialData?.departmentId || ""}
+          value={formData.departmentId}
           className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-          required
           onChange={(e) =>
             setFormData({ ...formData, departmentId: e.target.value })
           }
@@ -91,7 +90,7 @@ export default function StaffForm({
           {
             departmentList.map((department) => (
               <option key={department.id} value={department.id}>
-                {department.name}
+                {department?.name}
               </option>
             ))
           }

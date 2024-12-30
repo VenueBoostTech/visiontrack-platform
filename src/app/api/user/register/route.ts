@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { prisma } from "@/libs/prismaDb";
 import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 export async function POST(request: Request) {
 	const body = await request.json();
@@ -44,10 +45,26 @@ export async function POST(request: Request) {
 
 	try {
 		const user = await prisma.user.create({
+			// @ts-ignore
 			data: {
 				...newUser,
 			},
 		});
+
+		// sync to Supabase
+		try {
+			await supabase.auth.admin.createUser({
+			  email: email,
+			  password: password,
+			  email_confirm: true,
+			  user_metadata: {  // Changed from options to user_metadata
+				platforms: ['visiontrack']
+			  }
+			});
+		  } catch (supabaseError) {
+			// If Supabase fails, just log it - don't disrupt main flow
+			console.error('Supabase sync failed:', supabaseError);
+		  }
 
 		return NextResponse.json(user);
 	} catch (error) {
