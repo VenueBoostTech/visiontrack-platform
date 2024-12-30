@@ -1,20 +1,30 @@
 "use client";
 
-import { useState, useCallback, useEffect } from 'react';
-import { Camera, Edit, Power, Plus, Search, Filter, AlertCircle, Trash2, Eye } from 'lucide-react';
-import { toast } from 'react-hot-toast';
-import Modal from '@/components/Common/Modal';
-import CameraForm from './CameraForm';
-import DeleteModal from '@/components/Common/Modals/DeleteModal';
-import { useRouter } from 'next/navigation';
+import { useState, useCallback, useEffect } from "react";
+import {
+  Camera,
+  Edit,
+  Power,
+  Plus,
+  Search,
+  Filter,
+  AlertCircle,
+  Trash2,
+  Eye,
+} from "lucide-react";
+import { toast } from "react-hot-toast";
+import Modal from "@/components/Common/Modal";
+import CameraForm from "./CameraForm";
+import DeleteModal from "@/components/Common/Modals/DeleteModal";
+import { useRouter } from "next/navigation";
 
 interface CameraData {
   id: string;
   name: string;
   location: string;
   rtspUrl: string;
-  status: 'ACTIVE' | 'INACTIVE' | 'MAINTENANCE';
-  type: 'INDOOR' | 'OUTDOOR' | 'THERMAL';
+  status: "ACTIVE" | "INACTIVE" | "MAINTENANCE";
+  type: "INDOOR" | "OUTDOOR" | "THERMAL";
   direction?: string;
   zone: {
     name: string;
@@ -22,159 +32,172 @@ interface CameraData {
       name: string;
       property: {
         name: string;
-      }
-    }
-  }
+      };
+    };
+  };
 }
 
 export default function CamerasContent() {
-    const [showCreateModal, setShowCreateModal] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [selectedCamera, setSelectedCamera] = useState<CameraData | null>(null);
-    const [cameraToDelete, setCameraToDelete] = useState<CameraData | null>(null);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedCamera, setSelectedCamera] = useState<CameraData | null>(null);
+  const [cameraToDelete, setCameraToDelete] = useState<CameraData | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [cameras, setCameras] = useState<CameraData[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cameras, setCameras] = useState<CameraData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
+  const fetchCameras = async () => {
+    try {
+      const response = await fetch("/api/user/cameras");
+      if (!response.ok) throw new Error("Failed to fetch cameras");
+      const data = await response.json();
+      setCameras(data);
+    } catch (error) {
+      toast.error("Failed to load cameras");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const fetchCameras = async () => {
-      try {
-        const response = await fetch('/api/user/cameras');
-        if (!response.ok) throw new Error('Failed to fetch cameras');
-        const data = await response.json();
-        setCameras(data);
-      } catch (error) {
-        toast.error('Failed to load cameras');
-      } finally {
-        setIsLoading(false);
+  useEffect(() => {
+    fetchCameras();
+  }, []);
+
+  const handleDeleteCamera = async () => {
+    if (!cameraToDelete) return;
+    try {
+      setIsSubmitting(true);
+      const response = await fetch(`/api/user/cameras/${cameraToDelete.id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete camera");
+
+      setCameras((prev) =>
+        prev.filter((camera) => camera.id !== cameraToDelete.id)
+      );
+      toast.success("Camera deleted successfully");
+      setShowDeleteModal(false);
+      setCameraToDelete(null);
+    } catch (error) {
+      toast.error("Failed to delete camera");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCreateCamera = async (formData: any) => {
+    try {
+      setIsSubmitting(true);
+      const response = await fetch("/api/user/cameras", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create camera");
       }
-    };
 
-    useEffect(() => {
-      fetchCameras();
-    }, []);
+      const newCamera = await response.json();
+      setCameras((prev) => [newCamera, ...prev]);
+      toast.success("Camera added successfully");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create camera"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    const handleDeleteCamera = async () => {
-        if (!cameraToDelete) return;
-        try {
-          setIsSubmitting(true);
-          const response = await fetch(`/api/user/cameras/${cameraToDelete.id}`, {
-            method: 'DELETE',
-          });
-          if (!response.ok) throw new Error('Failed to delete camera');
-    
-          setCameras((prev) => prev.filter((camera) => camera.id !== cameraToDelete.id));
-          toast.success('Camera deleted successfully');
-          setShowDeleteModal(false);
-          setCameraToDelete(null);
-        } catch (error) {
-          toast.error('Failed to delete camera');
-        } finally {
-          setIsSubmitting(false);
-        }
-      };
-  
-    const handleCreateCamera = async (formData: any) => {
-      try {
-        setIsSubmitting(true);
-        const response = await fetch('/api/user/cameras', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-  
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.error || 'Failed to create camera');
-        }
-  
-        const newCamera = await response.json();
-        setCameras(prev => [newCamera, ...prev]);
-        toast.success('Camera added successfully');
-        handleCloseModal();
-      } catch (error) {
-        toast.error(error instanceof Error ? error.message : 'Failed to create camera');
-      } finally {
-        setIsSubmitting(false);
+  const handleEditCamera = async (formData: any) => {
+    try {
+      setIsSubmitting(true);
+      const response = await fetch(`/api/user/cameras/${selectedCamera?.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update camera");
       }
-    };
 
-    const handleEditCamera = async (formData: any) => {
-      try {
-        setIsSubmitting(true);
-        const response = await fetch(`/api/user/cameras/${selectedCamera?.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.error || 'Failed to update camera');
-        }
-
-        const updatedCamera = await response.json();
-        setCameras(prev => prev.map(camera => 
+      const updatedCamera = await response.json();
+      setCameras((prev) =>
+        prev.map((camera) =>
           camera.id === updatedCamera.id ? updatedCamera : camera
-        ));
-        toast.success('Camera updated successfully');
-        handleCloseModal();
-      } catch (error) {
-        toast.error(error instanceof Error ? error.message : 'Failed to update camera');
-      } finally {
-        setIsSubmitting(false);
+        )
+      );
+      toast.success("Camera updated successfully");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update camera"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleToggleStatus = async (camera: CameraData) => {
+    try {
+      const newStatus = camera.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+      const response = await fetch(`/api/user/cameras/${camera.id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update camera status");
       }
-    };
 
-    const handleToggleStatus = async (camera: CameraData) => {
-      try {
-        const newStatus = camera.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-        const response = await fetch(`/api/user/cameras/${camera.id}/status`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status: newStatus }),
-        });
+      const updatedCamera = await response.json();
+      setCameras((prev) =>
+        prev.map((cam) => (cam.id === camera.id ? updatedCamera : cam))
+      );
+      toast.success(`Camera ${newStatus.toLowerCase()}`);
+    } catch (error) {
+      toast.error("Failed to update camera status");
+    }
+  };
 
-        if (!response.ok) {
-          throw new Error('Failed to update camera status');
-        }
+  const handleView = (cameraId: string) => {
+    router.push(`/user/properties/cameras/${cameraId}`);
+  };
 
-        const updatedCamera = await response.json();
-        setCameras(prev => prev.map(cam => 
-          cam.id === camera.id ? updatedCamera : cam
-        ));
-        toast.success(`Camera ${newStatus.toLowerCase()}`);
-      } catch (error) {
-        toast.error('Failed to update camera status');
-      }
-    };
+  const handleCloseModal = useCallback(() => {
+    if (!isSubmitting) {
+      setShowCreateModal(false);
+      setShowEditModal(false);
+      setShowDeleteModal(false);
+      setSelectedCamera(null);
+    }
+  }, [isSubmitting]);
 
-    const handleView = (cameraId: string) => {
-      router.push(`/user/properties/cameras/${cameraId}`);
-    };
-  
-    const handleCloseModal = useCallback(() => {
-      if (!isSubmitting) {
-        setShowCreateModal(false);
-        setShowEditModal(false);
-        setShowDeleteModal(false);
-        setSelectedCamera(null);
-      }
-    }, [isSubmitting]);
-
-    // Calculate stats
-    const activeCamerasCount = cameras.filter(camera => camera.status === 'ACTIVE').length;
-    const inactiveCamerasCount = cameras.filter(camera => camera.status === 'INACTIVE').length;
-    const maintenanceCamerasCount = cameras.filter(camera => camera.status === 'MAINTENANCE').length;
+  // Calculate stats
+  const activeCamerasCount = cameras.filter(
+    (camera) => camera.status === "ACTIVE"
+  ).length;
+  const inactiveCamerasCount = cameras.filter(
+    (camera) => camera.status === "INACTIVE"
+  ).length;
+  const maintenanceCamerasCount = cameras.filter(
+    (camera) => camera.status === "MAINTENANCE"
+  ).length;
 
   return (
     <div className="px-5">
@@ -235,7 +258,9 @@ export default function CamerasContent() {
           <div className="flex justify-between items-center">
             <div>
               <h2 className="text-xl font-bold">Cameras</h2>
-              <p className="text-sm text-gray-500 mt-1">Manage and monitor all your cameras</p>
+              <p className="text-sm text-gray-500 mt-1">
+                Manage and monitor all your cameras
+              </p>
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
@@ -252,7 +277,7 @@ export default function CamerasContent() {
           <div className="flex gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input 
+              <input
                 type="text"
                 placeholder="Search cameras..."
                 className="w-full pl-10 pr-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
@@ -270,13 +295,27 @@ export default function CamerasContent() {
           <table className="w-full">
             <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Location</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Zone</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">Building</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
+                  Location
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
+                  Type
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
+                  Zone
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
+                  Building
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -299,31 +338,37 @@ export default function CamerasContent() {
                     <td className="px-6 py-4">{camera.location}</td>
                     <td className="px-6 py-4">{camera.type}</td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        camera.status === 'ACTIVE' 
-                          ? 'bg-green-100 text-green-800' 
-                          : camera.status === 'MAINTENANCE'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          camera.status === "ACTIVE"
+                            ? "bg-green-100 text-green-800"
+                            : camera.status === "MAINTENANCE"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                        }`}
+                      >
                         {camera.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4">{camera.zone.name}</td>
-                    <td className="px-6 py-4">{camera.zone.building.name}</td>
+                    <td className="px-6 py-4">{camera?.zone?.name}</td>
+                    <td className="px-6 py-4">
+                      {camera?.zone?.building?.name
+                        ? camera?.zone?.building?.name
+                        : "-"}
+                    </td>
                     <td className="px-6 py-4">
                       <div className="text-right items-right gap-2">
-                      <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleView(camera.id);
-                      }}
-                      className="p-1 text-gray-400 hover:text-blue-600"
-                      disabled={isLoading}
-                    >
-                      <Eye className="w-5 h-5" />
-                      </button>
-                        <button 
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleView(camera.id);
+                          }}
+                          className="p-1 text-gray-400 hover:text-blue-600"
+                          disabled={isLoading}
+                        >
+                          <Eye className="w-5 h-5" />
+                        </button>
+                        <button
                           onClick={() => {
                             setSelectedCamera(camera);
                             setShowEditModal(true);
@@ -333,14 +378,20 @@ export default function CamerasContent() {
                         >
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleToggleStatus(camera)}
                           className="p-1 hover:bg-gray-100 rounded-lg dark:hover:bg-gray-700"
-                          title={camera.status === 'ACTIVE' ? 'Deactivate camera' : 'Activate camera'}
+                          title={
+                            camera.status === "ACTIVE"
+                              ? "Deactivate camera"
+                              : "Activate camera"
+                          }
                         >
-                          <Power className={`w-4 h-4 ${camera.status === 'ACTIVE' ? 'text-green-600' : 'text-red-600'}`} />
+                          <Power
+                            className={`w-4 h-4 ${camera.status === "ACTIVE" ? "text-green-600" : "text-red-600"}`}
+                          />
                         </button>
-                        <button 
+                        <button
                           onClick={() => {
                             setCameraToDelete(camera);
                             setShowDeleteModal(true);
@@ -360,8 +411,8 @@ export default function CamerasContent() {
         </div>
       </div>
 
-       {/* Delete Modal */}
-       <DeleteModal
+      {/* Delete Modal */}
+      <DeleteModal
         showDeleteModal={showDeleteModal}
         setShowDeleteModal={setShowDeleteModal}
         deleteText="Delete Camera"
@@ -375,7 +426,7 @@ export default function CamerasContent() {
         onClose={handleCloseModal}
         title="Add New Camera"
       >
-        <CameraForm 
+        <CameraForm
           onSubmit={handleCreateCamera}
           onClose={handleCloseModal}
           isSubmitting={isSubmitting}
@@ -388,10 +439,10 @@ export default function CamerasContent() {
         onClose={handleCloseModal}
         title="Edit Camera"
       >
-        <CameraForm 
+        <CameraForm
           initialData={{
             ...selectedCamera,
-            zoneId: selectedCamera?.zone?.id || '',
+            zoneId: selectedCamera?.zone?.id || "",
           }}
           onSubmit={handleEditCamera}
           onClose={handleCloseModal}

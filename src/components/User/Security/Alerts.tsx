@@ -38,7 +38,6 @@ interface AlertRuleProps {
   initialAlerts: AlertRule[];
 }
 
-
 interface Preferences {
   desktopNotifications: boolean;
   soundAlerts: boolean;
@@ -50,25 +49,22 @@ interface Preferences {
   retentionDays: number;
 }
 
-
 const formatCondition = (condition: Condition) => {
   switch (condition.type) {
-    case 'time':
+    case "time":
       return `Time is between ${condition.value} and ${condition.secondaryValue}`;
-    case 'access':
-      return `Access attempts ${condition.operator.replace('_', ' ')} ${condition.value}`;
-    case 'location':
+    case "access":
+      return `Access attempts ${condition.operator.replace("_", " ")} ${condition.value}`;
+    case "location":
       return `Location is ${condition.operator} ${condition.value}`;
-    case 'device':
-      return `Device ${condition.operator === 'equals' ? 'is' : 'is not'} ${condition.value}`;
-    case 'user':
-      return `User role ${condition.operator === 'equals' ? 'is' : 'is not'} ${condition.value}`;
+    case "device":
+      return `Device ${condition.operator === "equals" ? "is" : "is not"} ${condition.value}`;
+    case "user":
+      return `User role ${condition.operator === "equals" ? "is" : "is not"} ${condition.value}`;
     default:
-      return '';
+      return "";
   }
 };
-
-
 
 const Alerts = ({ initialAlerts }: AlertRuleProps) => {
   const [activeTab, setActiveTab] = useState("notifications");
@@ -78,7 +74,9 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [notificationChannels, setNotificationChannels] = useState<NotificationChannel[]>([
+  const [notificationChannels, setNotificationChannels] = useState<
+    NotificationChannel[]
+  >([
     {
       id: "1",
       type: "email",
@@ -86,8 +84,8 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
       description: "Send alerts to specified email addresses",
       enabled: true,
       config: {
-        emails: []
-      }
+        emails: [],
+      },
     },
     {
       id: "2",
@@ -96,52 +94,55 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
       description: "Send alerts via SMS to security personnel",
       enabled: false,
       config: {
-        phone_numbers: []
-      }
-    }
+        phone_numbers: [],
+      },
+    },
   ]);
-  
+
   const [preferences, setPreferences] = useState<Preferences>({
     desktopNotifications: true,
     soundAlerts: false,
     minimumPriority: "all",
     businessHours: {
       start: "09:00",
-      end: "17:00"
+      end: "17:00",
     },
-    retentionDays: 30
+    retentionDays: 30,
   });
-  
-  const [showChannelConfig, setShowChannelConfig] = useState<string | null>(null);
 
-  
+  const [showChannelConfig, setShowChannelConfig] = useState<string | null>(
+    null
+  );
+
   const defaultFormData: AlertRule = {
     id: "",
     name: "",
     description: "",
     severity: "low",
     enabled: true,
-    conditions: [{
-      type: "",
-      operator: "",
-      value: "",
-    }],
+    conditions: [
+      {
+        type: "",
+        operator: "",
+        value: "",
+      },
+    ],
     actions: [],
     userId: "",
     businessId: "",
   };
 
-  const [alertFormData, setAlertFormData] = useState<AlertRule>(defaultFormData);
+  const [alertFormData, setAlertFormData] =
+    useState<AlertRule>(defaultFormData);
 
   const handleSeverityChange = (value: string) => {
     if (value === "low" || value === "medium" || value === "high") {
       setAlertFormData({
         ...alertFormData,
-        severity: value as "low" | "medium" | "high"
+        severity: value as "low" | "medium" | "high",
       });
     }
   };
-
 
   useEffect(() => {
     if (!showCreateRuleModal) {
@@ -152,18 +153,18 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
 
   useEffect(() => {
     if (selectedRule) {
-      const { 
-        id, 
-        name, 
-        description, 
-        severity, 
-        enabled, 
-        conditions, 
-        actions, 
-        userId, 
-        businessId 
+      const {
+        id,
+        name,
+        description,
+        severity,
+        enabled,
+        conditions,
+        actions,
+        userId,
+        businessId,
       } = selectedRule;
-      
+
       setAlertFormData({
         id,
         name,
@@ -173,7 +174,7 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
         conditions,
         actions,
         userId,
-        businessId
+        businessId,
       });
     } else {
       setAlertFormData(defaultFormData);
@@ -192,7 +193,7 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
           severity: data.severity,
           conditions: data.conditions,
           actions: data.actions,
-          enabled: true
+          enabled: true,
         }),
       });
 
@@ -217,38 +218,35 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
 
   const handleUpdate = async (data: Partial<AlertRule> & { id?: string }) => {
     const ruleId = data.id || selectedRule?.id;
-    
+
     if (!ruleId) {
       toast.error("No rule selected");
       return;
     }
-    
+
     setIsSubmitting(true);
     try {
-      const response = await fetch(
-        `/api/user/alert-rule/${ruleId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
-    
+      const response = await fetch(`/api/user/alert-rule/${ruleId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to update alert rule");
       }
-    
+
       const updatedRule = await response.json();
       setAlertRules((prev) =>
         prev.map((r) => (r.id === ruleId ? { ...r, ...data } : r))
       );
-      
+
       // Only close modal if it's a form update, not a toggle
       if (Object.keys(data).length > 1) {
         setShowCreateRuleModal(false);
       }
-      
+
       toast.success("Alert rule updated successfully!");
     } catch (error) {
       console.error("Update error:", error);
@@ -267,7 +265,6 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
     handleUpdate({ enabled, id: rule.id }); // Pass the rule ID directly
   };
 
-
   const handleCreateClick = () => {
     setSelectedRule(null); // Reset selected rule
     setAlertFormData(defaultFormData); // Reset form data
@@ -279,76 +276,80 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
       toast.error("No rule selected for deletion");
       return;
     }
-    
+
     setIsLoading(true);
     try {
       const response = await fetch(`/api/user/alert-rule/${selectedRule.id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete alert rule');
+        throw new Error(errorData.error || "Failed to delete alert rule");
       }
-      
-      setAlertRules(prev => prev.filter(rule => rule.id !== selectedRule.id));
-      toast.success('Alert rule deleted successfully');
+
+      setAlertRules((prev) =>
+        prev.filter((rule) => rule.id !== selectedRule.id)
+      );
+      toast.success("Alert rule deleted successfully");
       setShowDeleteConfirm(false);
     } catch (error) {
       console.error("Delete error:", error);
-      toast.error(error instanceof Error ? error.message : 'Failed to delete alert rule');
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete alert rule"
+      );
     } finally {
       setIsLoading(false);
       setSelectedRule(null);
     }
   };
 
-    // Fetch preferences
-    useEffect(() => {
-      const fetchPreferences = async () => {
-        try {
-          const response = await fetch('/api/business/preferences');
-          if (!response.ok) {
-            throw new Error('Failed to fetch preferences');
-          }
-          const data = await response.json();
-          setPreferences(data);
-        } catch (error) {
-          console.error('Fetch preferences error:', error);
-          toast.error('Failed to load preferences');
-        }
-      };
-
-      fetchPreferences();
-    }, []);
-
-    // Update handlers
-    const handleSavePreferences = async () => {
+  // Fetch preferences
+  useEffect(() => {
+    const fetchPreferences = async () => {
       try {
-        const response = await fetch('/api/business/preferences', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(preferences),
-        });
-
+        const response = await fetch("/api/business/preferences");
         if (!response.ok) {
-          throw new Error('Failed to save preferences');
+          throw new Error("Failed to fetch preferences");
         }
-
-        toast.success('Preferences saved successfully');
+        const data = await response.json();
+        setPreferences(data);
       } catch (error) {
-        console.error('Save preferences error:', error);
-        toast.error('Failed to save preferences');
+        console.error("Fetch preferences error:", error);
+        toast.error("Failed to load preferences");
       }
     };
 
-     // Fetch notification channels
+    fetchPreferences();
+  }, []);
+
+  // Update handlers
+  const handleSavePreferences = async () => {
+    try {
+      const response = await fetch("/api/business/preferences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(preferences),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save preferences");
+      }
+
+      toast.success("Preferences saved successfully");
+    } catch (error) {
+      console.error("Save preferences error:", error);
+      toast.error("Failed to save preferences");
+    }
+  };
+
+  // Fetch notification channels
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        const response = await fetch('/api/business/notification-channels');
+        const response = await fetch("/api/business/notification-channels");
         if (!response.ok) {
-          throw new Error('Failed to fetch channels');
+          throw new Error("Failed to fetch channels");
         }
         const data = await response.json();
         // Check if the data is not empty before setting the state
@@ -356,11 +357,11 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
           setNotificationChannels(data); // Only set if there is valid data
         } else {
           // Optional: handle empty response case if necessary
-          console.log('No notification channels found');
+          console.log("No notification channels found");
           // You can either leave this empty or show a message to the user
         }
       } catch (error) {
-        console.error('Fetch channels error:', error);
+        console.error("Fetch channels error:", error);
       }
     };
 
@@ -369,26 +370,24 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
 
   const handleChannelToggle = async (channelId: string, enabled: boolean) => {
     try {
-      const response = await fetch('/api/business/notification-channels', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/business/notification-channels", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: channelId, enabled }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update channel');
+        throw new Error("Failed to update channel");
       }
 
-      setNotificationChannels(channels =>
-        channels.map(c =>
-          c.id === channelId ? { ...c, enabled } : c
-        )
+      setNotificationChannels((channels) =>
+        channels.map((c) => (c.id === channelId ? { ...c, enabled } : c))
       );
     } catch (error) {
-      console.error('Update channel error:', error);
+      console.error("Update channel error:", error);
     }
   };
-  
+
   return (
     <div>
       {/* Your existing logic remains unchanged */}
@@ -431,72 +430,86 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
           {/* Notification Channels */}
           {activeTab === "notifications" && (
             <div className="p-6">
-            <div className="space-y-6">
-              {notificationChannels.map((channel) => (
-                <div key={channel.id} className="border rounded-lg p-4 dark:border-gray-700">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 ${
-                        channel.type === "email" 
-                          ? "bg-blue-100 text-blue-600" 
-                          : "bg-green-100 text-green-600"
-                      } rounded-lg`}>
-                        {channel.type === "email" ? <Mail className="w-5 h-5" /> : <Phone className="w-5 h-5" />}
+              <div className="space-y-6">
+                {notificationChannels.map((channel) => (
+                  <div
+                    key={channel.id}
+                    className="border rounded-lg p-4 dark:border-gray-700"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`p-2 ${
+                            channel.type === "email"
+                              ? "bg-blue-100 text-blue-600"
+                              : "bg-green-100 text-green-600"
+                          } rounded-lg`}
+                        >
+                          {channel.type === "email" ? (
+                            <Mail className="w-5 h-5" />
+                          ) : (
+                            <Phone className="w-5 h-5" />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-medium">{channel.name}</h3>
+                          <p className="text-sm text-gray-500 mt-1">
+                            {channel.description}
+                          </p>
+                          {channel.enabled && (
+                            <div className="mt-2">
+                              <span className="text-xs text-gray-500">
+                                {channel.type === "email"
+                                  ? `${channel.config.emails?.length || 0} email(s) configured`
+                                  : `${channel.config.phone_numbers?.length || 0} number(s) configured`}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-medium">{channel.name}</h3>
-                        <p className="text-sm text-gray-500 mt-1">{channel.description}</p>
-                        {channel.enabled && (
-                          <div className="mt-2">
-                            <span className="text-xs text-gray-500">
-                              {channel.type === "email" 
-                                ? `${channel.config.emails?.length || 0} email(s) configured`
-                                : `${channel.config.phone_numbers?.length || 0} number(s) configured`
-                              }
-                            </span>
-                          </div>
-                        )}
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="px-3 py-1 text-sm bg-gray-100 rounded-lg hover:bg-gray-200"
+                          onClick={() => setShowChannelConfig(channel.id)}
+                        >
+                          Configure
+                        </button>
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            checked={channel.enabled}
+                            onChange={(e) => {
+                              handleChannelToggle(channel.id, e.target.checked);
+                            }}
+                          />
+                          <span className="slider round"></span>
+                        </label>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="px-3 py-1 text-sm bg-gray-100 rounded-lg hover:bg-gray-200"
-                        onClick={() => setShowChannelConfig(channel.id)}
-                      >
-                        Configure
-                      </button>
-                      <label className="switch">
-                        <input
-                          type="checkbox"
-                          checked={channel.enabled}
-                          onChange={(e) => {
-                            handleChannelToggle(channel.id, e.target.checked);
-                          }}
-                        />
-                        <span className="slider round"></span>
-                      </label>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {/* Channel Configuration Modal */}
+              {showChannelConfig && (
+                <NotificationConfigModal
+                  channel={
+                    notificationChannels.find(
+                      (c) => c.id === showChannelConfig
+                    )!
+                  }
+                  isOpen={!!showChannelConfig}
+                  onClose={() => setShowChannelConfig(null)}
+                  onSave={(updatedChannel) => {
+                    setNotificationChannels((channels) =>
+                      channels.map((c) =>
+                        c.id === updatedChannel.id ? updatedChannel : c
+                      )
+                    );
+                  }}
+                />
+              )}
             </div>
-      
-            {/* Channel Configuration Modal */}
-            {showChannelConfig && (
-              <NotificationConfigModal
-                channel={notificationChannels.find(c => c.id === showChannelConfig)!}
-                isOpen={!!showChannelConfig}
-                onClose={() => setShowChannelConfig(null)}
-                onSave={(updatedChannel) => {
-                  setNotificationChannels(channels =>
-                    channels.map(c =>
-                      c.id === updatedChannel.id ? updatedChannel : c
-                    )
-                  );
-                }}
-              />
-            )}
-          </div>
           )}
 
           {activeTab === "rules" && (
@@ -504,7 +517,9 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
               <div className="flex justify-between items-center mb-6">
                 <div>
                   <h3 className="text-lg font-semibold">Alert Rules</h3>
-                  <p className="text-sm text-gray-500">Configure and manage alert rules for your system</p>
+                  <p className="text-sm text-gray-500">
+                    Configure and manage alert rules for your system
+                  </p>
                 </div>
                 {/* Create button */}
                 <button
@@ -539,45 +554,60 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
                               {rule.severity} priority
                             </span>
                           </div>
-                          <p className="text-sm text-gray-600 mt-1">{rule.description}</p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {rule.description}
+                          </p>
                         </div>
                         <div className="flex items-center gap-2">
-                        <label className="switch">
-                    <input
-                      type="checkbox"
-                      checked={rule.enabled}
-                      onChange={(e) => handleToggle(rule, e.target.checked)}
-                    />
-                    <span className="slider round"></span>
-                  </label>
+                          <label className="switch">
+                            <input
+                              type="checkbox"
+                              checked={rule.enabled}
+                              onChange={(e) =>
+                                handleToggle(rule, e.target.checked)
+                              }
+                            />
+                            <span className="slider round"></span>
+                          </label>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                      <h5 className="text-sm font-medium text-gray-700">Trigger Conditions</h5>
-                      <ul className="space-y-1">
-                        {/* Parse conditions if they're stored as strings */}
-                        {rule.conditions.map((condition, index) => {
-                          const parsedCondition = typeof condition === 'string' 
-                            ? JSON.parse(condition) 
-                            : condition;
-                          
-                          return (
-                            <li key={index} className="text-sm text-gray-600 flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-primary"></span>
-                              {formatCondition(parsedCondition)}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
+                        <div className="space-y-2">
+                          <h5 className="text-sm font-medium text-gray-700">
+                            Trigger Conditions
+                          </h5>
+                          <ul className="space-y-1">
+                            {/* Parse conditions if they're stored as strings */}
+                            {rule.conditions.map((condition, index) => {
+                              const parsedCondition =
+                                typeof condition === "string"
+                                  ? JSON.parse(condition)
+                                  : condition;
+
+                              return (
+                                <li
+                                  key={index}
+                                  className="text-sm text-gray-600 flex items-center gap-2"
+                                >
+                                  <span className="w-2 h-2 rounded-full bg-primary"></span>
+                                  {formatCondition(parsedCondition)}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
 
                         <div className="space-y-2">
-                          <h5 className="text-sm font-medium text-gray-700">Actions</h5>
+                          <h5 className="text-sm font-medium text-gray-700">
+                            Actions
+                          </h5>
                           <ul className="space-y-1">
                             {rule.actions.map((action, index) => (
-                              <li key={index} className="text-sm text-gray-600 flex items-center gap-2">
+                              <li
+                                key={index}
+                                className="text-sm text-gray-600 flex items-center gap-2"
+                              >
                                 <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                                 {action}
                               </li>
@@ -617,8 +647,12 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
                     <div className="flex justify-center mb-4">
                       <Bell className="w-12 h-12 text-gray-400" />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No Alert Rules</h3>
-                    <p className="mt-1 text-sm text-gray-500">Get started by creating a new alert rule.</p>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                      No Alert Rules
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Get started by creating a new alert rule.
+                    </p>
                     <button
                       className="mt-4 px-4 py-2 bg-primary text-white rounded-lg text-sm"
                       onClick={() => setShowCreateRuleModal(true)}
@@ -633,150 +667,157 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
 
           {/* Preferences */}
           {activeTab === "preferences" && (
-          <div className="p-6">
-          <div className="space-y-6">
-            {/* General Settings */}
-            <div className="border rounded-lg p-4 dark:border-gray-700">
-              <h3 className="font-medium mb-4">General Settings</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Enable Desktop Notifications</p>
-                    <p className="text-sm text-gray-500">
-                      Show alerts as desktop notifications
-                    </p>
+            <div className="p-6">
+              <div className="space-y-6">
+                {/* General Settings */}
+                <div className="border rounded-lg p-4 dark:border-gray-700">
+                  <h3 className="font-medium mb-4">General Settings</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">
+                          Enable Desktop Notifications
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Show alerts as desktop notifications
+                        </p>
+                      </div>
+                      <label className="switch">
+                        <input
+                          type="checkbox"
+                          checked={preferences.desktopNotifications}
+                          onChange={(e) =>
+                            setPreferences({
+                              ...preferences,
+                              desktopNotifications: e.target.checked,
+                            })
+                          }
+                        />
+                        <span className="slider round"></span>
+                      </label>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">Sound Alerts</p>
+                        <p className="text-sm text-gray-500">
+                          Play sound when new alerts arrive
+                        </p>
+                      </div>
+                      <label className="switch">
+                        <input
+                          type="checkbox"
+                          checked={preferences.soundAlerts}
+                          onChange={(e) =>
+                            setPreferences({
+                              ...preferences,
+                              soundAlerts: e.target.checked,
+                            })
+                          }
+                        />
+                        <span className="slider round"></span>
+                      </label>
+                    </div>
                   </div>
-                  <label className="switch">
-                    <input
-                      type="checkbox"
-                      checked={preferences.desktopNotifications}
-                      onChange={(e) =>
-                        setPreferences({
-                          ...preferences,
-                          desktopNotifications: e.target.checked,
-                        })
-                      }
-                    />
-                    <span className="slider round"></span>
-                  </label>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Sound Alerts</p>
-                    <p className="text-sm text-gray-500">
-                      Play sound when new alerts arrive
-                    </p>
-                  </div>
-                  <label className="switch">
-                    <input
-                      type="checkbox"
-                      checked={preferences.soundAlerts}
-                      onChange={(e) =>
-                        setPreferences({
-                          ...preferences,
-                          soundAlerts: e.target.checked,
-                        })
-                      }
-                    />
-                    <span className="slider round"></span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Alert Priority */}
-            <div className="border rounded-lg p-4 dark:border-gray-700">
-              <h3 className="font-medium mb-4">Minimum Alert Priority</h3>
-              <select
-                className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                value={preferences.minimumPriority}
-                onChange={(e) =>
-                  setPreferences({
-                    ...preferences,
-                    minimumPriority: e.target.value as Preferences['minimumPriority'],
-                  })
-                }
-              >
-                <option value="all">All Alerts</option>
-                <option value="low">Low and above</option>
-                <option value="medium">Medium and above</option>
-                <option value="high">High priority only</option>
-              </select>
-            </div>
-
-            {/* Business Hours */}
-            <div className="border rounded-lg p-4 dark:border-gray-700">
-              <h3 className="font-medium mb-4">Business Hours</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Start Time</label>
-                  <input
-                    type="time"
-                    value={preferences.businessHours.start}
+                {/* Alert Priority */}
+                <div className="border rounded-lg p-4 dark:border-gray-700">
+                  <h3 className="font-medium mb-4">Minimum Alert Priority</h3>
+                  <select
+                    className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                    value={preferences.minimumPriority}
                     onChange={(e) =>
                       setPreferences({
                         ...preferences,
-                        businessHours: {
-                          ...preferences.businessHours,
-                          start: e.target.value,
-                        },
+                        minimumPriority: e.target
+                          .value as Preferences["minimumPriority"],
                       })
                     }
-                    className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                  />
+                  >
+                    <option value="all">All Alerts</option>
+                    <option value="low">Low and above</option>
+                    <option value="medium">Medium and above</option>
+                    <option value="high">High priority only</option>
+                  </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">End Time</label>
-                  <input
-                    type="time"
-                    value={preferences.businessHours.end}
+
+                {/* Business Hours */}
+                <div className="border rounded-lg p-4 dark:border-gray-700">
+                  <h3 className="font-medium mb-4">Business Hours</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Start Time
+                      </label>
+                      <input
+                        type="time"
+                        value={preferences.businessHours.start}
+                        onChange={(e) =>
+                          setPreferences({
+                            ...preferences,
+                            businessHours: {
+                              ...preferences.businessHours,
+                              start: e.target.value,
+                            },
+                          })
+                        }
+                        className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        End Time
+                      </label>
+                      <input
+                        type="time"
+                        value={preferences.businessHours.end}
+                        onChange={(e) =>
+                          setPreferences({
+                            ...preferences,
+                            businessHours: {
+                              ...preferences.businessHours,
+                              end: e.target.value,
+                            },
+                          })
+                        }
+                        className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Alert Retention */}
+                <div className="border rounded-lg p-4 dark:border-gray-700">
+                  <h3 className="font-medium mb-4">Alert Retention</h3>
+                  <select
+                    className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                    value={preferences.retentionDays}
                     onChange={(e) =>
                       setPreferences({
                         ...preferences,
-                        businessHours: {
-                          ...preferences.businessHours,
-                          end: e.target.value,
-                        },
+                        retentionDays: Number(e.target.value),
                       })
                     }
-                    className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                  />
+                  >
+                    <option value="7">7 days</option>
+                    <option value="30">30 days</option>
+                    <option value="90">90 days</option>
+                    <option value="180">180 days</option>
+                  </select>
                 </div>
               </div>
-            </div>
 
-            {/* Alert Retention */}
-            <div className="border rounded-lg p-4 dark:border-gray-700">
-              <h3 className="font-medium mb-4">Alert Retention</h3>
-              <select
-                className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                value={preferences.retentionDays}
-                onChange={(e) =>
-                  setPreferences({
-                    ...preferences,
-                    retentionDays: Number(e.target.value),
-                  })
-                }
-              >
-                <option value="7">7 days</option>
-                <option value="30">30 days</option>
-                <option value="90">90 days</option>
-                <option value="180">180 days</option>
-              </select>
+              {/* Save Button */}
+              <div className="mt-6 flex justify-end">
+                <button
+                  className="px-4 py-2 bg-primary text-white rounded-lg"
+                  onClick={handleSavePreferences} // Use the handleSavePreferences function here
+                >
+                  Save Preferences
+                </button>
+              </div>
             </div>
-          </div>
-
-          {/* Save Button */}
-          <div className="mt-6 flex justify-end">
-            <button
-              className="px-4 py-2 bg-primary text-white rounded-lg"
-              onClick={handleSavePreferences} // Use the handleSavePreferences function here
-            >
-              Save Preferences
-            </button>
-          </div>
-        </div>
           )}
         </div>
 
@@ -788,7 +829,7 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
           }}
           title={selectedRule ? "Edit Rule" : "Create Rule"}
         >
-          <form 
+          <form
             onSubmit={(e) => {
               e.preventDefault();
               if (selectedRule) {
@@ -797,9 +838,12 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
                 handleCreate(alertFormData);
               }
             }}
-            className="space-y-4">
+            className="space-y-4"
+          >
             <div>
-              <label className="block text-sm font-medium mb-1">Rule Name</label>
+              <label className="block text-sm font-medium mb-1">
+                Rule Name
+              </label>
               <input
                 type="text"
                 className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
@@ -813,7 +857,9 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Description</label>
+              <label className="block text-sm font-medium mb-1">
+                Description
+              </label>
               <textarea
                 className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
                 placeholder="Describe the rule"
@@ -841,234 +887,294 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
                 <option value="high">High</option>
               </select>
             </div>
-          
+
             <div>
-              <label className="block text-sm font-medium mb-1">Conditions</label>
+              <label className="block text-sm font-medium mb-1">
+                Conditions
+              </label>
               <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-                {alertFormData.conditions.map((condition, index) => (
-                  <div key={index} className="flex gap-3 items-start">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 flex-1">
-                      {/* Condition Type */}
-                      <select
-                        className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                        value={condition.type || ""}
-                        onChange={(e) => {
-                          const newConditions = [...alertFormData.conditions];
-                          newConditions[index] = {
-                            ...condition,
-                            type: e.target.value,
-                            value: "",
-                            operator: "",
-                          };
-                          setAlertFormData({ ...alertFormData, conditions: newConditions });
-                        }}
-                      >
-                        <option value="">Select Type</option>
-                        <option value="time">Time Range</option>
-                        <option value="access">Access Attempts</option>
-                        <option value="location">Location</option>
-                        <option value="device">Device Type</option>
-                        <option value="user">User Role</option>
-                      </select>
-
-                      {/* Operator */}
-                      <select
-                        className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                        value={condition.operator || ""}
-                        onChange={(e) => {
-                          const newConditions = [...alertFormData.conditions];
-                          newConditions[index] = {
-                            ...condition,
-                            operator: e.target.value,
-                            value: "",
-                            secondaryValue: undefined,
-                          };
-                          setAlertFormData({ ...alertFormData, conditions: newConditions });
-                        }}
-                      >
-                        <option value="">Select Operator</option>
-                        {condition.type === "time" && (
-                          <>
-                            <option value="between">Between</option>
-                          </>
-                        )}
-                        {condition.type === "access" && (
-                          <>
-                            <option value="equals">Equals</option>
-                            <option value="greater_than">Greater Than</option>
-                            <option value="less_than">Less Than</option>
-                          </>
-                        )}
-                        {condition.type === "location" && (
-                          <>
-                            <option value="inside">Inside Zone</option>
-                            <option value="outside">Outside Zone</option>
-                          </>
-                        )}
-                        {condition.type === "device" && (
-                          <>
-                            <option value="equals">Is</option>
-                            <option value="not_equals">Is Not</option>
-                          </>
-                        )}
-                        {condition.type === "user" && (
-                          <>
-                            <option value="equals">Is</option>
-                            <option value="not_equals">Is Not</option>
-                          </>
-                        )}
-                      </select>
-
-                      {/* Value Inputs */}
-                      {condition.type === "time" && condition.operator === "between" ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          <div className="flex flex-col">
-                            <span className="text-xs text-gray-600 mb-1">Start Time</span>
-                            <input
-                              type="time"
-                              className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                              value={condition.value || ""}
-                              onChange={(e) => {
-                                const newConditions = [...alertFormData.conditions];
-                                newConditions[index] = {
-                                  ...condition,
-                                  value: e.target.value,
-                                };
-                                setAlertFormData({ ...alertFormData, conditions: newConditions });
-                              }}
-                            />
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-xs text-gray-600 mb-1">End Time</span>
-                            <input
-                              type="time"
-                              className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                              value={condition.secondaryValue || ""}
-                              onChange={(e) => {
-                                const newConditions = [...alertFormData.conditions];
-                                newConditions[index] = {
-                                  ...condition,
-                                  secondaryValue: e.target.value,
-                                };
-                                setAlertFormData({ ...alertFormData, conditions: newConditions });
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        // Other condition types remain unchanged
-                        <div>
-                          {condition.type === "access" && (
-                            <input
-                              type="number"
-                              className="w-full px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                              placeholder="Number of attempts"
-                              value={condition.value || ""}
-                              onChange={(e) => {
-                                const newConditions = [...alertFormData.conditions];
-                                newConditions[index] = {
-                                  ...condition,
-                                  value: e.target.value,
-                                };
-                                setAlertFormData({ ...alertFormData, conditions: newConditions });
-                              }}
-                            />
-                          )}
-
-                          {condition.type === "location" && (
-                            <select
-                              className="w-full px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                              value={condition.value || ""}
-                              onChange={(e) => {
-                                const newConditions = [...alertFormData.conditions];
-                                newConditions[index] = {
-                                  ...condition,
-                                  value: e.target.value,
-                                };
-                                setAlertFormData({ ...alertFormData, conditions: newConditions });
-                              }}
-                            >
-                              <option value="">Select Zone</option>
-                              <option value="entrance">Entrance</option>
-                              <option value="parking">Parking</option>
-                              <option value="restricted">Restricted Area</option>
-                            </select>
-                          )}
-
-                          {condition.type === "device" && (
-                            <select
-                              className="w-full px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                              value={condition.value || ""}
-                              onChange={(e) => {
-                                const newConditions = [...alertFormData.conditions];
-                                newConditions[index] = {
-                                  ...condition,
-                                  value: e.target.value,
-                                };
-                                setAlertFormData({ ...alertFormData, conditions: newConditions });
-                              }}
-                            >
-                              <option value="">Select Device Type</option>
-                              <option value="mobile">Mobile</option>
-                              <option value="desktop">Desktop</option>
-                              <option value="tablet">Tablet</option>
-                            </select>
-                          )}
-
-                          {condition.type === "user" && (
-                            <select
-                              className="w-full px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                              value={condition.value || ""}
-                              onChange={(e) => {
-                                const newConditions = [...alertFormData.conditions];
-                                newConditions[index] = {
-                                  ...condition,
-                                  value: e.target.value,
-                                };
-                                setAlertFormData({ ...alertFormData, conditions: newConditions });
-                              }}
-                            >
-                              <option value="">Select Role</option>
-                              <option value="admin">Admin</option>
-                              <option value="staff">Staff</option>
-                              <option value="user">Regular User</option>
-                            </select>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Add/Remove buttons */}
-                    <div className="flex gap-2 mt-2 ml-2">
-                      {index === alertFormData.conditions.length - 1 && (
-                        <button
-                          type="button"
-                          className="p-1.5 text-white bg-primary rounded-lg hover:bg-primary/90"
-                          onClick={() =>
+                {alertFormData.conditions.map((condition, index) => {
+                  const parsedCondition =
+                    typeof condition === "string"
+                      ? JSON.parse(condition)
+                      : condition;
+                  return (
+                    <div key={index} className="flex gap-3 items-start">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 flex-1">
+                        {/* Condition Type */}
+                        <select
+                          className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                          value={parsedCondition.type || ""}
+                          onChange={(e) => {
+                            const newConditions = [...alertFormData.conditions];
+                            newConditions[index] = {
+                              ...parsedCondition,
+                              type: e.target.value,
+                              value: "",
+                              operator: "",
+                            };
                             setAlertFormData({
                               ...alertFormData,
-                              conditions: [...alertFormData.conditions, { type: "", operator: "", value: "" }],
-                            })
-                          }
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                      {alertFormData.conditions.length > 1 && (
-                        <button
-                          type="button"
-                          className="p-1.5 text-white bg-red-500 rounded-lg hover:bg-red-600"
-                          onClick={() => {
-                            const newConditions = alertFormData.conditions.filter((_, i) => i !== index);
-                            setAlertFormData({ ...alertFormData, conditions: newConditions });
+                              conditions: newConditions,
+                            });
                           }}
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
+                          <option value="">Select Type</option>
+                          <option value="time">Time Range</option>
+                          <option value="access">Access Attempts</option>
+                          <option value="location">Location</option>
+                          <option value="device">Device Type</option>
+                          <option value="user">User Role</option>
+                        </select>
+
+                        {/* Operator */}
+                        <select
+                          className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                          value={parsedCondition.operator || ""}
+                          onChange={(e) => {
+                            const newConditions = [...alertFormData.conditions];
+                            newConditions[index] = {
+                              ...parsedCondition,
+                              operator: e.target.value,
+                              value: "",
+                              secondaryValue: undefined,
+                            };
+                            setAlertFormData({
+                              ...alertFormData,
+                              conditions: newConditions,
+                            });
+                          }}
+                        >
+                          <option value="">Select Operator</option>
+                          {parsedCondition.type === "time" && (
+                            <>
+                              <option value="between">Between</option>
+                            </>
+                          )}
+                          {parsedCondition.type === "access" && (
+                            <>
+                              <option value="equals">Equals</option>
+                              <option value="greater_than">Greater Than</option>
+                              <option value="less_than">Less Than</option>
+                            </>
+                          )}
+                          {parsedCondition.type === "location" && (
+                            <>
+                              <option value="inside">Inside Zone</option>
+                              <option value="outside">Outside Zone</option>
+                            </>
+                          )}
+                          {parsedCondition.type === "device" && (
+                            <>
+                              <option value="equals">Is</option>
+                              <option value="not_equals">Is Not</option>
+                            </>
+                          )}
+                          {parsedCondition.type === "user" && (
+                            <>
+                              <option value="equals">Is</option>
+                              <option value="not_equals">Is Not</option>
+                            </>
+                          )}
+                        </select>
+
+                        {/* Value Inputs */}
+                        {parsedCondition.type === "time" &&
+                        parsedCondition.operator === "between" ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div className="flex flex-col">
+                              <span className="text-xs text-gray-600 mb-1">
+                                Start Time
+                              </span>
+                              <input
+                                type="time"
+                                className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                                value={parsedCondition.value || ""}
+                                onChange={(e) => {
+                                  const newConditions = [
+                                    ...alertFormData.conditions,
+                                  ];
+                                  newConditions[index] = {
+                                    ...parsedCondition,
+                                    value: e.target.value,
+                                  };
+                                  setAlertFormData({
+                                    ...alertFormData,
+                                    conditions: newConditions,
+                                  });
+                                }}
+                              />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-xs text-gray-600 mb-1">
+                                End Time
+                              </span>
+                              <input
+                                type="time"
+                                className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                                value={parsedCondition.secondaryValue || ""}
+                                onChange={(e) => {
+                                  const newConditions = [
+                                    ...alertFormData.conditions,
+                                  ];
+                                  newConditions[index] = {
+                                    ...parsedCondition,
+                                    secondaryValue: e.target.value,
+                                  };
+                                  setAlertFormData({
+                                    ...alertFormData,
+                                    conditions: newConditions,
+                                  });
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          // Other condition types remain unchanged
+                          <div>
+                            {parsedCondition.type === "access" && (
+                              <input
+                                type="number"
+                                className="w-full px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                                placeholder="Number of attempts"
+                                value={parsedCondition.value || ""}
+                                onChange={(e) => {
+                                  const newConditions = [
+                                    ...alertFormData.conditions,
+                                  ];
+                                  newConditions[index] = {
+                                    ...parsedCondition,
+                                    value: e.target.value,
+                                  };
+                                  setAlertFormData({
+                                    ...alertFormData,
+                                    conditions: newConditions,
+                                  });
+                                }}
+                              />
+                            )}
+
+                            {parsedCondition.type === "location" && (
+                              <select
+                                className="w-full px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                                value={parsedCondition.value || ""}
+                                onChange={(e) => {
+                                  const newConditions = [
+                                    ...alertFormData.conditions,
+                                  ];
+                                  newConditions[index] = {
+                                    ...parsedCondition,
+                                    value: e.target.value,
+                                  };
+                                  setAlertFormData({
+                                    ...alertFormData,
+                                    conditions: newConditions,
+                                  });
+                                }}
+                              >
+                                <option value="">Select Zone</option>
+                                <option value="entrance">Entrance</option>
+                                <option value="parking">Parking</option>
+                                <option value="restricted">
+                                  Restricted Area
+                                </option>
+                              </select>
+                            )}
+
+                            {parsedCondition.type === "device" && (
+                              <select
+                                className="w-full px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                                value={parsedCondition.value || ""}
+                                onChange={(e) => {
+                                  const newConditions = [
+                                    ...alertFormData.conditions,
+                                  ];
+                                  newConditions[index] = {
+                                    ...parsedCondition,
+                                    value: e.target.value,
+                                  };
+                                  setAlertFormData({
+                                    ...alertFormData,
+                                    conditions: newConditions,
+                                  });
+                                }}
+                              >
+                                <option value="">Select Device Type</option>
+                                <option value="mobile">Mobile</option>
+                                <option value="desktop">Desktop</option>
+                                <option value="tablet">Tablet</option>
+                              </select>
+                            )}
+
+                            {parsedCondition.type === "user" && (
+                              <select
+                                className="w-full px-3 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                                value={parsedCondition.value || ""}
+                                onChange={(e) => {
+                                  const newConditions = [
+                                    ...alertFormData.conditions,
+                                  ];
+                                  newConditions[index] = {
+                                    ...parsedCondition,
+                                    value: e.target.value,
+                                  };
+                                  setAlertFormData({
+                                    ...alertFormData,
+                                    conditions: newConditions,
+                                  });
+                                }}
+                              >
+                                <option value="">Select Role</option>
+                                <option value="admin">Admin</option>
+                                <option value="staff">Staff</option>
+                                <option value="user">Regular User</option>
+                              </select>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Add/Remove buttons */}
+                      <div className="flex gap-2 mt-2 ml-2">
+                        {index === alertFormData.conditions.length - 1 && (
+                          <button
+                            type="button"
+                            className="p-1.5 text-white bg-primary rounded-lg hover:bg-primary/90"
+                            onClick={() =>
+                              setAlertFormData({
+                                ...alertFormData,
+                                conditions: [
+                                  ...alertFormData.conditions,
+                                  { type: "", operator: "", value: "" },
+                                ],
+                              })
+                            }
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {alertFormData.conditions.length > 1 && (
+                          <button
+                            type="button"
+                            className="p-1.5 text-white bg-red-500 rounded-lg hover:bg-red-600"
+                            onClick={() => {
+                              const newConditions =
+                                alertFormData.conditions.filter(
+                                  (_, i) => i !== index
+                                );
+                              setAlertFormData({
+                                ...alertFormData,
+                                conditions: newConditions,
+                              });
+                            }}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -1166,8 +1272,8 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
               </div>
             </div>
 
-           {/* Form Buttons */}
-           <div className="flex justify-end gap-3 pt-4 mt-6 border-t">
+            {/* Form Buttons */}
+            <div className="flex justify-end gap-3 pt-4 mt-6 border-t">
               <button
                 type="button"
                 onClick={() => {
@@ -1188,8 +1294,8 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
             </div>
           </form>
         </Modal>
-       {/* Delete Modal */}
-       {selectedRule && (
+        {/* Delete Modal */}
+        {selectedRule && (
           <DeleteModal
             showDeleteModal={showDeleteConfirm}
             setShowDeleteModal={setShowDeleteConfirm}
@@ -1198,7 +1304,6 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
             loading={isLoading}
           />
         )}
-
       </div>
     </div>
   );

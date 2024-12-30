@@ -11,23 +11,24 @@ export async function GET() {
     }
 
     const user = await prisma.user.findFirst({
-      where: { 
-        id: session.user.id 
+      where: {
+        id: session.user.id,
       },
       include: {
         ownedBusiness: true,
         workingAt: {
           include: {
-            business: true
-          }
-        }
-      }
+            business: true,
+          },
+        },
+      },
     });
 
-    const businessId = user?.role === 'BUSINESS_OWNER' 
-      ? user.ownedBusiness?.id 
-      // @ts-ignore
-      : user.workingAt?.businessId;
+    const businessId =
+      user?.role === "BUSINESS_OWNER"
+        ? user.ownedBusiness?.id
+        : // @ts-ignore
+          user.workingAt?.businessId;
 
     if (!businessId) {
       return NextResponse.json([]);
@@ -38,8 +39,8 @@ export async function GET() {
         OR: [
           { userId: session.user.id },
           // @ts-ignore
-          { businessId: businessId }
-        ]
+          { businessId: businessId },
+        ],
       },
       include: {
         user: {
@@ -48,8 +49,8 @@ export async function GET() {
             name: true,
             email: true,
             role: true,
-          }
-        }
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -69,27 +70,27 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const session = await getAuthSession();
-    
+
     if (!session?.user) {
       return NextResponse.json(
-        { error: 'You must be logged in' }, 
+        { error: "You must be logged in" },
         { status: 401 }
       );
     }
 
     // Get user with both ownedBusiness and workingAt
     const user = await prisma.user.findFirst({
-      where: { 
-        id: session.user.id 
+      where: {
+        id: session.user.id,
       },
       include: {
         ownedBusiness: true,
         workingAt: {
           include: {
-            business: true
-          }
-        }
-      }
+            business: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -97,9 +98,10 @@ export async function POST(request: Request) {
     }
 
     // Get business ID based on role
-    const businessId = user.role === 'BUSINESS_OWNER' 
-      ? user.ownedBusiness?.id 
-      : user.workingAt?.business?.id;
+    const businessId =
+      user.role === "BUSINESS_OWNER"
+        ? user.ownedBusiness?.id
+        : user.workingAt?.business?.id;
 
     if (!businessId) {
       return NextResponse.json({ error: "No business found" }, { status: 404 });
@@ -116,7 +118,7 @@ export async function POST(request: Request) {
     }
 
     // Convert conditions to an array of strings
-    const conditions = data.conditions ? data.conditions.map((c: any) => JSON.stringify(c)) : [];
+    const conditions = data.conditions || [];
 
     // Create the alert rule with conditions as string array
     const alertRule = await prisma.alertRule.create({
@@ -128,7 +130,7 @@ export async function POST(request: Request) {
         conditions, // Now it's an array of strings
         actions: data.actions || [],
         userId: session.user.id,
-        businessId: businessId
+        businessId: businessId,
       },
       include: {
         user: {
@@ -137,22 +139,27 @@ export async function POST(request: Request) {
             name: true,
             email: true,
             role: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     // Convert conditions back to objects in the response
     const responseRule = {
       ...alertRule,
-      conditions: alertRule.conditions.map(c => JSON.parse(c))
+      conditions: alertRule.conditions.map((c) => JSON.parse(c)),
     };
 
     return NextResponse.json(responseRule);
   } catch (error) {
     console.error("Create alert rule error:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to create alert rule" },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to create alert rule",
+      },
       { status: 500 }
     );
   }

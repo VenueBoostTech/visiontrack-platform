@@ -110,7 +110,7 @@ export default function PropertiesContent({
     
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/properties/${selectedProperty.id}`, {
+      const response = await fetch(`/api/user/properties/${selectedProperty.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
