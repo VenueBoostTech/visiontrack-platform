@@ -60,7 +60,7 @@ export default function PropertiesContent({
     
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/properties/${propertyToDelete.id}`, {
+      const response = await fetch(`/api/user/properties/${propertyToDelete.id}`, {
         method: 'DELETE',
       });
       
