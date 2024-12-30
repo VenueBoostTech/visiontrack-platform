@@ -53,7 +53,7 @@ interface CameraData {
     location?: string;
     rtspUrl: string;
     status: 'ACTIVE' | 'INACTIVE' | 'MAINTENANCE';
-    type: 'INDOOR' | 'OUTDOOR' | 'THERMAL';
+    type: 'INDOOR' | 'OUTDOOR' | 'THERMAL' | 'RETAIL';
     direction?: string;
     coverageArea?: any;
     capabilities?: {
@@ -69,6 +69,10 @@ interface CameraData {
       building?: {
         name: string;
       }
+    };
+    store?: {
+      id: string;
+      name: string;
     };
     // Additional monitoring data
     uptime: string;
@@ -250,6 +254,18 @@ interface CameraData {
                         <div className="flex justify-between">
                           <span>Zone</span>
                           <span className="font-medium">{camera.zone.name}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Zone</span>
+                          <span className="font-medium">
+                          {camera?.store?.name ? (
+                        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs">
+                          {camera.store.name}
+                        </span>
+                      ) : (
+                        "-"
+                      )}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Direction</span>

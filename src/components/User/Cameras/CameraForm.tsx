@@ -13,10 +13,27 @@ interface Building {
   zones: Zone[];
 }
 
+interface Store {
+  id: string;
+  name: string;
+}
+
+enum ZoneType {
+  ENTRANCE = 'ENTRANCE',
+  LOBBY = 'LOBBY',
+  PARKING = 'PARKING',
+  COMMON_AREA = 'COMMON_AREA',
+  GARAGE = 'GARAGE',
+  RETAIL = 'RETAIL',
+  SERVICE = 'SERVICE',
+  OUTDOOR = 'OUTDOOR'
+}
+
 interface Zone {
   id: string;
   name: string;
-  type: string;
+  type: ZoneType;
+  store?: Store;
   building: {
     id: string;
     property: {
@@ -38,6 +55,7 @@ interface CameraFormData {
   coverageArea?: any;
   capabilities?: Record<string, boolean>;
   zoneId: string;
+  storeId?: string;
 }
 
 interface CameraFormProps {
@@ -57,6 +75,7 @@ export default function CameraForm({
   const [selectedProperty, setSelectedProperty] = useState<string>('');
   const [selectedBuilding, setSelectedBuilding] = useState<string>('');
   const [selectedZone, setSelectedZone] = useState<string>(initialData?.zoneId || '');
+  const [selectedZoneData, setSelectedZoneData] = useState<Zone | null>(null);
   const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>(
     initialData?.capabilities ? Object.keys(initialData.capabilities) : []
   );
@@ -78,12 +97,14 @@ export default function CameraForm({
         const data = await response.json();
         setProperties(data);
 
-        // If we have initialData, set the selections
+        // If we have initialData, set the selections and fetch zone details
         if (initialData?.zoneId) {
-          const zone = await fetch(`/api/user/zones/${initialData.zoneId}`).then(res => res.json());
-          setSelectedZone(zone.id);
-          setSelectedBuilding(zone.building.id);
-          setSelectedProperty(zone.building.property.id);
+          const zoneResponse = await fetch(`/api/user/zones/${initialData.zoneId}`);
+          const zoneData = await zoneResponse.json();
+          setSelectedZoneData(zoneData);
+          setSelectedZone(zoneData.id);
+          setSelectedBuilding(zoneData.building.id);
+          setSelectedProperty(zoneData.building.property.id);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -94,11 +115,6 @@ export default function CameraForm({
     };
 
     fetchData();
-
-    // Reset form when initialData changes
-    if (initialData) {
-      setSelectedZone(initialData.zoneId);
-    }
   }, [initialData]);
 
   const availableBuildings = selectedProperty 
@@ -108,6 +124,24 @@ export default function CameraForm({
   const availableZones = selectedBuilding
     ? availableBuildings.find(b => b.id === selectedBuilding)?.zones || []
     : [];
+
+  const handleZoneChange = async (zoneId: string) => {
+    setSelectedZone(zoneId);
+    
+    if (zoneId) {
+      try {
+        const response = await fetch(`/api/user/zones/${zoneId}`);
+        if (!response.ok) throw new Error('Failed to fetch zone details');
+        const zoneData = await response.json();
+        setSelectedZoneData(zoneData);
+      } catch (error) {
+        console.error('Error fetching zone details:', error);
+        toast.error('Failed to load zone details');
+      }
+    } else {
+      setSelectedZoneData(null);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -123,8 +157,10 @@ export default function CameraForm({
       capabilities: selectedCapabilities.length > 0 ? selectedCapabilities.reduce((acc, curr) => ({
         ...acc,
         [curr]: true
-      }), {}) : null,
+      }), {}) : undefined,
       zoneId: selectedZone,
+      // Add store ID if zone is retail and has a store
+      storeId: selectedZoneData?.type === ZoneType.RETAIL ? selectedZoneData?.store?.id : undefined
     };
 
     onSubmit(data);
@@ -199,9 +235,7 @@ export default function CameraForm({
                   <option value="MAINTENANCE">Maintenance</option>
                 </select>
               </div>
-            </div>
 
-            <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium mb-1">Direction</label>
                 <input
@@ -212,7 +246,9 @@ export default function CameraForm({
                   placeholder="e.g., North, South-East"
                 />
               </div>
+            </div>
 
+            <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium mb-1">Property</label>
                 <select
@@ -221,6 +257,7 @@ export default function CameraForm({
                     setSelectedProperty(e.target.value);
                     setSelectedBuilding('');
                     setSelectedZone('');
+                    setSelectedZoneData(null);
                   }}
                   className="w-full px-3 py-1.5 rounded-md border dark:bg-gray-800 dark:border-gray-700"
                   required
@@ -242,6 +279,7 @@ export default function CameraForm({
                     onChange={(e) => {
                       setSelectedBuilding(e.target.value);
                       setSelectedZone('');
+                      setSelectedZoneData(null);
                     }}
                     className="w-full px-3 py-1.5 rounded-md border dark:bg-gray-800 dark:border-gray-700"
                     required
@@ -261,17 +299,27 @@ export default function CameraForm({
                   <label className="block text-sm font-medium mb-1">Zone</label>
                   <select
                     value={selectedZone}
-                    onChange={(e) => setSelectedZone(e.target.value)}
+                    onChange={(e) => handleZoneChange(e.target.value)}
                     className="w-full px-3 py-1.5 rounded-md border dark:bg-gray-800 dark:border-gray-700"
                     required
                   >
                     <option value="">Select a zone</option>
                     {availableZones.map((zone) => (
                       <option key={zone.id} value={zone.id}>
-                        {zone.name}
+                        {zone.name} {zone.type === ZoneType.RETAIL && zone.store ? ' (Store)' : ''}
                       </option>
                     ))}
                   </select>
+                </div>
+              )}
+
+              {/* Show store info if zone is retail and has a store */}
+              {selectedZoneData?.type === ZoneType.RETAIL && selectedZoneData.store && (
+                <div>
+                  <label className="block text-sm font-medium mb-1">Connected Store</label>
+                  <div className="px-3 py-1.5 rounded-md border bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
+                    {selectedZoneData.store.name}
+                  </div>
                 </div>
               )}
 
@@ -305,7 +353,7 @@ export default function CameraForm({
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 mt-4 pt-3 border-t px-4">
+        <div className="flex justify-end gap-3 mt-4 pt-3 border-t dark:border-gray-700 px-4">
           <button
             type="button"
             onClick={onClose}
