@@ -19,6 +19,7 @@ export async function PUT(
     }
 
     const data = await request.json();
+    console.log('Update received data:', data); // Debug log
     
     // Get user's business ID
     const user = await prisma.user.findFirst({
@@ -48,22 +49,18 @@ export async function PUT(
       return new NextResponse("Rule not found", { status: 404 });
     }
 
-    // Convert new conditions to string array if provided
-    const conditions = data.conditions 
-      ? data.conditions.map((c: any) => JSON.stringify(c))
-      : existingRule.conditions;
-
+    // Important: Don't use optional chaining here as it might cause empty updates
     const alertRule = await prisma.alertRule.update({
       where: { 
         id: params.alertRuleId
       },
       data: {
-        name: data.name ?? existingRule.name,
-        description: data.description ?? existingRule.description,
-        severity: data.severity ?? existingRule.severity,
+        name: data.name || existingRule.name,
+        description: data.description || existingRule.description,
+        severity: data.severity || existingRule.severity,
         enabled: data.enabled !== undefined ? data.enabled : existingRule.enabled,
-        conditions,
-        actions: data.actions ?? existingRule.actions,
+        conditions: data.conditions || existingRule.conditions,
+        actions: data.actions || existingRule.actions,
       },
       include: {
         user: {
@@ -77,13 +74,7 @@ export async function PUT(
       }
     });
 
-    // Convert conditions back to objects in response
-    const responseRule = {
-      ...alertRule,
-      conditions: alertRule.conditions.map(c => JSON.parse(c))
-    };
-
-    return NextResponse.json(responseRule);
+    return NextResponse.json(alertRule);
   } catch (error) {
     console.error('Rule update error:', error);
     return new NextResponse(
@@ -92,7 +83,6 @@ export async function PUT(
     );
   }
 }
-
 export async function DELETE(
   request: Request,
   { params }: { params: { alertRuleId: string } }
