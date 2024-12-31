@@ -24,7 +24,7 @@ interface CameraData {
   location: string;
   rtspUrl: string;
   status: "ACTIVE" | "INACTIVE" | "MAINTENANCE";
-  type: "INDOOR" | "OUTDOOR" | "THERMAL";
+  type: "INDOOR" | "OUTDOOR" | "THERMAL" | "RETAIL";
   direction?: string;
   zone: {
     name: string;
@@ -34,6 +34,10 @@ interface CameraData {
         name: string;
       };
     };
+  };
+  store?: {
+    id: string;
+    name: string;
   };
 }
 
@@ -313,6 +317,9 @@ export default function CamerasContent() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
                   Building
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500">
+                  Store
+                </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500">
                   Actions
                 </th>
@@ -355,6 +362,16 @@ export default function CamerasContent() {
                       {camera?.zone?.building?.name
                         ? camera?.zone?.building?.name
                         : "-"}
+                    </td>
+                     {/* Add Store cell */}
+                    <td className="px-6 py-4">
+                      {camera?.store?.name ? (
+                        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs">
+                          {camera.store.name}
+                        </span>
+                      ) : (
+                        "-"
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-right items-right gap-2">

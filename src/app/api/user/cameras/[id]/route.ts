@@ -22,9 +22,10 @@ export async function GET(
               include: {
                 property: true
               }
-            }
+            },
           }
-        }
+        },
+        store: true
       }
     });
 
