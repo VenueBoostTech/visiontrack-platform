@@ -23,7 +23,8 @@ import {
 	Bell as BellIcon,
 	ScrollText,
 	CreditCard,
-	Store
+	Store,
+	KeyRound
    } from "lucide-react";
    
    export const getUserSidebarData = (businessType: string = 'RETAIL'): Sidebar[] => {
@@ -179,6 +180,12 @@ import {
 	icon: <Settings className="w-6 h-6" />,
 	// @ts-ignore
 	children: [
+	{
+		id: "7-1",
+		title: "VT Credentials",
+		path: "/user/settings/vt-credentials",
+		icon: <KeyRound className="w-4 h-4" />
+	},
 	{
 		id: "7-2",
 		title: "Notifications",

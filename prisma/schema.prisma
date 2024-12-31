@@ -118,6 +118,18 @@ model BusinessPreferences {
   updatedAt            DateTime  @updatedAt
 }
 
+model VTApiCredential {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  platform_id     String    @unique  // ID from VisionTrack platform
+  name            String
+  api_key         String    // API key for VisionTrack
+  businessId      String    @db.ObjectId @unique  // Each business can only have one VT credential
+  business        Business  @relation(fields: [businessId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  lastUsed        DateTime? 
+}
+
 model Business {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
   name            String
@@ -138,6 +150,7 @@ model Business {
 
   notificationChannels NotificationChannel[]
   preferences         BusinessPreferences?
+  vtCredentials   VTApiCredential?
 }
 
 model BusinessStaff {
