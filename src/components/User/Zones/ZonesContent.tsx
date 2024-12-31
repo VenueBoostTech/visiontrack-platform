@@ -182,7 +182,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Buildings with Zones</p>
               <h3 className="text-xl font-bold">
-                {new Set(zones.map(zone => zone.building.name)).size}
+                {new Set(zones.map(zone => zone?.building?.name)).size}
               </h3>
             </div>
           </div>
@@ -275,7 +275,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{zone.floor || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {zone.building.property?.name} - {zone.building.name}
+                      {zone?.building?.property?.name} - {zone?.building?.name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {zone.store?.name || 'No Store'}
