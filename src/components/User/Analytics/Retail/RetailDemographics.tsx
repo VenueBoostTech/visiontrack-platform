@@ -1,102 +1,109 @@
 // components/User/Analytics/Retail/RetailDemographics.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Users, 
-  Clock, 
-  TrendingUp, 
-  Calendar,
+import {
+  Users,
+  Clock,
+  TrendingUp,
   ArrowUp,
-  ArrowDown,
-  ShoppingBag
+  ShoppingBag,
 } from "lucide-react";
-import { 
-  BarChart, 
-  Bar, 
+import {
+  BarChart,
+  Bar,
   LineChart,
   Line,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
+  Cell,
+} from "recharts";
 
 // Mock data
 const mockData = {
   ageGroups: [
-    { age: '18-24', count: 342, male: 180, female: 162 },
-    { age: '25-34', count: 456, male: 245, female: 211 },
-    { age: '35-44', count: 384, male: 198, female: 186 },
-    { age: '45-54', count: 298, male: 158, female: 140 },
-    { age: '55-64', count: 246, male: 128, female: 118 },
-    { age: '65+', count: 187, male: 95, female: 92 }
+    { age: "18-24", count: 342, male: 180, female: 162 },
+    { age: "25-34", count: 456, male: 245, female: 211 },
+    { age: "35-44", count: 384, male: 198, female: 186 },
+    { age: "45-54", count: 298, male: 158, female: 140 },
+    { age: "55-64", count: 246, male: 128, female: 118 },
+    { age: "65+", count: 187, male: 95, female: 92 },
   ],
   shoppingPatterns: [
-    { hour: '09', weekday: 120, weekend: 180 },
-    { hour: '11', weekday: 280, weekend: 350 },
-    { hour: '13', weekday: 340, weekend: 420 },
-    { hour: '15', weekday: 290, weekend: 380 },
-    { hour: '17', weekday: 310, weekend: 400 },
-    { hour: '19', weekday: 220, weekend: 320 },
-    { hour: '21', weekday: 150, weekend: 250 }
+    { hour: "09", weekday: 120, weekend: 180 },
+    { hour: "11", weekday: 280, weekend: 350 },
+    { hour: "13", weekday: 340, weekend: 420 },
+    { hour: "15", weekday: 290, weekend: 380 },
+    { hour: "17", weekday: 310, weekend: 400 },
+    { hour: "19", weekday: 220, weekend: 320 },
+    { hour: "21", weekday: 150, weekend: 250 },
   ],
   customerProfile: [
-    { name: 'Regular', value: 35 },
-    { name: 'Occasional', value: 45 },
-    { name: 'First-time', value: 20 }
-  ]
+    { name: "Regular", value: 35 },
+    { name: "Occasional", value: 45 },
+    { name: "First-time", value: 20 },
+  ],
 };
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
 
 export default function RetailDemographics() {
-  const [timeRange, setTimeRange] = useState('week');
-  const [selectedZone, setSelectedZone] = useState('all');
+  const [timeRange, setTimeRange] = useState("week");
+  const [selectedZone, setSelectedZone] = useState("all");
 
   // Calculate total visitors and gender ratio
-  const totalVisitors = mockData.ageGroups.reduce((sum, group) => sum + group.count, 0);
-  const maleVisitors = mockData.ageGroups.reduce((sum, group) => sum + group.male, 0);
-  const femaleVisitors = mockData.ageGroups.reduce((sum, group) => sum + group.female, 0);
+  const totalVisitors = mockData.ageGroups.reduce(
+    (sum, group) => sum + group.count,
+    0
+  );
+  const maleVisitors = mockData.ageGroups.reduce(
+    (sum, group) => sum + group.male,
+    0
+  );
+  const femaleVisitors = mockData.ageGroups.reduce(
+    (sum, group) => sum + group.female,
+    0
+  );
 
   return (
     <div className="space-y-6">
-     {/* Customer Demographics Header */}
-    <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-      <div>
-        <h2 className="text-2xl font-bold">Customer Demographics</h2>
-        <p className="text-sm text-gray-500 mt-1">
-          Analyze customer demographics and shopping patterns
-        </p>
+      {/* Customer Demographics Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+        <div>
+          <h2 className="text-2xl font-bold">Customer Demographics</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Analyze customer demographics and shopping patterns
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <select
+            className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value)}
+          >
+            <option value="day">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="quarter">This Quarter</option>
+          </select>
+          <select
+            className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
+            value={selectedZone}
+            onChange={(e) => setSelectedZone(e.target.value)}
+          >
+            <option value="all">All Zones</option>
+            <option value="entrance">Entrance</option>
+            <option value="checkout">Checkout Area</option>
+            <option value="electronics">Electronics</option>
+          </select>
+        </div>
       </div>
-      <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-        <select
-          className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
-          value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value)}
-        >
-          <option value="day">Today</option>
-          <option value="week">This Week</option>
-          <option value="month">This Month</option>
-          <option value="quarter">This Quarter</option>
-        </select>
-        <select
-          className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
-          value={selectedZone}
-          onChange={(e) => setSelectedZone(e.target.value)}
-        >
-          <option value="all">All Zones</option>
-          <option value="entrance">Entrance</option>
-          <option value="checkout">Checkout Area</option>
-          <option value="electronics">Electronics</option>
-        </select>
-      </div>
-    </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -109,7 +116,9 @@ export default function RetailDemographics() {
               <div>
                 <p className="text-sm text-gray-500">Total Customers</p>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-2xl font-bold">{totalVisitors.toLocaleString()}</h3>
+                  <h3 className="text-2xl font-bold">
+                    {totalVisitors.toLocaleString()}
+                  </h3>
                   <span className="text-xs text-green-500 flex items-center">
                     <ArrowUp className="w-3 h-3" /> 12%
                   </span>
@@ -203,17 +212,17 @@ export default function RetailDemographics() {
                   <XAxis dataKey="hour" />
                   <YAxis />
                   <Tooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="weekday" 
-                    stroke="#3b82f6" 
+                  <Line
+                    type="monotone"
+                    dataKey="weekday"
+                    stroke="#3b82f6"
                     strokeWidth={2}
                     name="Weekday"
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="weekend" 
-                    stroke="#10b981" 
+                  <Line
+                    type="monotone"
+                    dataKey="weekend"
+                    stroke="#10b981"
                     strokeWidth={2}
                     name="Weekend"
                   />
@@ -246,7 +255,10 @@ export default function RetailDemographics() {
                     dataKey="value"
                   >
                     {mockData.customerProfile.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -255,8 +267,8 @@ export default function RetailDemographics() {
               <div className="flex justify-center gap-4 mt-4">
                 {mockData.customerProfile.map((entry, index) => (
                   <div key={entry.name} className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
+                    <div
+                      className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: COLORS[index % COLORS.length] }}
                     />
                     <span className="text-sm">{entry.name}</span>
@@ -275,31 +287,34 @@ export default function RetailDemographics() {
           <CardContent>
             <div className="space-y-4">
               {[
-                { zone: 'Electronics', youngAdult: 45, adult: 35, senior: 20 },
-                { zone: 'Fashion', youngAdult: 55, adult: 30, senior: 15 },
-                { zone: 'Home Goods', youngAdult: 25, adult: 45, senior: 30 },
+                { zone: "Electronics", youngAdult: 45, adult: 35, senior: 20 },
+                { zone: "Fashion", youngAdult: 55, adult: 30, senior: 15 },
+                { zone: "Home Goods", youngAdult: 25, adult: 45, senior: 30 },
               ].map((zone) => (
                 <div key={zone.zone} className="p-4 border rounded-lg">
                   <div className="flex justify-between items-center mb-2">
                     <h4 className="font-medium">{zone.zone}</h4>
                     <span className="text-sm text-gray-500">
-                      Dominant: {Object.entries(zone)
-                        .filter(([key]) => key !== 'zone')
-                        .sort(([,a], [,b]) => b - a)[0][0].replace(/([A-Z])/g, ' $1').trim()}
+                      Dominant:{" "}
+                      {Object.entries(zone)
+                        .filter(([key]) => key !== "zone")
+                        .sort(([, a]: any, [, b]: any) => b - a)[0][0]
+                        .replace(/([A-Z])/g, " $1")
+                        .trim()}
                     </span>
                   </div>
                   <div className="h-2 bg-gray-200 rounded-full">
                     <div className="flex h-full rounded-full overflow-hidden">
-                      <div 
-                        className="bg-blue-500 h-full" 
+                      <div
+                        className="bg-blue-500 h-full"
                         style={{ width: `${zone.youngAdult}%` }}
                       />
-                      <div 
-                        className="bg-green-500 h-full" 
+                      <div
+                        className="bg-green-500 h-full"
                         style={{ width: `${zone.adult}%` }}
                       />
-                      <div 
-                        className="bg-amber-500 h-full" 
+                      <div
+                        className="bg-amber-500 h-full"
                         style={{ width: `${zone.senior}%` }}
                       />
                     </div>

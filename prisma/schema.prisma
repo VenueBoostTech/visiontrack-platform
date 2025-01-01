@@ -316,3 +316,20 @@ enum BusinessType {
   MULTI_FAMILY_RESIDENTIAL
   RETAIL
 }
+
+
+model CronSetup {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  type            String
+  data            Json
+}
+
+model AgeGenderDistribution {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  refId           String    @unique
+  total           Int       @default(0)
+  age             Json
+  gender          Json
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
