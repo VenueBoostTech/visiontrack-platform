@@ -27,32 +27,45 @@ export default function SigninWithPassword() {
 		});
 	};
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-
-		if (!integrations.isAuthEnabled) {
-			return toast.error(messages.auth);
-		}
-
-		if (!data.email) {
-			return toast.error("Please enter your email address.");
-		}
-
+	
+		if (!integrations.isAuthEnabled) return toast.error(messages.auth);
+		if (!data.email) return toast.error("Please enter your email address.");
+	
 		setLoading(true);
-
-		signIn("credentials", { ...data, redirect: false }).then((callback) => {
-			if (callback?.error) {
-				toast.error(callback.error);
-				setLoading(false);
-			}
-
-			if (callback?.ok && !callback?.error) {
-				toast.success("Logged in successfully");
-				setLoading(false);
-				setData({ email: "", password: "", remember: false });
-				router.push("/admin");
-			}
-		});
+	
+		try {
+		const authResult = await signIn("credentials", { ...data, redirect: false });
+		if (!authResult || authResult.error) {
+			toast.error(authResult?.error || "Login failed");
+			return;
+		}
+	
+		// // Get business and VT credentials
+		// const owner = await fetch('/api/user/business').then(r => r.json());
+		
+		// if (!owner?.ownedBusiness?.vtCredentials) {
+		// 	toast.error("No VT credentials found");
+		// 	return;
+		// }
+	
+		// // Set credentials for API calls
+		// vtClient.setCredentials({
+		// 	platform_id: owner.ownedBusiness.vtCredentials.platform_id,
+		// 	api_key: owner.ownedBusiness.vtCredentials.api_key
+		// });
+	
+		toast.success("Logged in successfully");
+		setData({ email: "", password: "", remember: false });
+		router.push("/admin");
+	
+		} catch (error) {
+		console.error('Login error:', error);
+		toast.error("Login failed");
+		} finally {
+		setLoading(false);
+		}
 	};
 
 	return (
