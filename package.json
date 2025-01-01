@@ -17,7 +17,8 @@
 		"fix-lint": "eslint --fix .",
 		"fix-style": "npm run fix-format && npm run fix-lint",
 		"test-build": "npm run check-style && npm run build",
-		"db:seed": "ts-node prisma/seeds/initial-setup.ts"
+		"db:seed": "ts-node prisma/seeds/initial-setup.ts",
+		"test:jobs": "ts-node src/scripts/test-jobs.ts"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.515.0",
