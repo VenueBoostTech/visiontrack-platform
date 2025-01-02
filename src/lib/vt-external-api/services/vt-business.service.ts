@@ -3,7 +3,7 @@ import vtClient from '../client';
 export const VTBusinessService = {
  async getBusinessId(platformId: string) {
    try {
-     const response = await vtClient.get(`/api/businesses/${platformId}`);
+     const response = await vtClient.get(`/api/businesses/by-vt-platform-id/${platformId}`);
       // @ts-ignore
      return response.business_id;
    } catch (error: any) {

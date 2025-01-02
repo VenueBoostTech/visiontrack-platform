@@ -2,7 +2,7 @@
 export const VT_ENDPOINTS = {
   BUSINESS: {
     CREATE: '/api/businesses',
-    GET_ID: (platformId: string) => `/api/businesses/${platformId}`,
+    GET_BY_PLATFORM_ID: (platformId: string) => `/api/businesses/by-vt-platform-id/${platformId}`,
   },
   CAMERAS: {
     BASE: '/api/camera',
