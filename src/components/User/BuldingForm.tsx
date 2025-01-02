@@ -11,9 +11,15 @@ interface BuildingFormProps {
   initialData?: {
     name: string;
     floorCount: number;
+    belowGroundFloors: number;
     propertyId: string;
   } | null;
-  onSubmit: (data: { name: string; floorCount: number; propertyId: string }) => void;
+  onSubmit: (data: { 
+    name: string;
+    floorCount: number;
+    belowGroundFloors: number;
+    propertyId: string;
+   }) => void;
   onClose: () => void;
   isSubmitting?: boolean;
 }
@@ -59,6 +65,7 @@ export default function BuildingForm({
       onSubmit({
         name: formData.get('name') as string,
         floorCount: parseInt(formData.get('floorCount') as string),
+        belowGroundFloors: parseInt(formData.get('belowGroundFloors') as string) || 0,
         propertyId: formData.get('propertyId') as string
       });
     }}>
@@ -90,16 +97,30 @@ export default function BuildingForm({
             ))}
           </select>
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Number of Floors</label>
-          <input
-            type="number"
-            name="floorCount"
-            defaultValue={initialData?.floorCount}
-            min="1"
-            className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-            required
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Below Ground Floors</label>
+            <input
+              type="number"
+              name="belowGroundFloors"
+              defaultValue={initialData?.belowGroundFloors || 0}
+              min="0"
+              className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+            />
+            <p className="text-xs text-gray-500 mt-1">Optional: number of basement levels</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Total Floors</label>
+            <input
+              type="number"
+              name="floorCount"
+              defaultValue={initialData?.floorCount || 1}
+              min="1"
+              className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">Will be numbered 0 to N-1</p>
+          </div>
         </div>
         <div className="flex justify-end gap-3">
           <button

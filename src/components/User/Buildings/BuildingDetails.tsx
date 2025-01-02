@@ -2,13 +2,14 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Building2, Maximize2, Video, Map, Home } from 'lucide-react';
+import { Building2, Video, Home } from 'lucide-react';
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 
 interface Building {
     id: string;
     name: string;
     floorCount: number;
+    belowGroundFloors: number;
     property: {
       id: string;
       name: string;
@@ -40,6 +41,24 @@ interface Building {
 export default function BuildingDetails({ buildingId }: { buildingId: string }) {
   const [building, setBuilding] = useState<Building | null>(null);
   const [activeFloor, setActiveFloor] = useState<number | null>(null);
+
+  const getAllFloors = (floorCount: number, belowGroundFloors: number) => {
+    const floors = [];
+    // Add below ground floors if any
+    for (let i = belowGroundFloors; i > 0; i--) {
+      floors.push(-i);
+    }
+    // Add regular floors (0 to floorCount-1)
+    for (let i = 0; i < floorCount; i++) {
+      floors.push(i);
+    }
+    return floors;
+  };
+
+  const getFloorLabel = (floor: number) => {
+    if (floor < 0) return `Basement ${Math.abs(floor)}`;
+    return `Floor ${floor}`;
+  };
 
   useEffect(() => {
     const fetchBuilding = async () => {
@@ -149,18 +168,16 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
           <div className="bg-white rounded-lg shadow-sm p-4">
             <h3 className="font-medium mb-4">Floors</h3>
             <div className="space-y-2">
-              {Array.from({ length: building.floorCount }, (_, i) => i + 1).map((floor) => (
+              {building && getAllFloors(building.floorCount, building.belowGroundFloors).map((floor) => (
                 <button
                   key={floor}
                   onClick={() => setActiveFloor(floor)}
                   className={`w-full px-4 py-2 text-left rounded-lg ${
-                    activeFloor === floor
-                      ? 'bg-primary text-white'
-                      : 'hover:bg-gray-100'
+                    activeFloor === floor ? 'bg-primary text-white' : 'hover:bg-gray-100'
                   }`}
                 >
                   <div className="flex justify-between items-center">
-                    <span>Floor {floor}</span>
+                    <span>{getFloorLabel(floor)}</span>
                     <span className="text-sm">
                       {getZonesForFloor(floor).length} zones
                     </span>
@@ -177,9 +194,6 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
             <div className="bg-white rounded-lg shadow-sm p-4">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-medium">Floor {activeFloor} Zones</h3>
-                <button className="p-2 hover:bg-gray-100 rounded-lg">
-                  <Maximize2 className="w-5 h-5" />
-                </button>
               </div>
 
               <div className="space-y-4">

@@ -205,6 +205,7 @@ model Building {
  id          String    @id @default(auto()) @map("_id") @db.ObjectId
  name        String
  floorCount  Int
+ belowGroundFloors Int      @default(0)
  createdAt   DateTime  @default(now())
  updatedAt   DateTime  @updatedAt
 
@@ -260,6 +261,7 @@ enum ZoneType {
   SERVICE
   OUTDOOR
   WAREHOUSE
+  HALL
 }
 
 model Camera {
