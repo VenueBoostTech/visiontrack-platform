@@ -411,6 +411,33 @@ export const adminSidebarData = [
 	},
 	{
 	  id: 4,
+	  title: "All Businesses",
+	  path: "/admin/businesses-list",
+	  icon: (
+		<svg
+		  width='24'
+		  height='24'
+		  viewBox='0 0 24 24'
+		  fill='none'
+		  xmlns='http://www.w3.org/2000/svg'
+		>
+		  <path
+			fillRule='evenodd'
+			clipRule='evenodd'
+			d='M12 6.75C12.4142 6.75 12.75 7.08579 12.75 7.5V9.5C12.75 9.91421 12.4142 10.25 12 10.25C11.5858 10.25 11.25 9.91421 11.25 9.5V7.5C11.25 7.08579 11.5858 6.75 12 6.75Z'
+			fill='currentColor'
+		  />
+		  <path
+			fillRule='evenodd'
+			clipRule='evenodd'
+			d='M7.25 3C7.25 2.58579 7.58579 2.25 8 2.25H16C16.4142 2.25 16.75 2.58579 16.75 3V21C16.75 21.4142 16.4142 21.75 16 21.75H8C7.58579 21.75 7.25 21.4142 7.25 21V3ZM8.75 3.75V20.25H15.25V3.75H8.75Z'
+			fill='currentColor'
+		  />
+		</svg>
+	  ),
+	},
+	{
+	  id: 5,
 	  title: "AI Integration",
 	  path: "/admin/ai-integration",
 	  icon: (
@@ -431,7 +458,7 @@ export const adminSidebarData = [
 	  ),
 	},
 	{
-	  id: 5,
+	  id: 6,
 	  title: "API Settings",
 	  path: "/admin/api",
 	  icon: (
@@ -458,7 +485,7 @@ export const adminSidebarData = [
 	  ),
 	},
 	{
-	  id: 6,
+	  id: 7,
 	  title: "Settings",
 	  path: "/admin/settings",
 	  icon: (
