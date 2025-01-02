@@ -148,6 +148,8 @@ export default function ZoneForm({
           <option value="RETAIL">Retail</option>
           <option value="SERVICE">Service</option>
           <option value="OUTDOOR">Outdoor</option>
+          <option value="WAREHOUSE">Warehouse</option>
+          <option value="HALL">Hall</option>
         </select>
       </div>
 
