@@ -16,7 +16,7 @@ export const VTBusinessService = {
 
  async createBusiness(data: { name: string, vt_platform_id: string, api_key: string }) {
    try {
-     const response = await vtClient.post('/api/businesses', data);
+     const response = await vtClient.post('/api/businesses/', data);
      // @ts-ignore
      return response.business_id;
    } catch (error) {
