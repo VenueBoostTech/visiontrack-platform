@@ -217,7 +217,7 @@ model Zone {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   type        ZoneType
-  floor       Int?
+  floor       Int?      @db.Int   // This will allow any integer including 0 and negative numbers
   coordinates Json?     
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
