@@ -11,6 +11,7 @@ interface Building {
   name: string;
   type: string;
   floorCount: number;
+  belowGroundFloors: number;
   createdAt: Date;
 }
 
@@ -25,6 +26,7 @@ interface Property {
 interface BuildingFormData {
   name: string;
   floorCount: number;
+  belowGroundFloors: number;
 }
 
 export default function PropertyDetails({
@@ -155,7 +157,8 @@ export default function PropertyDetails({
           const formData = new FormData(e.currentTarget);
           handleCreateBuilding({
             name: formData.get('name') as string,
-            floorCount: parseInt(formData.get('floorCount') as string)
+            floorCount: parseInt(formData.get('floorCount') as string),
+            belowGroundFloors: parseInt(formData.get('belowGroundFloors') as string) || 0
           });
         }}>
           <div className="space-y-4">
@@ -168,15 +171,29 @@ export default function PropertyDetails({
                 required
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Number of Floors</label>
-              <input
-                type="number"
-                name="floorCount"
-                min="1"
-                className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
-                required
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Below Ground Floors</label>
+                <input
+                  type="number"
+                  name="belowGroundFloors"
+                  min="0"
+                  defaultValue="0"
+                  className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                />
+                <p className="text-xs text-gray-500 mt-1">Optional: number of basement levels</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Above Ground Floors</label>
+                <input
+                  type="number"
+                  name="floorCount"
+                  min="1"
+                  className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 dark:border-gray-700"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">Will be numbered 0 to N-1</p>
+              </div>
             </div>
             <div className="flex justify-end gap-3">
               <button
