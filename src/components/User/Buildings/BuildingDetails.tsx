@@ -57,6 +57,7 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
 
   const getFloorLabel = (floor: number) => {
     if (floor < 0) return `Basement ${Math.abs(floor)}`;
+    if (floor === 0) return 'Ground Floor';
     return `Floor ${floor}`;
   };
 
@@ -68,14 +69,14 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
           const data = await response.json();
           setBuilding(data);
           if (data.floorCount > 0) {
-            setActiveFloor(1);
+            setActiveFloor(0); // Start with ground floor instead of 1
           }
         }
       } catch (error) {
         console.error('Error fetching building:', error);
       }
     };
-
+  
     fetchBuilding();
   }, [buildingId]);
 
@@ -200,12 +201,12 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
           {activeFloor && (
             <div className="bg-white rounded-lg shadow-sm p-4">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-medium">
-                  {activeFloor < 0 
-                    ? `Basement ${Math.abs(activeFloor)}` 
-                    : `Floor ${activeFloor}`} Zones
-                </h3>
-              </div>
+              <h3 className="font-medium">
+                {activeFloor < 0 ? `Basement ${Math.abs(activeFloor)}` :
+                activeFloor === 0 ? 'Ground Floor' :
+                `Floor ${activeFloor}`} Zones
+              </h3>
+            </div>
 
               <div className="space-y-4">
                 {getZonesForFloor(activeFloor).map((zone) => (
