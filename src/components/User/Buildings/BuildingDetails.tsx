@@ -82,7 +82,10 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
   if (!building) return null;
 
   const getZonesForFloor = (floor: number) => {
-    return building.zones.filter(zone => zone.floor === floor);
+    return building.zones.filter(zone => {
+      // Explicit comparison to handle floor 0
+      return zone.floor === floor;
+    });
   };
 
   const totalCameras = building.zones.reduce((acc, zone) => acc + zone.cameras.length, 0);
@@ -136,16 +139,20 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
               </div>
             </div>
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Building2 className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Floors</p>
-                  <h3 className="text-lg font-bold">{building.floorCount}</h3>
-                </div>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <Building2 className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Floors</p>
+                <h3 className="text-lg font-bold">
+                  {building.belowGroundFloors > 0 
+                    ? `${building.floorCount} + ${building.belowGroundFloors} underground`
+                    : building.floorCount}
+                </h3>
               </div>
             </div>
+          </div>
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-purple-100 rounded-lg">
@@ -193,7 +200,11 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
           {activeFloor && (
             <div className="bg-white rounded-lg shadow-sm p-4">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-medium">Floor {activeFloor} Zones</h3>
+                <h3 className="font-medium">
+                  {activeFloor < 0 
+                    ? `Basement ${Math.abs(activeFloor)}` 
+                    : `Floor ${activeFloor}`} Zones
+                </h3>
               </div>
 
               <div className="space-y-4">
