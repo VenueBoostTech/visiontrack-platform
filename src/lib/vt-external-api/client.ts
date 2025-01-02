@@ -1,11 +1,12 @@
 // lib/vt-external-api/client.ts
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-const VT_API_BASE_URL = 'https://coreapi.visiontrack.xyz';
+const VT_API_BASE_URL = 'http://coreapi.visiontrack.xyz';
 
 interface VTCredentials {
   platform_id: string;
   api_key: string;
+  business_id?: string;
 }
 
 class VTExternalClient {
@@ -24,9 +25,10 @@ class VTExternalClient {
     this.vtApi.interceptors.request.use((config) => {
       // @ts-ignore
       const credentials = config.credentials as VTCredentials;
-      if (credentials?.platform_id && credentials?.api_key) {
-        config.headers['X-VT-Platform-ID'] = credentials.platform_id;
-        config.headers['X-VT-API-Key'] = credentials.api_key;
+      if (credentials) {
+        if (credentials.platform_id) config.headers['X-VT-Platform-ID'] = credentials.platform_id;
+        if (credentials.api_key) config.headers['X-VT-API-Key'] = credentials.api_key;
+        if (credentials.business_id) config.headers['X-VT-Business-ID'] = credentials.business_id;
       }
       return config;
     });

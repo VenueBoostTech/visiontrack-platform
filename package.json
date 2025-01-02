@@ -17,7 +17,8 @@
 		"fix-lint": "eslint --fix .",
 		"fix-style": "npm run fix-format && npm run fix-lint",
 		"test-build": "npm run check-style && npm run build",
-		"db:seed": "ts-node prisma/seeds/initial-setup.ts"
+		"db:seed": "ts-node prisma/seeds/initial-setup.ts",
+		"test:jobs": "ts-node src/scripts/test-jobs.ts"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.515.0",
@@ -42,11 +43,13 @@
 		"clsx": "^2.1.1",
 		"crypto": "^1.0.1",
 		"lucide-react": "^0.468.0",
+		"mailosaur": "^8.7.0",
 		"next": "14.0.4",
 		"next-auth": "^4.24.11",
 		"next-sanity": "^7.0.8",
 		"next-themes": "^0.2.1",
 		"nextjs-toploader": "^1.6.6",
+		"node-cron": "^3.0.3",
 		"nodemailer": "^6.9.8",
 		"openai": "^4.27.0",
 		"phc-argon2": "^1.1.4",
@@ -69,7 +72,7 @@
 	},
 	"devDependencies": {
 		"@anthropic-ai/sdk": "^0.33.1",
-		"@antiwork/shortest": "^0.1.1",
+		"@antiwork/shortest": "^0.3.0",
 		"@types/bcrypt": "^5.0.2",
 		"@types/bcryptjs": "^2.4.6",
 		"@types/jest": "^29.5.14",
