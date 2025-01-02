@@ -258,6 +258,7 @@ enum ZoneType {
   RETAIL
   SERVICE
   OUTDOOR
+  WAREHOUSE
 }
 
 model Camera {

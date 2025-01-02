@@ -273,7 +273,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
                         {zone.type}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{zone.floor || '-'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{zone.floor || '0'}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {zone?.building?.property?.name} - {zone?.building?.name}
                     </td>
