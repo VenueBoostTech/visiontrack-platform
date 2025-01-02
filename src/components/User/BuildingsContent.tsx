@@ -13,6 +13,7 @@ interface Building {
   id: string;
   name: string;
   floorCount: number;
+  belowGroundFloors: number;
   createdAt: Date;
   property: {
     id: string;
@@ -171,7 +172,16 @@ export default function BuildingsContent({
                 >
                   <td className="px-6 py-4 whitespace-nowrap font-medium">{building.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{building.property.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{building.floorCount}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {building.belowGroundFloors > 0 ? (
+                      <div className="flex flex-col">
+                        <span>{building.floorCount} above</span>
+                        <span className="text-sm text-gray-500">{building.belowGroundFloors} underground</span>
+                      </div>
+                    ) : (
+                      building.floorCount
+                    )}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">{building.zones.length}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                   {formatDate(new Date(building.createdAt))}
