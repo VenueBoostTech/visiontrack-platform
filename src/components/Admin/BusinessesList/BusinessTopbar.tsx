@@ -8,10 +8,10 @@ export default function BusinessTopbar() {
       <div className="space-y-1">
         <h2 className="text-2xl font-bold tracking-tight">
           <Building2 className="inline-block mr-2 h-6 w-6" />
-          Businesses
+          Manage VisionTrack Businesses
         </h2>
         <p className="text-sm text-muted-foreground">
-          Manage all registered businesses
+          View and manage all registered businesses in the VisionTrack platform with their test and production statuses
         </p>
       </div>
       <div className="flex items-center gap-2"></div>
