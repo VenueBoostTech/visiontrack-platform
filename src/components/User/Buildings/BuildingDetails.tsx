@@ -83,9 +83,12 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
   if (!building) return null;
 
   const getZonesForFloor = (floor: number) => {
+    
     return building.zones.filter(zone => {
-      // Explicit comparison to handle floor 0
-      return zone.floor === floor;
+      const zoneFloor = parseInt(zone.floor.toString());
+      const targetFloor = parseInt(floor.toString());
+      
+      return zoneFloor === targetFloor;
     });
   };
 
@@ -198,7 +201,7 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
 
         {/* Floor Details & Zones */}
         <div className="lg:col-span-2">
-          {activeFloor && (
+        {activeFloor !== null && (
             <div className="bg-white rounded-lg shadow-sm p-4">
               <div className="flex justify-between items-center mb-4">
               <h3 className="font-medium">
@@ -243,9 +246,11 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
                   </div>
                 ))}
 
-                {getZonesForFloor(activeFloor).length === 0 && (
+              {getZonesForFloor(activeFloor).length === 0 && (
                   <div className="text-center py-8 text-gray-500">
-                    No zones on this floor
+                    No zones on {activeFloor < 0 ? `Basement ${Math.abs(activeFloor)}` :
+                    activeFloor === 0 ? 'Ground Floor' :
+                    `Floor ${activeFloor}`}
                   </div>
                 )}
               </div>
