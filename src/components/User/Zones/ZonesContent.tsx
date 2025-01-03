@@ -137,7 +137,8 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
       SERVICE: 'bg-gray-100 text-gray-800',
       OUTDOOR: 'bg-teal-100 text-teal-800',
       WAREHOUSE: 'bg-indigo-100 text-indigo-800',  // Deep blue-purple shade
-      HALL: 'bg-amber-100 text-amber-800'          // Warm golden shade  
+      HALL: 'bg-amber-100 text-amber-800',          // Warm golden shade  
+      UNKNOWN: 'bg-gray-100 text-gray-800'
     };
     return colors[type as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };

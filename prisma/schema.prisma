@@ -388,4 +388,5 @@ enum ZoneType {
   OUTDOOR
   WAREHOUSE
   HALL
+  UNKNOWN
 }

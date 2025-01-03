@@ -28,7 +28,8 @@ enum ZoneType {
   SERVICE = 'SERVICE',
   OUTDOOR = 'OUTDOOR',
   WAREHOUSE = 'WAREHOUSE',
-  HALL = 'HALL'
+  HALL = 'HALL',
+  UNKNOWN = 'UNKNOWN'
 }
 
 interface Zone {
