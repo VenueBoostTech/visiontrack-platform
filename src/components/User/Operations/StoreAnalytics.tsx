@@ -1,61 +1,70 @@
 // components/User/Operations/StoreAnalytics.tsx
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  BarChart2, 
-  TrendingUp, 
-  Users, 
+import {
+  TrendingUp,
+  Users,
   ArrowUp,
-  ArrowDown,
-  Store,
   DollarSign,
-  Activity
+  Activity,
 } from "lucide-react";
-import { 
-  AreaChart,
-  Area,
+import {
   BarChart,
   Bar,
   LineChart,
   Line,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts';
+} from "recharts";
 
 const mockData = {
   performanceMetrics: [
-    { hour: '09:00', traffic: 120, sales: 2400, conversion: 15 },
-    { hour: '10:00', traffic: 180, sales: 4200, conversion: 18 },
-    { hour: '11:00', traffic: 240, sales: 6300, conversion: 21 },
-    { hour: '12:00', traffic: 280, sales: 8100, conversion: 24 },
-    { hour: '13:00', traffic: 260, sales: 7200, conversion: 22 },
-    { hour: '14:00', traffic: 220, sales: 5400, conversion: 20 },
-    { hour: '15:00', traffic: 190, sales: 4800, conversion: 19 }
+    { hour: "09:00", traffic: 120, sales: 2400, conversion: 15 },
+    { hour: "10:00", traffic: 180, sales: 4200, conversion: 18 },
+    { hour: "11:00", traffic: 240, sales: 6300, conversion: 21 },
+    { hour: "12:00", traffic: 280, sales: 8100, conversion: 24 },
+    { hour: "13:00", traffic: 260, sales: 7200, conversion: 22 },
+    { hour: "14:00", traffic: 220, sales: 5400, conversion: 20 },
+    { hour: "15:00", traffic: 190, sales: 4800, conversion: 19 },
   ],
   zoneEfficiency: [
-    { zone: 'Entrance', traffic: 850, engagement: 45, conversion: 22 },
-    { zone: 'Main Display', traffic: 620, engagement: 68, conversion: 34 },
-    { zone: 'Checkout', traffic: 450, engagement: 75, conversion: 82 },
-    { zone: 'Electronics', traffic: 580, engagement: 58, conversion: 28 }
+    { zone: "Entrance", traffic: 850, engagement: 45, conversion: 22 },
+    { zone: "Main Display", traffic: 620, engagement: 68, conversion: 34 },
+    { zone: "Checkout", traffic: 450, engagement: 75, conversion: 82 },
+    { zone: "Electronics", traffic: 580, engagement: 58, conversion: 28 },
   ],
   salesCorrelation: [
-    { factor: 'Traffic Flow', correlation: 85 },
-    { factor: 'Staff Coverage', correlation: 72 },
-    { factor: 'Weather', correlation: 45 },
-    { factor: 'Marketing', correlation: 68 }
-  ]
+    { factor: "Traffic Flow", correlation: 85 },
+    { factor: "Staff Coverage", correlation: 72 },
+    { factor: "Weather", correlation: 45 },
+    { factor: "Marketing", correlation: 68 },
+  ],
 };
 
 export default function StoreAnalytics() {
-  const [timeRange, setTimeRange] = useState('today');
+  const [timeRange, setTimeRange] = useState("today");
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
+  const [stores, setStores] = useState([]);
+
+  const getStores = async () => {
+    try {
+      const response = await fetch("/api/user/stores");
+      if (!response.ok) throw new Error("Failed to fetch stores");
+      const data = await response.json();
+      setStores(data);
+    } catch (error) {
+      console.error("Error fetching stores:", error);
+    }
+  };
+
+  useEffect(() => {
+    getStores();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -67,16 +76,29 @@ export default function StoreAnalytics() {
             Store performance and operational metrics
           </p>
         </div>
-        <select
-          className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
-          value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value)}
-        >
-          <option value="today">Today</option>
-          <option value="week">This Week</option>
-          <option value="month">This Month</option>
-          <option value="quarter">This Quarter</option>
-        </select>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
+          <select
+            className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
+            value={selectedDepartment}
+            onChange={(e) => setSelectedDepartment(e.target.value)}
+          >
+            <option value="all">All Stores</option>
+            {stores.map((store: any) => (
+              <option key={store.id} value={store.id}>
+                {store.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value)}
+          >
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+          </select>
+        </div>
       </div>
 
       {/* Key Metrics */}
@@ -169,18 +191,18 @@ export default function StoreAnalytics() {
                   <YAxis yAxisId="left" orientation="left" />
                   <YAxis yAxisId="right" orientation="right" />
                   <Tooltip />
-                  <Line 
+                  <Line
                     yAxisId="left"
-                    type="monotone" 
-                    dataKey="traffic" 
-                    stroke="#3b82f6" 
+                    type="monotone"
+                    dataKey="traffic"
+                    stroke="#3b82f6"
                     name="Traffic"
                   />
-                  <Line 
+                  <Line
                     yAxisId="right"
-                    type="monotone" 
-                    dataKey="sales" 
-                    stroke="#10b981" 
+                    type="monotone"
+                    dataKey="sales"
+                    stroke="#10b981"
                     name="Sales"
                   />
                 </LineChart>
@@ -223,25 +245,27 @@ export default function StoreAnalytics() {
               <div key={factor.factor} className="p-4 border rounded-lg">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="font-medium">{factor.factor}</h4>
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    factor.correlation >= 70 
-                      ? 'bg-green-100 text-green-800' 
-                      : factor.correlation >= 50
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span
+                    className={`px-2 py-1 text-xs rounded-full ${
+                      factor.correlation >= 70
+                        ? "bg-green-100 text-green-800"
+                        : factor.correlation >= 50
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                    }`}
+                  >
                     {factor.correlation}%
                   </span>
                 </div>
                 <div className="space-y-2">
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
+                    <div
                       className={`h-2 rounded-full ${
                         factor.correlation >= 70
-                          ? 'bg-green-500'
+                          ? "bg-green-500"
                           : factor.correlation >= 50
-                          ? 'bg-yellow-500'
-                          : 'bg-red-500'
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
                       }`}
                       style={{ width: `${factor.correlation}%` }}
                     />

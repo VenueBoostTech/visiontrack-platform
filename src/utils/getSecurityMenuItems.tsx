@@ -1,5 +1,5 @@
 // utils/getSecurityMenuItems.tsx
-import { Shield, Bell, FileText, ShieldAlert, Siren, Terminal, AlertTriangle, UserCog, UserCheck } from 'lucide-react';
+import { Shield, Bell, FileText, ShieldAlert, Siren, Terminal, AlertTriangle, UserCog, UserCheck, Notebook } from 'lucide-react';
 
 export const getSecurityMenuItems = (businessType: string = 'RETAIL') => {
   // Base items that show for all business types
@@ -21,7 +21,13 @@ export const getSecurityMenuItems = (businessType: string = 'RETAIL') => {
       title: "Reports",
       path: "/user/security/reports",
       icon: <FileText className="w-4 h-4" />
-    }
+    },
+    {
+      id: "5-2",
+      title: "Notes & Issues",  // New menu item
+      path: "/user/security/notes",
+      icon: <Notebook className="w-4 h-4" />
+    },
   ];
 
   // Items only for retail businesses
