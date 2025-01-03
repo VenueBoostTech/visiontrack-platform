@@ -5,13 +5,16 @@ import BusinessListTable from "@/components/Admin/BusinessesList/BusinessListTab
 export const revalidate = 0;
 
 export default async function BusinessListContainer() {
-  const businesses = await VTSuperAdminService.listBusinesses();
+  // const businesses = await VTSuperAdminService.listBusinesses();
+  // @ts-ignore
+  const businesses = [];
 
   return (
     <>
       <div className="mb-5">
         <BusinessListTopbar />
       </div>
+      {/* @ts-ignore */}
       <BusinessListTable businesses={businesses} />
     </>
   );
