@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Building2, Search, ExternalLink } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
-import BusinessModalAction from "@/components/Common/Modals/BusinessModalAction";
+import BusinessModalAction from "@/components/Common/Modals/BusinessListModalAction";
 import Link from "next/link";
 
 export default function BusinessTopbar() {
@@ -44,7 +44,7 @@ export default function BusinessTopbar() {
          />
        </div>
        <Link 
-         href="/user/businesses-list"
+         href="/admin/businesses-list"
          className="inline-flex items-center gap-2 px-4 h-9 py-1 bg-red-400 hover:bg-rd-600 text-white rounded-lg transition-colors"
        >
          <ExternalLink className="h-4 w-4" />

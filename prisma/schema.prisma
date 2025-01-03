@@ -75,6 +75,7 @@ model User {
   saleAssociate         Store[]      @relation("saleAssociate")
   brandManager          Store[]      @relation("brandManager")
   businessOwner         Store[]      @relation("businessOwner")
+  notes       Note[]
   alertRules            AlertRule[]  @relation("UserAlertRules")
 }
 
@@ -86,7 +87,6 @@ model VerificationToken {
 
  @@unique([identifier, token])
 }
-
 
 model NotificationChannel {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
@@ -148,6 +148,7 @@ model Business {
   properties      Property[]
   departments     Department[]
   alertRules      AlertRule[]
+  notes       Note[]
 
   notificationChannels  NotificationChannel[]
   preferences           BusinessPreferences?
@@ -232,6 +233,7 @@ model Zone {
   storeId     String?   @db.ObjectId
   store       Store?    @relation(fields: [storeId], references: [id])
   cameras     Camera[]
+  notes       Note[]
 }
 
 model Store {
@@ -249,19 +251,6 @@ model Store {
   brandManager      User      @relation(name: "brandManager", fields: [brandManagerId], references: [id])
   cameras Camera[]
   zones    Zone[]
-}
-
-enum ZoneType {
-  ENTRANCE
-  LOBBY
-  PARKING
-  COMMON_AREA
-  GARAGE
-  RETAIL
-  SERVICE
-  OUTDOOR
-  WAREHOUSE
-  HALL
 }
 
 model Camera {
@@ -282,6 +271,7 @@ model Camera {
   zone          Zone        @relation(fields: [zoneId], references: [id])
   storeId       String?      @db.ObjectId
   store         Store?       @relation(fields: [storeId], references: [id])
+  notes       Note[]
 }
 
 model AlertRule {
@@ -301,26 +291,6 @@ model AlertRule {
   businessId  String    @db.ObjectId
   business    Business  @relation(fields: [businessId], references: [id])
 }
-
-enum CameraStatus {
-  ACTIVE
-  INACTIVE
-  MAINTENANCE
-}
-
-enum CameraType {
-  INDOOR
-  OUTDOOR
-  THERMAL
-}
-
-enum BusinessType {
-  COMMERCIAL_REAL_ESTATE
-  MANUFACTURING_WAREHOUSING
-  MULTI_FAMILY_RESIDENTIAL
-  RETAIL
-}
-
 
 model CronSetup {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
@@ -348,4 +318,74 @@ model VtBusinessConnections {
 
   // Relations
   businessId  String    @db.ObjectId
+}
+
+model Note {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  content     String
+  type        NoteType  @default(GENERAL)
+  priority    Priority  @default(LOW)
+  status      String    @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  userId      String    @db.ObjectId
+  user        User      @relation(fields: [userId], references: [id])
+  businessId  String    @db.ObjectId
+  business    Business  @relation(fields: [businessId], references: [id])
+  
+  // Optional relations
+  cameraId    String?   @db.ObjectId
+  camera      Camera?   @relation(fields: [cameraId], references: [id])
+  zoneId      String?   @db.ObjectId
+  zone        Zone?     @relation(fields: [zoneId], references: [id])
+}
+
+enum NoteType {
+  GENERAL
+  SECURITY_ISSUE
+  MAINTENANCE
+  CAMERA_NOTE
+  INCIDENT
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum CameraStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum CameraType {
+  INDOOR
+  OUTDOOR
+  THERMAL
+}
+
+enum BusinessType {
+  COMMERCIAL_REAL_ESTATE
+  MANUFACTURING_WAREHOUSING
+  MULTI_FAMILY_RESIDENTIAL
+  RETAIL
+}
+
+enum ZoneType {
+  ENTRANCE
+  LOBBY
+  PARKING
+  COMMON_AREA
+  GARAGE
+  RETAIL
+  SERVICE
+  OUTDOOR
+  WAREHOUSE
+  HALL
 }
