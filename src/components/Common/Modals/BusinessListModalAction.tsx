@@ -54,12 +54,11 @@ export default function BusinessListModalAction({
         className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
       >
         <Plus className="w-4 h-4 mr-2" />
-        Add Business
+        Sync Business
       </button>
 
       <Modal
-        title="Create New VT Business"
-        description="Add a new business and assign an owner."
+        title="Sync Business with Core VT Platform"
         isOpen={open}
         onClose={() => setOpen(false)}
       >

@@ -26,7 +26,7 @@ export async function DELETE(
     });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Staff deletion error:", error);
+    console.error("Business deletion error:", error);
     return NextResponse.json(
       { error: "Failed to remove vt business" },
       { status: 500 }
