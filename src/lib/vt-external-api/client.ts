@@ -29,7 +29,11 @@ class VTExternalClient {
         if (credentials.platform_id) config.headers['X-VT-Platform-ID'] = credentials.platform_id;
         if (credentials.api_key) config.headers['X-VT-API-Key'] = credentials.api_key;
         if (credentials.business_id) config.headers['X-VT-Business-ID'] = credentials.business_id;
-      }
+      }   
+         
+      if (config.url?.includes('superadmin')) {
+        config.headers['X-VT-SUPERADMIN-API-KEY'] = process.env.NEXT_PUBLIC_SUPER_ADMIN_API_KEY;
+      }      
       return config;
     });
 

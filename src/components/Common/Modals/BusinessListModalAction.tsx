@@ -4,10 +4,12 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import Modal from "@/components/Common/Modal";
 import BusinessListForm from "@/components/BusinessListForm";
-import { VTSuperAdminService } from "@/lib/vt-external-api/services/vt-superadmin-service";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export interface BusinessListFormData {
   name: string;
+  vt_platform_id: string;
   is_active: boolean;
   is_local_test: boolean;
   is_prod_test: boolean;
@@ -22,18 +24,23 @@ export default function BusinessListModalAction({
 
   const handleSubmit = async (data: BusinessListFormData) => {
     try {
-      const response = await VTSuperAdminService.createBusiness({
-        name: data.name,
-        is_active: data.is_active,
-        is_local_test: data.is_local_test,
-        is_prod_test: data.is_prod_test,
-        vt_platform_id: "",
-        api_key: "",
-      });
+      try {
+        const response = await fetch("/api/admin/vtbusiness/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
 
-      console.log(response);
-
-      onSuccess?.();
+        if (!response.ok) {
+          throw new Error("Failed to create business");
+        }
+        toast.success("Business addded successfully!");
+        onSuccess?.();
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "Failed to add business"
+        );
+      }
     } catch (error) {
       console.error("Error creating business:", error);
       throw error;

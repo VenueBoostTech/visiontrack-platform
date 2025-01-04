@@ -5,6 +5,7 @@ import { VTApiResponse } from "../types";
 import { VTQueryParams, VTBusiness } from "../types/business.types";
 
 export const VTSuperAdminService = {
+  
   listBusinesses: async (
     params?: VTQueryParams
   ): Promise<VTApiResponse<VTBusiness[]>> => {
@@ -30,8 +31,7 @@ export const VTSuperAdminService = {
         VT_ENDPOINTS.SUPERADMIN.CREATE,
         data
       );
-      // @ts-ignore
-      return response.business_id;
+      return response;
     } catch (error) {
       console.error("Create business error:", error);
       throw error;
@@ -39,11 +39,8 @@ export const VTSuperAdminService = {
   },
 
   updateBusiness: async (
-    business_id : string,
+    business_id: string,
     data: {
-      name: string;
-      vt_platform_id: string;
-      api_key: string;
       is_active: boolean;
       is_local_test: boolean;
       is_prod_test: boolean;
@@ -51,13 +48,26 @@ export const VTSuperAdminService = {
   ) => {
     try {
       const response = await vtClient.put(
-        VT_ENDPOINTS.SUPERADMIN.UPDATE(business_id ),
+        VT_ENDPOINTS.SUPERADMIN.UPDATE(business_id),
         data
       );
       // @ts-ignore
-      return response.business_id;
+      return response;
     } catch (error) {
       console.error("Update business error:", error);
+      throw error;
+    }
+  },
+
+  deleteBusiness: async (business_id: string) => {
+    try {
+      const response = await vtClient.delete(
+        VT_ENDPOINTS.SUPERADMIN.DELETE(business_id)
+      );
+      // @ts-ignore
+      return response;
+    } catch (error) {
+      console.error("Delete business error:", error);
       throw error;
     }
   },

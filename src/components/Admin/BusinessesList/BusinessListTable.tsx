@@ -4,7 +4,10 @@ import { Pencil, Trash } from "lucide-react";
 import Modal from "@/components/Common/Modal";
 import { useState } from "react";
 import { VTSuperAdminService } from "@/lib/vt-external-api/services/vt-superadmin-service";
-import BusinessListForm, { BusinessListFormData } from "@/components/BusinessListForm";
+import BusinessListForm, {
+  BusinessListFormData,
+} from "@/components/BusinessListForm";
+import DeleteModal from "@/components/Common/Modals/DeleteModal";
 
 type BusinessUpdateFormData = BusinessListFormData & { id: string };
 
@@ -20,30 +23,56 @@ function Badge({ value }: { value: boolean }) {
   );
 }
 
-export default function BusinessTable({
-  businesses,
+export default function BusinessListTable({
+  vtBusinesses,
 }: {
-  businesses: VTBusiness[];
+  vtBusinesses: VTBusiness[];
 }) {
   const [open, setOpen] = useState(false);
   const [initialData, setInitialData] = useState<BusinessUpdateFormData>();
+  const [vtBusinessList, setVtBusinessList] = useState(vtBusinesses);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleSubmit = async (data: BusinessListFormData) => {
     try {
       const response = await VTSuperAdminService.updateBusiness(data.id, {
-        name: data.name,
         is_active: data.is_active,
         is_local_test: data.is_local_test,
         is_prod_test: data.is_prod_test,
-        vt_platform_id: "",
-        api_key: "",
       });
-      console.log(response);
+      setVtBusinessList(
+        vtBusinessList.map((b: any) => (b.id === data.id ? response : b))
+      );
     } catch (error) {
       console.error("Error creating business:", error);
       throw error;
     }
   };
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        `/api/admin/vtbusiness/delete/${initialData?.id}/${initialData?.vt_platform_id}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to create business");
+      }
+
+      setVtBusinessList(
+        vtBusinessList.filter((b: any) => b.id !== initialData?.id)
+      );
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error("Error deleting business:", error);
+      throw error;
+    }
+  };
+
   return (
     <div>
       <div className="rounded-lg border bg-white dark:bg-gray-800">
@@ -77,7 +106,7 @@ export default function BusinessTable({
             </tr>
           </thead>
           <tbody>
-            {businesses.map((business: any) => {
+            {vtBusinessList.map((business: any) => {
               const isProd =
                 !business?.is_local_test && !business?.is_prod_test;
 
@@ -94,14 +123,18 @@ export default function BusinessTable({
                   <td className="hidden lg:table-cell px-4 py-3">
                     <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100">
                       {business.created_at
-                        ? new Date(business.created_at).toLocaleDateString()
+                        ? new Date(business.created_at).toLocaleDateString(
+                            "en-US"
+                          )
                         : "N/A"}
                     </span>
                   </td>
                   <td className="hidden lg:table-cell px-4 py-3">
                     <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100">
                       {business.updated_at
-                        ? new Date(business.updated_at).toLocaleDateString()
+                        ? new Date(business.updated_at).toLocaleDateString(
+                            "en-US"
+                          )
                         : "N/A"}
                     </span>
                   </td>
@@ -136,7 +169,13 @@ export default function BusinessTable({
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-gray-400 hover:text-red-600">
+                      <button
+                        className="p-1 text-gray-400 hover:text-red-600"
+                        onClick={() => {
+                          setShowDeleteModal(true);
+                          setInitialData(business);
+                        }}
+                      >
                         <Trash className="w-4 h-4" />
                       </button>
                     </div>
@@ -144,6 +183,13 @@ export default function BusinessTable({
                 </tr>
               );
             })}
+            {vtBusinesses.length === 0 && (
+              <tr>
+                <td colSpan={8} className="p-4 text-center">
+                  No VT Businesses found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -159,6 +205,12 @@ export default function BusinessTable({
           initialData={initialData}
         />
       </Modal>
+      <DeleteModal
+        showDeleteModal={showDeleteModal}
+        setShowDeleteModal={setShowDeleteModal}
+        deleteText="Delete Business"
+        handleDelete={handleDelete}
+      />
     </div>
   );
 }

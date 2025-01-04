@@ -43,6 +43,7 @@ export default function BusinessTable({
             <th className="hidden lg:table-cell px-4 py-3 text-left text-sm font-medium">Type</th>
             <th className="hidden sm:table-cell px-4 py-3 text-left text-sm font-medium">Staff</th>
             <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
+            <th className="px-4 py-3 text-left text-sm font-medium">Vt Connected</th>
             <th className="px-4 py-3 text-right text-sm font-medium">Actions</th>
           </tr>
         </thead>
@@ -85,6 +86,11 @@ export default function BusinessTable({
               <td className="px-4 py-3">
                 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                   Active
+                </span>
+              </td>
+              <td className="px-4 py-3">
+                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${business.vt_connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  {business.vt_connected ? 'Yes' : 'No'}
                 </span>
               </td>
               <td className="px-4 py-3 text-right">

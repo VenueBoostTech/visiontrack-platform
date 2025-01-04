@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Business } from "@prisma/client";
+import { useEffect, useState } from "react";
 
 export interface BusinessListFormData {
   id: string;
@@ -8,12 +9,14 @@ export interface BusinessListFormData {
   is_active: boolean;
   is_local_test: boolean;
   is_prod_test: boolean;
+  vt_platform_id: string;
 }
 
 interface BusinessListFormProps {
   initialData?: BusinessListFormData;
   onSubmit: (data: BusinessListFormData) => Promise<void>;
   onClose: () => void;
+  businesses?: [Business];
 }
 
 export default function BusinessListForm({
@@ -28,16 +31,44 @@ export default function BusinessListForm({
       is_active: true,
       is_local_test: false,
       is_prod_test: false,
+      vt_platform_id: "",
     }
   );
+  const [businesses, setBusinesses] = useState<any>([]);
 
+  useEffect(() => {
+    const fetchBusinesses = async () => {
+      try {
+        const response = await fetch("/api/admin/vtbusiness/business");
+        const data = await response.json();
+        setBusinesses(data);
+      } catch (error) {
+        console.error("Error fetching businesses:", error);
+      }
+    };
+    fetchBusinesses();
+  }, []);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await onSubmit(formData);
+      if (formData.id) {
+        await onSubmit(formData);
+      } else {
+        const business = businesses?.find(
+          (b: any) => b.id == formData.vt_platform_id
+        );
+
+        const data = {
+          ...formData,
+          role: business.owner.role,
+          name: business.name,
+        };
+        await onSubmit(data);
+      }
+
       onClose();
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -48,19 +79,26 @@ export default function BusinessListForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-5">
-        <div className="flex gap-2 items-center">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-nowrap">
-            Business Name
-          </label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none dark:border-gray-600 dark:bg-gray-800"
-            required
-          />
-        </div>
+      <div className="flex flex-col gap-7">
+        {(initialData?.id == "" || initialData?.id == undefined) && (
+          <div className="flex gap-2 items-center">
+            <select
+              value={formData.vt_platform_id}
+              onChange={(e) =>
+                setFormData({ ...formData, vt_platform_id: e.target.value })
+              }
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none dark:border-gray-600 dark:bg-gray-800"
+              required
+            >
+              <option value="">Select a business</option>
+              {businesses?.map((business: any) => (
+                <option key={business.id} value={business.id}>
+                  {business.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="grid grid-cols-3 gap-3">
           <div className="flex gap-2 items-center">
