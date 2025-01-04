@@ -2,12 +2,20 @@
 import { VTSuperAdminService } from "@/lib/vt-external-api/services/vt-superadmin-service";
 import BusinessListTopbar from "@/components/Admin/BusinessesList/BusinessListTopbar";
 import BusinessListTable from "@/components/Admin/BusinessesList/BusinessListTable";
-export const revalidate = 0;
+export const revalidate = 1;
+
+async function getVTBusinesses() {
+  let vtBusinesses: any = [];
+  try {
+    vtBusinesses = await VTSuperAdminService.listBusinesses();
+  } catch (error) {
+    console.error("Error creating business:", error);
+  }
+  return vtBusinesses;
+}
 
 export default async function BusinessListContainer() {
-  // const businesses = await VTSuperAdminService.listBusinesses();
-  // @ts-ignore
-  const businesses = [];
+  const vtBusinesses = await getVTBusinesses();
 
   return (
     <>
@@ -15,7 +23,7 @@ export default async function BusinessListContainer() {
         <BusinessListTopbar />
       </div>
       {/* @ts-ignore */}
-      <BusinessListTable businesses={businesses} />
+      <BusinessListTable vtBusinesses={vtBusinesses} />
     </>
   );
 }

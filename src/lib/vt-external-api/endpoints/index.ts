@@ -13,5 +13,6 @@ export const VT_ENDPOINTS = {
     GET: "/api/superadmin/businesses/",
     CREATE: "/api/superadmin/businesses/",
     UPDATE: (id: string) => `/api/superadmin/businesses/${id}`,
+    DELETE: (id: string) => `/api/superadmin/businesses/${id}`,
   },
 } as const;

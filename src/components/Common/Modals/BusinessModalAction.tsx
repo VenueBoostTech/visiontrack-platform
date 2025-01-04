@@ -30,10 +30,6 @@ export default function BusinessModalAction({ onSuccess }: { onSuccess?: () => v
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to create business");
-      }
-
       onSuccess?.();
     } catch (error) {
       console.error("Error creating business:", error);
