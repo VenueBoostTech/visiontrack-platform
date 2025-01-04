@@ -34,7 +34,7 @@ interface Zone {
 }
 
 export default function ZonesContent({ initialZones }: { initialZones: Zone[] }) {
-  const [zones, setZones] = useState<Zone[]>(initialZones);
+  const [zones, setZones] = useState<Zone[]>(initialZones || []);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);

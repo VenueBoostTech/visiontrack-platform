@@ -1,5 +1,3 @@
-console.log("Main VT credentials route loaded");
-
 // app/api/user/vt-credentials/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/libs/prismaDb";
