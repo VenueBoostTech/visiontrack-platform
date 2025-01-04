@@ -136,7 +136,7 @@ model Business {
   email           String?
   phone           String?
   address         String?
-  vt_use_scenario BusinessType @default(RETAIL)  // Added this field
+  vt_use_scenario BusinessType @default(RETAIL)
   vt_connected    Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -144,15 +144,15 @@ model Business {
   // Relations
   ownerId         String    @db.ObjectId @unique
   owner           User      @relation("BusinessOwner", fields: [ownerId], references: [id])
-  staff           BusinessStaff[]
-  properties      Property[]
-  departments     Department[]
-  alertRules      AlertRule[]
-  notes       Note[]
+  staff           BusinessStaff[]        @relation(onDelete: Cascade)
+  properties      Property[]             @relation(onDelete: Cascade)
+  departments     Department[]           @relation(onDelete: Cascade)
+  alertRules      AlertRule[]            @relation(onDelete: Cascade)
+  notes           Note[]                 @relation(onDelete: Cascade)
 
-  notificationChannels  NotificationChannel[]
-  preferences           BusinessPreferences?
-  vtCredentials         VTApiCredential?
+  notificationChannels  NotificationChannel[] @relation(onDelete: Cascade)
+  preferences          BusinessPreferences?  @relation(onDelete: Cascade)
+  vtCredentials        VTApiCredential?      @relation(onDelete: Cascade)
 }
 
 model BusinessStaff {
