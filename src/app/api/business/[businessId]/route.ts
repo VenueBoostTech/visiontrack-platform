@@ -79,9 +79,82 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    // Use a transaction to ensure all deletions succeed or none do
+    // Log the deletion attempt
+    console.log(`Attempting to delete business: ${params.businessId}`);
+
+    // First check if the business exists
+    const business = await prisma.business.findUnique({
+      where: { id: params.businessId },
+      include: {
+        staff: true,
+        properties: {
+          include: {
+            buildings: {
+              include: {
+                zones: {
+                  include: {
+                    cameras: true
+                  }
+                }
+              }
+            }
+          }
+        },
+        notificationChannels: true,
+        preferences: true,
+        vtCredentials: true,
+        alertRules: true,
+        notes: true
+      }
+    });
+
+    if (!business) {
+      console.log(`Business ${params.businessId} not found`);
+      return new NextResponse("Business not found", { status: 404 });
+    }
+
+    // Use a transaction to ensure atomicity
     await prisma.$transaction(async (tx) => {
-      // Delete all related records first
+      // Delete cameras first (deepest level)
+      for (const property of business.properties) {
+        for (const building of property.buildings) {
+          for (const zone of building.zones) {
+            if (zone.cameras.length > 0) {
+              console.log(`Deleting cameras for zone ${zone.id}`);
+              await tx.camera.deleteMany({
+                where: { zoneId: zone.id }
+              });
+            }
+          }
+        }
+      }
+
+      // Delete zones
+      for (const property of business.properties) {
+        for (const building of property.buildings) {
+          console.log(`Deleting zones for building ${building.id}`);
+          await tx.zone.deleteMany({
+            where: { buildingId: building.id }
+          });
+        }
+      }
+
+      // Delete buildings
+      for (const property of business.properties) {
+        console.log(`Deleting buildings for property ${property.id}`);
+        await tx.building.deleteMany({
+          where: { propertyId: property.id }
+        });
+      }
+
+      // Delete properties
+      console.log(`Deleting properties for business ${params.businessId}`);
+      await tx.property.deleteMany({
+        where: { businessId: params.businessId }
+      });
+
+      // Delete other related records
+      console.log('Deleting related records...');
       await tx.notificationChannel.deleteMany({
         where: { businessId: params.businessId }
       });
@@ -90,7 +163,7 @@ export async function DELETE(
         where: { businessId: params.businessId }
       });
       
-       // @ts-ignore
+      // @ts-ignore
       await tx.vtApiCredential.deleteMany({
         where: { businessId: params.businessId }
       });
@@ -108,16 +181,37 @@ export async function DELETE(
       });
 
       // Finally delete the business
+      console.log('Deleting business...');
       await tx.business.delete({
         where: { id: params.businessId }
       });
     });
 
+    console.log(`Successfully deleted business ${params.businessId}`);
     return new NextResponse(null, { status: 204 });
     
   } catch (error) {
-    console.error("[BUSINESS_DELETE]", error);
-     // @ts-ignore
-    return new NextResponse(`Internal Error: ${error.message}`, { status: 500 });
+    console.error("[BUSINESS_DELETE] Detailed error:", {
+      // @ts-ignore
+      error: error.message,
+      // @ts-ignore
+      stack: error.stack,
+      businessId: params.businessId
+    });
+    
+    // Return a more detailed error message
+    return new NextResponse(
+      JSON.stringify({
+        error: "Failed to delete business",
+        // @ts-ignore
+        details: error.message
+      }), 
+      { 
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
   }
 }

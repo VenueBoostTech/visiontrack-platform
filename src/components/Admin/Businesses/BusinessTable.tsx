@@ -85,22 +85,24 @@ export default function BusinessTable({ businesses, onRefresh }: BusinessTablePr
   const handleDelete = async () => {
     if (!selectedBusiness) return;
     setIsLoading(true);
-
+  
     try {
       const response = await fetch(`/api/business/${selectedBusiness.id}`, {
         method: "DELETE",
       });
-
+  
       if (!response.ok) {
-        throw new Error('Failed to delete business');
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.details || 'Failed to delete business');
       }
-
+  
       toast.success("Business deleted successfully");
       setShowDeleteModal(false);
       onRefresh?.();
     } catch (error) {
       console.error('Error deleting business:', error);
-      toast.error("Failed to delete business");
+      // @ts-ignore
+      toast.error(error.message || "Failed to delete business");
     } finally {
       setIsLoading(false);
     }
