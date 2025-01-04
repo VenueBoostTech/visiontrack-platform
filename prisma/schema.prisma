@@ -96,7 +96,7 @@ model NotificationChannel {
   enabled     Boolean   @default(true)
   config      Json      // For storing emails, phone numbers, etc.
   businessId  String    @db.ObjectId
-  business    Business  @relation(fields: [businessId], references: [id])
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
   updatedBy   String?   @db.ObjectId // Reference to user who last updated
   createdBy   String    @db.ObjectId // Reference to user who created
   createdAt   DateTime  @default(now())
@@ -106,7 +106,7 @@ model NotificationChannel {
 model BusinessPreferences {
   id                    String    @id @default(auto()) @map("_id") @db.ObjectId
   businessId            String    @db.ObjectId @unique
-  business              Business  @relation(fields: [businessId], references: [id])
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
   desktopNotifications  Boolean   @default(true)
   soundAlerts           Boolean   @default(false)
   minimumPriority      String    @default("all") // "all" | "low" | "medium" | "high"
@@ -124,7 +124,7 @@ model VTApiCredential {
   name            String
   api_key         String    // API key for VisionTrack
   businessId      String    @db.ObjectId @unique  // Each business can only have one VT credential
-  business        Business  @relation(fields: [businessId], references: [id])
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   lastUsed        DateTime? 
@@ -136,7 +136,7 @@ model Business {
   email           String?
   phone           String?
   address         String?
-  vt_use_scenario BusinessType @default(RETAIL)
+  vt_use_scenario BusinessType @default(RETAIL)  // Added this field
   vt_connected    Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -144,22 +144,22 @@ model Business {
   // Relations
   ownerId         String    @db.ObjectId @unique
   owner           User      @relation("BusinessOwner", fields: [ownerId], references: [id])
-  staff           BusinessStaff[]        @relation(onDelete: Cascade)
-  properties      Property[]             @relation(onDelete: Cascade)
-  departments     Department[]           @relation(onDelete: Cascade)
-  alertRules      AlertRule[]            @relation(onDelete: Cascade)
-  notes           Note[]                 @relation(onDelete: Cascade)
+  staff           BusinessStaff[]
+  properties      Property[]
+  departments     Department[]
+  alertRules      AlertRule[]
+  notes       Note[]
 
-  notificationChannels  NotificationChannel[] @relation(onDelete: Cascade)
-  preferences          BusinessPreferences?  @relation(onDelete: Cascade)
-  vtCredentials        VTApiCredential?      @relation(onDelete: Cascade)
+  notificationChannels  NotificationChannel[]
+  preferences           BusinessPreferences?
+  vtCredentials         VTApiCredential?
 }
 
 model BusinessStaff {
  id          String    @id @default(auto()) @map("_id") @db.ObjectId
  businessId  String    @db.ObjectId
  userId      String    @unique @db.ObjectId  // Each user can only be staff at one business
- business    Business  @relation(fields: [businessId], references: [id])
+ business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
  user        User      @relation(fields: [userId], references: [id])
  createdAt   DateTime  @default(now())
 
@@ -190,7 +190,7 @@ model Property {
 
  // Relations
  businessId  String    @db.ObjectId
- business    Business  @relation(fields: [businessId], references: [id])
+ business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
  buildings   Building[]
  zones       Zone[]
 }
@@ -289,7 +289,7 @@ model AlertRule {
   userId      String    @db.ObjectId
   user        User      @relation("UserAlertRules", fields: [userId], references: [id])
   businessId  String    @db.ObjectId
-  business    Business  @relation(fields: [businessId], references: [id])
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
 }
 
 model CronSetup {
@@ -334,7 +334,7 @@ model Note {
   userId      String    @db.ObjectId
   user        User      @relation(fields: [userId], references: [id])
   businessId  String    @db.ObjectId
-  business    Business  @relation(fields: [businessId], references: [id])
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
   
   // Optional relations
   cameraId    String?   @db.ObjectId
