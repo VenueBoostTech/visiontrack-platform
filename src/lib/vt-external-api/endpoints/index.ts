@@ -8,6 +8,7 @@ export const VT_ENDPOINTS = {
   CAMERAS: {
     BASE: "/api/camera",
     DETAIL: (id: string) => `/api/camera/${id}`,
+    POST: "/api/camera/",
   },
   SUPERADMIN: {
     GET: "/api/superadmin/businesses/",

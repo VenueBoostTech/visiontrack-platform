@@ -59,6 +59,7 @@ interface CameraFormData {
   capabilities?: Record<string, boolean>;
   zoneId: string;
   storeId?: string;
+  propertyId?: string;
 }
 
 interface CameraFormProps {
@@ -163,7 +164,8 @@ export default function CameraForm({
       }), {}) : undefined,
       zoneId: selectedZone,
       // Add store ID if zone is retail and has a store
-      storeId: selectedZoneData?.type === ZoneType.RETAIL ? selectedZoneData?.store?.id : undefined
+      storeId: selectedZoneData?.type === ZoneType.RETAIL ? selectedZoneData?.store?.id : undefined,
+      propertyId: selectedProperty
     };
 
     onSubmit(data);

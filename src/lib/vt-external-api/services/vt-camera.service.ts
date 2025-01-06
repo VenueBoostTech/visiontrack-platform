@@ -23,7 +23,7 @@ export const VTCameraService = {
 
   createCamera: async (data: CreateVTCameraDto): Promise<VTApiResponse<VTCamera>> => {
     return await vtClient.post<VTApiResponse<VTCamera>>(
-      VT_ENDPOINTS.CAMERAS.BASE,
+      VT_ENDPOINTS.CAMERAS.POST,
       data
     );
   },

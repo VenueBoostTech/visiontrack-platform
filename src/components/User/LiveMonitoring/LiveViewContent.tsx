@@ -1,28 +1,20 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  MonitorDot,
+import {
   Camera,
-  Settings,
   Maximize2,
   Volume2,
   PlaySquare,
   Download,
-  Share2
+  Share2,
 } from "lucide-react";
+import ReactPlayer from "react-player";
 
-const mockCameras = [
-  { id: 'CAM001', name: 'Main Entrance', status: 'active', zone: 'Entrance' },
-  { id: 'CAM002', name: 'Parking Lot A', status: 'active', zone: 'Exterior' },
-  { id: 'CAM003', name: 'Checkout Area', status: 'active', zone: 'Interior' },
-  { id: 'CAM004', name: 'Storage Room', status: 'inactive', zone: 'Restricted' }
-];
-
-export default function LiveViewContent() {
-  const [selectedCamera, setSelectedCamera] = useState(mockCameras[0]);
-  const [layout, setLayout] = useState('single');
+export default function LiveViewContent({ cameras }: any) {
+  const [selectedCamera, setSelectedCamera] = useState(cameras[0]);
+  const [layout, setLayout] = useState("single");
 
   return (
     <div className="space-y-6">
@@ -56,22 +48,30 @@ export default function LiveViewContent() {
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y">
-                {mockCameras.map((camera) => (
+                {cameras.map((camera: any) => (
                   <button
                     key={camera.id}
                     onClick={() => setSelectedCamera(camera)}
                     className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
-                      selectedCamera.id === camera.id ? 'bg-gray-50 dark:bg-gray-800' : ''
+                      selectedCamera.id === camera.id
+                        ? "bg-gray-50 dark:bg-gray-800"
+                        : ""
                     }`}
                   >
                     <Camera className="w-4 h-4" />
                     <div className="flex-1 text-left">
                       <p className="font-medium">{camera.name}</p>
-                      <p className="text-sm text-gray-500">{camera.zone}</p>
+                      <p className="text-sm text-gray-500">
+                        {camera.zone.name}
+                      </p>
                     </div>
-                    <span className={`w-2 h-2 rounded-full ${
-                      camera.status === 'active' ? 'bg-green-500' : 'bg-red-500'
-                    }`} />
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        camera.status === "ACTIVE"
+                          ? "bg-green-500"
+                          : "bg-red-500"
+                      }`}
+                    />
                   </button>
                 ))}
               </div>
@@ -84,15 +84,21 @@ export default function LiveViewContent() {
           <Card>
             <CardContent className="p-0">
               <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden">
-                {/* Placeholder for video feed */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <img 
-                    src="/api/placeholder/1280/720" 
-                    alt="Camera Feed"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                
+                <ReactPlayer
+                  url={selectedCamera.rtspUrl}
+                  playing
+                  controls
+                  width="100%"
+                  height="90%"
+                  config={{
+                    file: {
+                      attributes: {
+                        controlsList: "nodownload",
+                      },
+                    },
+                  }}
+                />
+
                 {/* Camera Info Overlay */}
                 <div className="absolute top-4 left-4 bg-black/50 rounded-lg p-2 text-white">
                   <p className="text-sm">{selectedCamera.name}</p>
@@ -133,7 +139,9 @@ export default function LiveViewContent() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Resolution</label>
+                  <label className="block text-sm font-medium mb-1">
+                    Resolution
+                  </label>
                   <select className="w-full px-3 py-2 border rounded-lg">
                     <option>1080p</option>
                     <option>720p</option>
@@ -141,7 +149,9 @@ export default function LiveViewContent() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Frame Rate</label>
+                  <label className="block text-sm font-medium mb-1">
+                    Frame Rate
+                  </label>
                   <select className="w-full px-3 py-2 border rounded-lg">
                     <option>30 fps</option>
                     <option>24 fps</option>

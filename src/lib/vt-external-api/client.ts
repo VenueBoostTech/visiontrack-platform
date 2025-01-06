@@ -33,7 +33,15 @@ class VTExternalClient {
          
       if (config.url?.includes('superadmin')) {
         config.headers['X-VT-SUPERADMIN-API-KEY'] = process.env.NEXT_PUBLIC_SUPER_ADMIN_API_KEY;
-      }      
+      }
+      console.log("🚀 ~ VTExternalClient ~ this.vtApi.interceptors.request.use ~ credentials:", config.data.credentials)
+
+      if (config.url?.includes('camera')) {
+        config.headers['X-VT-Business-ID '] = config.data.credentials.business_id;
+        config.headers['X-VT-API-Key'] = config.data.credentials.api_key;
+        config.headers['X-VT-Platform-ID'] = config.data.credentials.platform_id;
+      }
+      
       return config;
     });
 
