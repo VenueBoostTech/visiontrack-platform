@@ -8,7 +8,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Loader from "../Common/Loader";
 import { integrations, messages } from "../../../integrations.config";
-
+import vtClient from '../../lib/vt-external-api/client'
 export default function SigninWithPassword() {
 	const [data, setData] = useState({
 		email: "",
@@ -51,9 +51,10 @@ export default function SigninWithPassword() {
 		// }
 	
 		// // Set credentials for API calls
-		// vtClient.setCredentials({
+		// vtClient .setCredentials({
 		// 	platform_id: owner.ownedBusiness.vtCredentials.platform_id,
-		// 	api_key: owner.ownedBusiness.vtCredentials.api_key
+		// 	api_key: owner.ownedBusiness.vtCredentials.api_key,
+		// 	business_id: owner.ownedBusiness.id
 		// });
 	
 		toast.success("Logged in successfully");

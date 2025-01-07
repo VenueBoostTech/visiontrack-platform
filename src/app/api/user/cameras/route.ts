@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/libs/prismaDb";
 import { getAuthSession } from "@/libs/auth";
 import { VTCameraService } from "@/lib/vt-external-api/services/vt-camera.service";
-
+import vtClient from '../../../../lib/vt-external-api/client'
 export async function GET() {
   try {
     const session = await getAuthSession();
@@ -170,8 +170,16 @@ export async function POST(request: Request) {
         store: true,
       },
     });
+    
 
-    if (camera) {
+    if (camera && credential) {
+      
+      vtClient.setCredentials({
+        platform_id: credential.businessId,
+        api_key: credential.api_key,
+        business_id: credential.platform_id
+      })
+      // credential
       await VTCameraService.createCamera({
         camera_id: camera.id,
         rtsp_url: camera.rtspUrl,
@@ -181,12 +189,7 @@ export async function POST(request: Request) {
         capabilities: camera.capabilities || [],
         name: camera.name,
         location: camera.location || "",
-        direction: camera.direction || "",
-        credentials: {
-          platform_id: credential?.platform_id,
-          api_key: credential?.api_key,
-          business_id: credential?.businessId,
-        },
+        direction: camera.direction || ""
       });
     }
 

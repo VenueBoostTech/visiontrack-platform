@@ -331,7 +331,7 @@ export default function CamerasContent() {
                   <td colSpan={7} className="px-6 py-4 text-center">
                     Loading cameras...
                   </td>
-                </tr>
+                </tr> 
               ) : cameras.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-4 text-center">
