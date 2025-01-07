@@ -1,7 +1,8 @@
 // lib/vt-external-api/client.ts
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-const VT_API_BASE_URL = 'https://coreapi.visiontrack.xyz';
+// const VT_API_BASE_URL = 'https://coreapi.visiontrack.xyz';
+const VT_API_BASE_URL = "http://192.168.0.112:8000";
 
 interface VTCredentials {
   platform_id: string;
@@ -18,29 +19,34 @@ class VTExternalClient {
       baseURL: VT_API_BASE_URL,
       timeout: 10000,
       headers: {
-        'Content-Type': 'application/json',
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     this.vtApi.interceptors.request.use((config) => {
       // @ts-ignore
       const credentials = config.credentials as VTCredentials;
       if (credentials) {
-        if (credentials.platform_id) config.headers['X-VT-Platform-ID'] = credentials.platform_id;
-        if (credentials.api_key) config.headers['X-VT-API-Key'] = credentials.api_key;
-        if (credentials.business_id) config.headers['X-VT-Business-ID'] = credentials.business_id;
-      }   
-         
-      if (config.url?.includes('superadmin')) {
-        config.headers['X-VT-SUPERADMIN-API-KEY'] = process.env.NEXT_PUBLIC_SUPER_ADMIN_API_KEY;
-      }      
+        if (credentials.platform_id)
+          config.headers["X-VT-Platform-ID"] = credentials.platform_id;
+        if (credentials.api_key)
+          config.headers["X-VT-API-Key"] = credentials.api_key;
+        if (credentials.business_id)
+          config.headers["X-VT-Business-ID"] = credentials.business_id;
+      }
+
+      if (config.url?.includes("superadmin")) {
+        config.headers["X-VT-SUPERADMIN-API-KEY"] =
+          process.env.NEXT_PUBLIC_SUPER_ADMIN_API_KEY;
+      }
+
       return config;
     });
 
     this.vtApi.interceptors.response.use(
-      response => response,
-      error => {
-        console.error('VT API Error:', error?.response?.data || error.message);
+      (response) => response,
+      (error) => {
+        console.error("VT API Error:", error?.response?.data || error.message);
         return Promise.reject(error);
       }
     );

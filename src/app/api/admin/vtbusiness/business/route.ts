@@ -27,7 +27,7 @@ export async function GET(req: Request) {
     return NextResponse.json(businesses);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to create business" },
+      { error: "Failed to fetch business" },
       { status: 500 }
     );
   }

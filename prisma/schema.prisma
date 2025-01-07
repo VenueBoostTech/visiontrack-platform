@@ -187,6 +187,7 @@ model Property {
  address     String
  createdAt   DateTime  @default(now())
  updatedAt   DateTime  @updatedAt
+ vtId        String?
 
  // Relations
  businessId  String    @db.ObjectId
@@ -209,7 +210,7 @@ model Building {
  belowGroundFloors Int      @default(0)
  createdAt   DateTime  @default(now())
  updatedAt   DateTime  @updatedAt
-
+ vtId        String?
  // Relations
  propertyId  String    @db.ObjectId
  property    Property  @relation(fields: [propertyId], references: [id])
@@ -224,7 +225,8 @@ model Zone {
   coordinates Json?     
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
+  vtId        String?
+  
   // Relations
   propertyId  String    @db.ObjectId
   property    Property  @relation(fields: [propertyId], references: [id])

@@ -24,6 +24,11 @@ export async function DELETE(
         vt_connected: false,
       },
     });
+    await prisma.vTApiCredential.delete({
+      where: {
+        businessId: params.vt_platform_id
+      }
+    })
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Business deletion error:", error);
