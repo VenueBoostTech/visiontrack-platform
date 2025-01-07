@@ -5,14 +5,20 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react"; // Import Lucide icons
 
-
 export default function Sidebar({
   sidebarOthersData,
   sidebarData,
   sidebarRef,
 }: any) {
   const pathname = usePathname();
-  const [openMenus, setOpenMenus] = useState<{ [key: number]: boolean }>({});
+
+  // Check current pathname for open menu.
+  const currentOpenMenu = sidebarData.find(
+    (i: any) => pathname.includes(i.path) || 0
+  );
+  const [openMenus, setOpenMenus] = useState<{ [key: number]: boolean }>({
+    [currentOpenMenu.id]: true,
+  });
 
   const toggleMenu = (id: number) => {
     setOpenMenus((prevState) => ({
@@ -70,7 +76,11 @@ export default function Sidebar({
                       {item.title}
                       {item.children && (
                         <span className="ml-auto">
-                          {openMenus[item.id] ? <ChevronDown /> : <ChevronRight />}
+                          {openMenus[item.id] ? (
+                            <ChevronDown />
+                          ) : (
+                            <ChevronRight />
+                          )}
                         </span>
                       )}
                     </Link>
@@ -86,7 +96,9 @@ export default function Sidebar({
                                   : "text-dark hover:bg-primary hover:bg-opacity-10 hover:text-primary dark:text-gray-5 dark:hover:bg-white dark:hover:bg-opacity-10 dark:hover:text-white"
                               }`}
                             >
-                              <span className="h-[22px] w-[22px]">{child.icon}</span>
+                              <span className="h-[22px] w-[22px]">
+                                {child.icon}
+                              </span>
                               {child.title}
                             </Link>
                           </li>

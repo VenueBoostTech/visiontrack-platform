@@ -38,7 +38,7 @@ export default function BusinessListTable({
       });
       setVtBusinessList(vtBusinessList.map((b: any) => (b.id === data.id ? response : b)));
     } catch (error) {
-      console.error("Error creating business:", error);
+      console.error("Error update business:", error);
       throw error;
     }
   };
@@ -54,7 +54,7 @@ export default function BusinessListTable({
       );
 
       if (!response.ok) {
-        throw new Error("Failed to create business");
+        throw new Error("Failed to delete business");
       }
 
       setVtBusinessList(vtBusinessList.filter((b: any) => b.id !== initialData?.id));
