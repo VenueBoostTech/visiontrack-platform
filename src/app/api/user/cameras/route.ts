@@ -231,7 +231,7 @@ export async function POST(request: Request) {
         business_id: user.ownedBusiness.vtCredentials.platform_id,
       });
 
-      const response: any = await VTCameraService.createCamera({
+      let payload : any= {
         camera_id: camera.id,
         rtsp_url: validationResult.data.rtspUrl,
         property_id: property.vtId,
@@ -241,7 +241,16 @@ export async function POST(request: Request) {
         ...(validationResult.data.direction ? { floor: validationResult.data.direction } : {}),
         status: validationResult.data.status,
         capabilities: validationResult.data.capabilities,
-      });      
+      }
+      if(zone.store){
+        payload = {
+          ...payload,
+          store_id: zone.store.id,
+        }
+      }
+      console.log(payload);
+      
+      const response: any = await VTCameraService.createCamera(payload);      
       vtId = response.id;
     }
 

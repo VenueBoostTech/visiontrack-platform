@@ -170,20 +170,31 @@ export async function PUT(
         business_id: user.ownedBusiness.vtCredentials.platform_id,
       });
 
-
-      const response: any = await VTCameraService.updateCamera(
-        camera.vtId,
-        {
-          camera_id: camera.id,
-          rtsp_url: validationResult.data.rtspUrl,
-          property_id: property.vtId,
-          zone_id: zone.vtId,
-          name: validationResult.data.name,
-          ...(validationResult.data.location ? { floor: validationResult.data.location } : {}),
-          ...(validationResult.data.direction ? { floor: validationResult.data.direction } : {}),
-          status: validationResult.data.status,
-          capabilities: validationResult.data.capabilities,
-        });        
+      let payload : any = {
+        camera_id: camera.id,
+        rtsp_url: validationResult.data.rtspUrl,
+        property_id: property.vtId,
+        zone_id: zone.vtId,
+        name: validationResult.data.name,
+        ...(validationResult.data.location ? { floor: validationResult.data.location } : {}),
+        ...(validationResult.data.direction ? { floor: validationResult.data.direction } : {}),
+        status: validationResult.data.status,
+        capabilities: validationResult.data.capabilities,
+      }
+      if(zone.store){
+        payload = {
+          ...payload,
+          store_id: zone.store.id,
+        }
+      } else {
+        payload = {
+          ...payload,
+          store_id: null,
+        }
+      }
+      console.log(payload);
+      
+      const response: any = await VTCameraService.updateCamera(camera.vtId, payload);        
     }
 
     const {propertyId, ...updateData} = data
