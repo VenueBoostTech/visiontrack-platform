@@ -24,7 +24,7 @@ async function getDepartment() {
         },
       },
     },
-  });
+  });  
   if (owner?.ownedBusiness) {
     departments = await prisma.department?.findMany({
       where: {
@@ -49,7 +49,7 @@ const StaffPage = async () => {
 
   // Get business owner
   const owner = await prisma.user.findFirst({
-    where: { 
+    where: {
       id: session.user.id,
       role: "BUSINESS_OWNER"
     },
@@ -85,12 +85,12 @@ const StaffPage = async () => {
   });
 
   const departmentList = await getDepartment();
-  
+
   return (
     <div className="px-5">
       <StaffContent
         // @ts-ignore
-        initialStaff={currentStaff} 
+        initialStaff={currentStaff}
         businessId={owner.ownedBusiness.id}
         departmentList={departmentList}
         owner={owner}

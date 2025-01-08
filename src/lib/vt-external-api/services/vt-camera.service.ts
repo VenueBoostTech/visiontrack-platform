@@ -22,6 +22,7 @@ export const VTCameraService = {
   },
 
   createCamera: async (data: CreateVTCameraDto): Promise<VTApiResponse<VTCamera>> => {
+
     return await vtClient.post<VTApiResponse<VTCamera>>(
       VT_ENDPOINTS.CAMERAS.POST,
       data
@@ -30,7 +31,7 @@ export const VTCameraService = {
 
   updateCamera: async (cameraId: string, data: UpdateVTCameraDto): Promise<VTApiResponse<VTCamera>> => {
     return await vtClient.put<VTApiResponse<VTCamera>>(
-      VT_ENDPOINTS.CAMERAS.DETAIL(cameraId),
+      VT_ENDPOINTS.CAMERAS.UPDATE(cameraId),
       data
     );
   },

@@ -20,7 +20,7 @@ export async function PUT(
 
     if (!session?.user) {
       return NextResponse.json(
-        { error: "You must be logged in" },
+        { error: "You must be logged in" }, 
         { status: 401 }
       );
     }
@@ -64,9 +64,9 @@ export async function PUT(
         { error: "You do not have permission to update this property" },
         { status: 403 }
       );
-    }
+    } 
 
-    if (user.ownedBusiness.vtCredentials) {
+    if (user.ownedBusiness.vtCredentials && property.vtId) {  
       vtClient.setCredentials({
         platform_id: user.ownedBusiness.vtCredentials.businessId,
         api_key: user.ownedBusiness.vtCredentials.api_key,
@@ -74,12 +74,11 @@ export async function PUT(
       });
 
       const response: any = await VTPropertiesService.updateProperties({
-        id: params.id,
+        id: property.vtId,
         name: validationResult.data.name,
         type: validationResult.data.type,
         address: validationResult.data.address,
       });
-      console.log("Update Successfully");
     }
 
     const updatedProperty = await prisma.property.update({
@@ -111,11 +110,58 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const property = await prisma.property.delete({
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id as string },
+      include: {
+        ownedBusiness: {
+          include: {
+            vtCredentials: true,
+          },
+        },
+      },
+    });
+
+    // For delete properties, we still require BUSINESS_OWNER role
+    if (user?.role !== "BUSINESS_OWNER") {
+      return NextResponse.json(
+        { error: "Only business owners can delete properties" },
+        { status: 403 }
+      );
+    }
+
+    if (!user?.ownedBusiness) {
+      return NextResponse.json(
+        { error: "No business found for this user" },
+        { status: 404 }
+      );
+    }
+
+    const property = await prisma.property.findUnique({ 
       where: { id: params.id },
     });
 
-    return NextResponse.json(property);
+    if (!property) {
+      return NextResponse.json(
+        { error: "Property not found" },
+        { status: 404 }
+      );
+    } 
+
+    const propertyDelete = await prisma.property.delete({
+      where: { id: params.id },
+    });
+
+    if (user.ownedBusiness && user.ownedBusiness.vtCredentials && property.vtId) {
+      vtClient.setCredentials({
+        platform_id: user.ownedBusiness.vtCredentials.businessId,
+        api_key: user.ownedBusiness.vtCredentials.api_key,
+        business_id: user.ownedBusiness.vtCredentials.platform_id,
+      });
+
+      const response: any = await VTPropertiesService.deleteProperties(property.vtId);
+    }
+
+    return NextResponse.json(propertyDelete);
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to delete property" },

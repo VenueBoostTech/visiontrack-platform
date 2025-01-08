@@ -8,7 +8,8 @@ export const VT_ENDPOINTS = {
   CAMERAS: {
     BASE: "/api/camera",
     DETAIL: (id: string) => `/api/camera/${id}`,
-    POST: "/api/camera/",
+    UPDATE: (id: string) => `/api/camera/${id}`,
+    POST: "/api/camera/",     
   },
   SUPERADMIN: {
     GET: "/api/superadmin/businesses/",
@@ -19,11 +20,16 @@ export const VT_ENDPOINTS = {
   PROPERTIES: {
     CREATE: "vt/api/v1/property/properties/",
     UPDATE: (id: string) => `vt/api/v1/property/properties/${id}`,
+    DELETE: (id: string) => `vt/api/v1/property/properties/${id}`,
   },
   BUILDING: {
     CREATE: "vt/api/v1/property/buildings/",
+    UPDATE: (id: string) => `vt/api/v1/property/buildings/${id}`,
+    DELETE: (id: string) => `vt/api/v1/property/properties/${id}`,
   },
   ZONE: {
     CREATE: (id: string) => `vt/api/v1/zone/properties/${id}/zones`,
+    UPDATE: (id: string) => `/vt/api/v1/zone/zones/${id}`,
+    DELETE: (id: string) => `/vt/api/v1/zone/zones/${id}`
   },
 } as const;

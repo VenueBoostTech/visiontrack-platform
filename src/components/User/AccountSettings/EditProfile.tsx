@@ -106,7 +106,7 @@ export default function EditProfile() {
 
       // Only make the API call if there are changes
       if (Object.keys(requestBody).length === 0) {
-        toast.info("No changes to save");
+        toast.error("No changes to save");
         setLoading(false);
         return null;
       }

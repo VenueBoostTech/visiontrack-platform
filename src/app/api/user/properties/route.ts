@@ -38,7 +38,7 @@ export async function GET() {
       user?.role === "BUSINESS_OWNER"
         ? user.ownedBusiness?.id
         : // @ts-ignore
-          user.workingAt?.business?.id;
+        user.workingAt?.business?.id;
 
     if (!businessId) {
       return NextResponse.json([]);
@@ -70,7 +70,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  try { 
+  try {
     const session = await getAuthSession();
     if (!session?.user) {
       return NextResponse.json(
@@ -113,7 +113,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const data = await request.json();
+    const data = await request.json();  
 
     // Validate input data
     const validationResult = propertySchema.safeParse(data);
@@ -123,9 +123,8 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    let vtId = null;
     
+    let vtId = null;
     if (user.ownedBusiness.vtCredentials) {
       vtClient.setCredentials({
         platform_id: user.ownedBusiness.vtCredentials.businessId,
