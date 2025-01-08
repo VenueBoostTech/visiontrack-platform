@@ -215,6 +215,7 @@ model Building {
  propertyId  String    @db.ObjectId
  property    Property  @relation(fields: [propertyId], references: [id])
  zones       Zone[]
+ businessId  String    @db.ObjectId
 }
 
 model Zone {
@@ -236,6 +237,7 @@ model Zone {
   store       Store?    @relation(fields: [storeId], references: [id])
   cameras     Camera[]
   notes       Note[]
+  businessId  String    @db.ObjectId
 }
 
 model Store {
@@ -273,7 +275,9 @@ model Camera {
   zone          Zone        @relation(fields: [zoneId], references: [id])
   storeId       String?      @db.ObjectId
   store         Store?       @relation(fields: [storeId], references: [id])
-  notes       Note[]
+  notes         Note[]
+  businessId    String?    @db.ObjectId
+  vtId          String?
 }
 
 model AlertRule {

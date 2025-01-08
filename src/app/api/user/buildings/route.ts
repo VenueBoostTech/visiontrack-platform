@@ -4,7 +4,7 @@ import { prisma } from "@/libs/prismaDb";
 import { getAuthSession } from "@/libs/auth";
 import { z } from "zod";
 
-import vtClient from "../../../../lib/vt-external-api/client";  
+import vtClient from "../../../../lib/vt-external-api/client";
 import { VTBuildingService } from "@/lib/vt-external-api/services/vt-building.service";
 
 const buildingSchema = z.object({
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       }
     })
 
-    if(!property){
+    if (!property) {
       return NextResponse.json(
         { error: "Property not found." },
         { status: 404 }
@@ -97,9 +97,10 @@ export async function POST(request: Request) {
     }
 
     const building = await prisma.building.create({
-      data:{
+      data: {
         ...data,
-        vtId: vtId
+        vtId: vtId,
+        businessId: user.ownedBusiness.id,
       },
       include: {
         property: true,

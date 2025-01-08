@@ -12,8 +12,8 @@ const zoneSchema = z.object({
   propertyId: z.string(),
   buildingId: z.string(),
   type: z.string(),
-  floor: z.string(),
-  storeId: z.string(),
+  floor: z.union([z.number(), z.null()]).optional(),
+  storeId: z.string().optional(),
 });
 
 export async function GET() {
@@ -75,8 +75,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const data = await request.json();
-
     // Get user with business relationships
     const user = await prisma.user.findFirst({
       where: {
@@ -111,6 +109,17 @@ export async function POST(request: Request) {
       );
     }
 
+    const data = await request.json();
+
+    // Validate input data
+    const validationResult = zoneSchema.safeParse(data);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: validationResult.error.errors[0].message },
+        { status: 400 }
+      );
+    }
+
     const building = await prisma.building.findFirst({
       where: {
         id: data.buildingId,
@@ -128,15 +137,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate input data
-    const validationResult = zoneSchema.safeParse(data);
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: validationResult.error.errors[0].message },
-        { status: 400 }
-      );
-    }
-
     const zoneData = {
       name: data.name,
       type: data.type,
@@ -148,6 +148,7 @@ export async function POST(request: Request) {
         : {}),
     };
 
+    let vtId = null;
     if (user.ownedBusiness.vtCredentials) {
       vtClient.setCredentials({
         platform_id: user.ownedBusiness.vtCredentials.businessId,
@@ -160,13 +161,17 @@ export async function POST(request: Request) {
         building_id: validationResult.data.buildingId,
         name: validationResult.data.name,
         type: validationResult.data.type,
-        floor: validationResult.data.floor,
-        store_id: validationResult.data.storeId,
+        ...(validationResult.data.floor ? { floor: validationResult.data.floor } : {})
       });
+      vtId = response.id;
     }
 
     const zone = await prisma.zone.create({
-      data: zoneData,
+      data: {
+        ...zoneData,
+        vtId: vtId,
+        businessId: user.ownedBusiness.id,
+      },
       include: {
         property: true,
         building: {
