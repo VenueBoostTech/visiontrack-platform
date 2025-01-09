@@ -1,7 +1,7 @@
 // components/User/Analytics/Retail/RetailDemographics.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Users,
@@ -24,6 +24,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import toast from "react-hot-toast";
 
 // Mock data
 const mockData = {
@@ -53,9 +54,25 @@ const mockData = {
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
 
-export default function RetailDemographics() {
+export default function RetailDemographics({ zones, user }: { zones: any, user: any }) {
   const [timeRange, setTimeRange] = useState("week");
   const [selectedZone, setSelectedZone] = useState("all");
+  const [demographics, setDemographics] = useState(null);
+
+  const getDemographics = async (id: string) => {
+    const response = await fetch(`/api/user/demographics/${id}`);
+    const data = await response.json();
+    if (data.ok) {
+      setDemographics(data)
+      toast.success("Demographics fetched successfully");
+    } else {
+      toast.error("Failed to fetch demographics");
+    }
+  }
+
+  useEffect(() => {
+    getDemographics(selectedZone);
+  }, [selectedZone]);
 
   // Calculate total visitors and gender ratio
   const totalVisitors = mockData.ageGroups.reduce(
@@ -98,9 +115,11 @@ export default function RetailDemographics() {
             onChange={(e) => setSelectedZone(e.target.value)}
           >
             <option value="all">All Zones</option>
-            <option value="entrance">Entrance</option>
-            <option value="checkout">Checkout Area</option>
-            <option value="electronics">Electronics</option>
+            {
+              zones.map((zone: any) => (
+                <option key={zone.vtId} value={zone.vtId}>{zone.name}</option>
+              ))
+            }
           </select>
         </div>
       </div>
