@@ -33,4 +33,13 @@ export const VTPropertiesService = {
       throw error;
     }
   },
+  deleteProperties: async (id: string) => {
+    try {
+      const response = await vtClient.delete(VT_ENDPOINTS.PROPERTIES.DELETE(id));
+      return response;
+    } catch (error) {
+      console.error("Delete business error:", error);
+      throw error;
+    }
+  },
 };

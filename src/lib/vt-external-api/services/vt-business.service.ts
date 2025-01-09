@@ -13,7 +13,7 @@ export const VTBusinessService = {
       }
       throw error;
     }
-  },
+  },  
 
   async createBusiness(data: { name: string, vt_platform_id: string, api_key: string }) {
     try {

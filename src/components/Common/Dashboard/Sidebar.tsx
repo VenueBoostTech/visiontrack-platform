@@ -17,7 +17,7 @@ export default function Sidebar({
     (i: any) => pathname.includes(i.path) || 0
   );
   const [openMenus, setOpenMenus] = useState<{ [key: number]: boolean }>({
-    [currentOpenMenu.id]: true,
+    [currentOpenMenu?.id ?? 0]: true,
   });
 
   const toggleMenu = (id: number) => {
