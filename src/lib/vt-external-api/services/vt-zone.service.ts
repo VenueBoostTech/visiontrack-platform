@@ -22,7 +22,7 @@ export interface UpdateVTZones {
   store_id?: string;
 }
 
-export const VTZineService = {
+export const VTZoneService = {
   createZone: async (data: CreateVTZones) => {
     try {
       return await vtClient.post(

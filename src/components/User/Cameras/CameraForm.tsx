@@ -56,10 +56,11 @@ interface CameraFormData {
   status: CameraStatus;
   direction?: string;
   coverageArea?: any;
-  capabilities?: Record<string, boolean>;
+  capabilities?: string[];
   zoneId: string;
   storeId?: string;
   propertyId?: string;
+  vtId?: string;
 }
 
 interface CameraFormProps {
@@ -80,9 +81,7 @@ export default function CameraForm({
   const [selectedBuilding, setSelectedBuilding] = useState<string>('');
   const [selectedZone, setSelectedZone] = useState<string>(initialData?.zoneId || '');
   const [selectedZoneData, setSelectedZoneData] = useState<Zone | null>(null);
-  const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>(
-    initialData?.capabilities ? Object.keys(initialData.capabilities) : []
-  );
+  const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   const capabilities = [
@@ -101,7 +100,7 @@ export default function CameraForm({
         const data = await response.json();
         setProperties(data);
 
-        // If we have initialData, set the selections and fetch zone details
+        // If we have initialData, set the selections and fetch zone details        
         if (initialData?.zoneId) {
           const zoneResponse = await fetch(`/api/user/zones/${initialData.zoneId}`);
           const zoneData = await zoneResponse.json();
@@ -109,6 +108,8 @@ export default function CameraForm({
           setSelectedZone(zoneData.id);
           setSelectedBuilding(zoneData.building.id);
           setSelectedProperty(zoneData.building.property.id);
+          const currentCapabilities = zoneData?.cameras.find((cam: any) => cam.vtId === initialData.vtId).capabilities || [];
+          setSelectedCapabilities(currentCapabilities);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -121,7 +122,7 @@ export default function CameraForm({
     fetchData();
   }, [initialData]);
 
-  const availableBuildings = selectedProperty 
+  const availableBuildings = selectedProperty
     ? properties.find(p => p.id === selectedProperty)?.buildings || []
     : [];
 
@@ -131,7 +132,7 @@ export default function CameraForm({
 
   const handleZoneChange = async (zoneId: string) => {
     setSelectedZone(zoneId);
-    
+
     if (zoneId) {
       try {
         const response = await fetch(`/api/user/zones/${zoneId}`);
@@ -150,7 +151,7 @@ export default function CameraForm({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    
+
     const data: CameraFormData = {
       name: formData.get('name') as string,
       location: formData.get('location') as string || undefined,
@@ -158,10 +159,7 @@ export default function CameraForm({
       type: formData.get('type') as CameraType,
       status: formData.get('status') as CameraStatus,
       direction: formData.get('direction') as string || undefined,
-      capabilities: selectedCapabilities.length > 0 ? selectedCapabilities.reduce((acc, curr) => ({
-        ...acc,
-        [curr]: true
-      }), {}) : undefined,
+      capabilities: selectedCapabilities,
       zoneId: selectedZone,
       // Add store ID if zone is retail and has a store
       storeId: selectedZoneData?.type === ZoneType.RETAIL ? selectedZoneData?.store?.id : undefined,
@@ -347,7 +345,7 @@ export default function CameraForm({
                         }}
                         className="rounded border-gray-300 dark:border-gray-600"
                       />
-                      {capability.split('_').map(word => 
+                      {capability.split('_').map(word =>
                         word.charAt(0).toUpperCase() + word.slice(1)
                       ).join(' ')}
                     </label>

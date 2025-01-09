@@ -4,7 +4,7 @@ import { prisma } from "@/libs/prismaDb";
 import { getAuthSession } from "@/libs/auth";
 import { z } from 'zod';
 import vtClient from "../../../../../lib/vt-external-api/client";
-import { VTZineService } from '@/lib/vt-external-api/services/vt-zone.service';
+import { VTZoneService } from '@/lib/vt-external-api/services/vt-zone.service';
 
 
 const zoneSchema = z.object({
@@ -148,7 +148,7 @@ export async function PUT(
         business_id: user.ownedBusiness.vtCredentials.platform_id,
       });
 
-      const response: any = await VTZineService.updateZone({
+      const response: any = await VTZoneService.updateZone({
         id: existingZone.vtId,
         property_id: validationResult.data.propertyId,
         building_id: validationResult.data.buildingId,
@@ -245,7 +245,7 @@ export async function DELETE(
         business_id: user.ownedBusiness.vtCredentials.platform_id,
       });
 
-      const response: any = await VTZineService.deleteZone(zone.vtId);
+      const response: any = await VTZoneService.deleteZone(zone.vtId);
     }
 
     return NextResponse.json({ success: true });
