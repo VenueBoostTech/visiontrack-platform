@@ -10,9 +10,7 @@ const cameraSchema = z.object({
   name: z.string().min(1, "Name is required"),
   rtspUrl: z.string(),
   status: z.enum(["ACTIVE", "INACTIVE", "MAINTENANCE"]),
-  // propertyId: z.string(),
-  // zoneId: z.string(),
-  capabilities: z.union([z.string(), z.null()]).optional(),
+  capabilities: z.array(z.string()).optional(),
   store_id: z.union([z.string(), z.null()]).optional(),
   location: z.union([z.string(), z.null()]).optional(),
   direction: z.union([z.string(), z.null()]).optional(),
@@ -170,7 +168,7 @@ export async function PUT(
         business_id: user.ownedBusiness.vtCredentials.platform_id,
       });
 
-      let payload : any = {
+      let payload: any = {
         camera_id: camera.id,
         rtsp_url: validationResult.data.rtspUrl,
         property_id: property.vtId,
@@ -181,7 +179,7 @@ export async function PUT(
         status: validationResult.data.status,
         capabilities: validationResult.data.capabilities,
       }
-      if(zone.store){
+      if (zone.store) {
         payload = {
           ...payload,
           store_id: zone.store.id,
@@ -192,12 +190,10 @@ export async function PUT(
           store_id: null,
         }
       }
-      console.log(payload);
-      
-      const response: any = await VTCameraService.updateCamera(camera.vtId, payload);        
-    }
+      const response: any = await VTCameraService.updateCamera(camera.vtId, payload);
+    }    
 
-    const {propertyId, ...updateData} = data
+    const { propertyId, ...updateData } = data
     const updatedCamera = await prisma.camera.update({
       where: { id: params.id },
       data: updateData,

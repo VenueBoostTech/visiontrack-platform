@@ -10,9 +10,7 @@ const cameraSchema = z.object({
   name: z.string().min(1, "Name is required"),
   rtspUrl: z.string(),
   status: z.enum(["ACTIVE", "INACTIVE", "MAINTENANCE"]),
-  // propertyId: z.string(),
-  // zoneId: z.string(),
-  capabilities: z.union([z.string(), z.null()]).optional(),
+  capabilities: z.array(z.string()).optional(),
   store_id: z.union([z.string(), z.null()]).optional(),
   location: z.union([z.string(), z.null()]).optional(),
   direction: z.union([z.string(), z.null()]).optional(),
@@ -129,7 +127,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const data = await request.json();
+    const data = await request.json();    
 
     const businessId =
       user?.role === "BUSINESS_OWNER"
@@ -231,7 +229,7 @@ export async function POST(request: Request) {
         business_id: user.ownedBusiness.vtCredentials.platform_id,
       });
 
-      let payload : any= {
+      let payload: any = {
         camera_id: camera.id,
         rtsp_url: validationResult.data.rtspUrl,
         property_id: property.vtId,
@@ -242,15 +240,14 @@ export async function POST(request: Request) {
         status: validationResult.data.status,
         capabilities: validationResult.data.capabilities,
       }
-      if(zone.store){
+      if (zone.store) {
         payload = {
           ...payload,
           store_id: zone.store.id,
         }
       }
-      console.log(payload);
-      
-      const response: any = await VTCameraService.createCamera(payload);      
+
+      const response: any = await VTCameraService.createCamera(payload);
       vtId = response.id;
     }
 

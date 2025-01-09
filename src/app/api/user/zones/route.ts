@@ -5,7 +5,7 @@ import { getAuthSession } from "@/libs/auth";
 import { z } from "zod";
 import vtClient from "../../../../lib/vt-external-api/client";
 import { VTBuildingService } from "@/lib/vt-external-api/services/vt-building.service";
-import { VTZineService } from "@/lib/vt-external-api/services/vt-zone.service";
+import { VTZoneService } from "@/lib/vt-external-api/services/vt-zone.service";
 
 const zoneSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -156,7 +156,7 @@ export async function POST(request: Request) {
         business_id: user.ownedBusiness.vtCredentials.platform_id,
       });
 
-      const response: any = await VTZineService.createZone({
+      const response: any = await VTZoneService.createZone({
         property_id: validationResult.data.propertyId,
         building_id: validationResult.data.buildingId,
         name: validationResult.data.name,
