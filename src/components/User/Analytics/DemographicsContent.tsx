@@ -23,7 +23,7 @@ const mockData = {
   ]
 };
 
-export default function DemographicsContent() {
+export default function DemographicsContent({ zones, user }: { zones: any, user: any }) {
   const [selectedTimeRange] = useState('week');
   const totalVisitors = mockData.ageGroups.reduce((sum, group) => sum + group.count, 0);
   const maleVisitors = mockData.ageGroups.reduce((sum, group) => sum + group.male, 0);
