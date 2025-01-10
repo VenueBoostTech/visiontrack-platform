@@ -24,8 +24,10 @@ import {
 	ScrollText,
 	CreditCard,
 	Store,
-	KeyRound
+	KeyRound,
+	FolderSyncIcon
    } from "lucide-react";
+import { title } from "process";
    
    export const getUserSidebarData = (businessType: string = 'RETAIL'): Sidebar[] => {
 	return [
@@ -478,6 +480,12 @@ export const adminSidebarData = [
 		</svg>
 	  ),
 	},
+	{
+		id: 7,
+		title:"Sync",
+		path:"/admin/sync",
+		icon: <FolderSyncIcon className="w-6 h-6" />
+	}
   ];
 
 export const adminSidebarOtherData: Sidebar[] = [
