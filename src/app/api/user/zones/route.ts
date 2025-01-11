@@ -137,6 +137,20 @@ export async function POST(request: Request) {
       );
     }
 
+    const property = await prisma.property.findFirst({
+      where: {
+        id: data.propertyId,
+        businessId: user.ownedBusiness.id,
+      },
+    });
+
+    if (!property) {
+      return NextResponse.json(
+        { error: "Property not found" },
+        { status: 404 }
+      );
+    }
+
     const zoneData = {
       name: data.name,
       type: data.type,
@@ -157,8 +171,8 @@ export async function POST(request: Request) {
       });
 
       const response: any = await VTZoneService.createZone({
-        property_id: validationResult.data.propertyId,
-        building_id: validationResult.data.buildingId,
+        property_id: property.vtId,
+        building_id: building.vtId,
         name: validationResult.data.name,
         type: validationResult.data.type,
         ...(validationResult.data.floor ? { floor: validationResult.data.floor } : {})

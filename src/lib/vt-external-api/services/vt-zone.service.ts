@@ -5,8 +5,8 @@ import { VT_ENDPOINTS } from "../endpoints";
 
 export interface CreateVTZones {
   name: string;
-  property_id: string;
-  building_id: string;
+  property_id: string | null;
+  building_id: string | null;
   type: string;
   floor?: number;
   store_id?: string;
@@ -26,7 +26,7 @@ export const VTZoneService = {
   createZone: async (data: CreateVTZones) => {
     try {
       return await vtClient.post(
-        VT_ENDPOINTS.ZONE.CREATE(data.property_id),
+        VT_ENDPOINTS.ZONE.CREATE(data.property_id || ''),
         data
       );
     } catch (error) {

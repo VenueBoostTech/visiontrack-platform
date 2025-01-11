@@ -1,15 +1,12 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Map, Activity, Users, ArrowUpRight, Clock } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import toast from 'react-hot-toast';
+import vtClient from "../../../lib/vt-external-api/client"
+import { VTHeatmapService } from '@/lib/vt-external-api/services/vt-heatmap.service';
 
-// Mock data for heatmap points
-const mockHeatmapData = Array.from({ length: 50 }, () => ({
-  x: Math.floor(Math.random() * 100),
-  y: Math.floor(Math.random() * 100),
-  value: Math.floor(Math.random() * 100) // intensity
-}));
 
 const mockTimeData = [
   { hour: '00:00', value: 25 },
@@ -20,9 +17,40 @@ const mockTimeData = [
   { hour: '20:00', value: 45 }
 ];
 
-export default function HeatmapContent() {
-  const [selectedZone, setSelectedZone] = useState('all');
-  const [selectedTimeRange, setSelectedTimeRange] = useState('day');
+export default function HeatmapContent({ zones, user }: { zones: any, user: any }) {
+  const [selectedZone, setSelectedZone] = useState('');
+  const [filterBy, setFilterBy] = useState('last_24_hours');
+  const [heatmapData, setHeatmapData] = useState<any>([]);
+  const getHeatmap = async (vtId: string, filterBy: string) => {
+    try {
+      if (user.ownedBusiness.vtCredentials && filterBy) {
+        vtClient.setCredentials({
+          platform_id: user.ownedBusiness.vtCredentials.businessId,
+          api_key: user.ownedBusiness.vtCredentials.api_key,
+          business_id: user.ownedBusiness.vtCredentials.platform_id,
+        });
+
+        const response: any = await VTHeatmapService.getHeatmap(vtId, filterBy);
+        if (response.points.length > 0) {
+          setHeatmapData(response.points.map((point: any) => ({
+            x: point.x,
+            y: point.y,
+            value: point.weight
+          })));
+        } else {
+          setHeatmapData([]);
+        }
+
+
+      }
+    } catch (error) {
+      setHeatmapData([]);
+    }
+  }
+
+  useEffect(() => {
+    getHeatmap(selectedZone, filterBy);
+  }, [selectedZone, filterBy]);
 
   return (
     <div className="px-6 space-y-6">
@@ -36,23 +64,25 @@ export default function HeatmapContent() {
         </div>
         <div className="flex gap-3">
           <select
-            className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
+            className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
             value={selectedZone}
             onChange={(e) => setSelectedZone(e.target.value)}
           >
-            <option value="all">All Zones</option>
-            <option value="entrance">Entrance</option>
-            <option value="lobby">Lobby</option>
-            <option value="parking">Parking</option>
+            <option value="">All Zones</option>
+            {
+              zones.map((zone: any) => (
+                <option key={zone.vtId} value={zone.vtId}>{zone.name}</option>
+              ))
+            }
           </select>
           <select
             className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
-            value={selectedTimeRange}
-            onChange={(e) => setSelectedTimeRange(e.target.value)}
+            value={filterBy}
+            onChange={(e) => setFilterBy(e.target.value)}
           >
-            <option value="day">Last 24 Hours</option>
-            <option value="week">Last Week</option>
-            <option value="month">Last Month</option>
+            <option value="last_24_hours">Last 24 Hours</option>
+            <option value="last_week">Last Week</option>
+            <option value="last_month">Last Month</option>
           </select>
         </div>
       </div>
@@ -66,7 +96,7 @@ export default function HeatmapContent() {
             </div>
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Active Zones</p>
-              <h3 className="text-xl font-bold">8</h3>
+              <h3 className="text-xl font-bold">{zones.length}</h3>
             </div>
           </div>
         </div>
@@ -136,7 +166,7 @@ export default function HeatmapContent() {
                 <XAxis type="number" dataKey="x" name="x" />
                 <YAxis type="number" dataKey="y" name="y" />
                 <ZAxis type="number" dataKey="value" range={[20, 400]} name="intensity" />
-                <Tooltip 
+                <Tooltip
                   cursor={{ strokeDasharray: '3 3' }}
                   content={({ payload }) => {
                     if (payload && payload.length) {
@@ -149,8 +179,8 @@ export default function HeatmapContent() {
                     return null;
                   }}
                 />
-                <Scatter 
-                  data={mockHeatmapData} 
+                <Scatter
+                  data={heatmapData}
                   fill="#3b82f6"
                   opacity={0.6}
                 />
@@ -174,17 +204,16 @@ export default function HeatmapContent() {
                 <div>
                   <p className="font-medium">{spot.name}</p>
                   <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                    <div 
-                      className="bg-blue-600 h-2 rounded-full" 
+                    <div
+                      className="bg-blue-600 h-2 rounded-full"
                       style={{ width: `${spot.value}%` }}
                     ></div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold">{spot.value}%</span>
-                  <span className={`text-sm ${
-                    spot.trend.startsWith('+') ? 'text-green-500' : 'text-red-500'
-                  }`}>
+                  <span className={`text-sm ${spot.trend.startsWith('+') ? 'text-green-500' : 'text-red-500'
+                    }`}>
                     {spot.trend}
                   </span>
                 </div>
@@ -199,8 +228,8 @@ export default function HeatmapContent() {
                   <span className="text-sm text-gray-500">{time.hour}</span>
                   <div className="flex-1 mx-3">
                     <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className="bg-blue-600 h-1.5 rounded-full" 
+                      <div
+                        className="bg-blue-600 h-1.5 rounded-full"
                         style={{ width: `${time.value}%` }}
                       ></div>
                     </div>
