@@ -1,5 +1,7 @@
 import { VTBuildingService } from "@/lib/vt-external-api/services/vt-building.service";
 import vtClient from "../../../../lib/vt-external-api/client";
+import { prisma } from "@/libs/prismaDb";
+
 export async function GET(request: Request) {
     try {
         const buildings = await prisma.building.findMany({

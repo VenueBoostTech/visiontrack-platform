@@ -1,3 +1,4 @@
+import { prisma } from "@/libs/prismaDb";
 import { VTZoneService } from "@/lib/vt-external-api/services/vt-zone.service";
 import vtClient from "../../../../lib/vt-external-api/client";
 export async function GET(request: Request) {

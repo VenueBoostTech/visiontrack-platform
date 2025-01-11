@@ -1,3 +1,4 @@
+import { prisma } from "@/libs/prismaDb";
 import { VTPropertiesService } from "@/lib/vt-external-api/services/vt-properties.service";
 import vtClient from "../../../../lib/vt-external-api/client";
 export async function GET(request: Request) {
