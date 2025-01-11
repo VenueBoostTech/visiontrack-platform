@@ -2,11 +2,11 @@
 import vtClient from "../client";
 import { VT_ENDPOINTS } from "../endpoints";
 
-export const VTDemographicsService = {
-  getDemographics: async (zoneId: string, timeRange: string) => {
+export const VTHeatmapService = {
+  getHeatmap: async (zoneId: string, timeRange: string) => {
     try {
       return await vtClient.get(
-        VT_ENDPOINTS.DEMOGRAPHICS.GET(zoneId, timeRange)
+        VT_ENDPOINTS.HEATMAP.GET(zoneId, timeRange)
       );
     } catch (error) {
       console.error("Get demographics error:", error);

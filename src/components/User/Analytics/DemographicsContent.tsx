@@ -1,18 +1,13 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Users, Clock, TrendingUp, Calendar } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import toast from 'react-hot-toast';
+import { VTDemographicsService } from '@/lib/vt-external-api/services/vt-demographics.service';
+import vtClient from "../../../lib/vt-external-api/client";
 
 const mockData = {
-  ageGroups: [
-    { age: '18-24', count: 342, male: 180, female: 162 },
-    { age: '25-34', count: 456, male: 245, female: 211 },
-    { age: '35-44', count: 384, male: 198, female: 186 },
-    { age: '45-54', count: 298, male: 158, female: 140 },
-    { age: '55-64', count: 246, male: 128, female: 118 },
-    { age: '65+', count: 187, male: 95, female: 92 }
-  ],
   timeDistribution: [
     { time: '6AM', count: 150 },
     { time: '9AM', count: 480 },
@@ -24,10 +19,47 @@ const mockData = {
 };
 
 export default function DemographicsContent({ zones, user }: { zones: any, user: any }) {
-  const [selectedTimeRange] = useState('week');
-  const totalVisitors = mockData.ageGroups.reduce((sum, group) => sum + group.count, 0);
-  const maleVisitors = mockData.ageGroups.reduce((sum, group) => sum + group.male, 0);
-  const femaleVisitors = mockData.ageGroups.reduce((sum, group) => sum + group.female, 0);
+  const [timeRange, setTimeRange] = useState('week');
+  const [demographics, setDemographics] = useState<any>(null);
+
+  const getDemographics = async (zone: string, timeRange: string) => {
+    try {
+      if (user.ownedBusiness.vtCredentials && timeRange) {
+        vtClient.setCredentials({
+          platform_id: user.ownedBusiness.vtCredentials.businessId,
+          api_key: user.ownedBusiness.vtCredentials.api_key,
+          business_id: user.ownedBusiness.vtCredentials.platform_id,
+        });
+
+        //get demographics
+        const response: any = await VTDemographicsService.getDemographics(zone, timeRange);
+
+        //Sort age_groups by age
+        response.age_groups = response.age_groups.sort((a: any, b: any) => {
+          const getAgeRange = (age: any) => {
+            const match = age.match(/(\d+)-(\d+)/);  // Modified regex to match age range without parentheses
+            return match ? parseInt(match[1]) : 0;
+          };
+          // Remove parentheses from the age and update the key
+          a.age = a.age.replace(/[()]/g, '');
+          b.age = b.age.replace(/[()]/g, '');
+
+          return getAgeRange(a.age) - getAgeRange(b.age);
+        });
+
+        //get daily average
+        response.daily_average = response.total_count / (timeRange === "week" ? 7 : timeRange === "month" ? 30 : timeRange === "quarter" ? 365 : 1)
+
+        setDemographics(response);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch demographics");
+    }
+  }
+
+  useEffect(() => {
+    getDemographics("all", timeRange);
+  }, [timeRange]);
 
   return (
     <div className="px-6 space-y-6">
@@ -41,12 +73,13 @@ export default function DemographicsContent({ zones, user }: { zones: any, user:
         </div>
         <select
           className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
-          value={selectedTimeRange}
+          value={timeRange}
+          onChange={(e) => setTimeRange(e.target.value)}
         >
           <option value="day">Last 24 Hours</option>
           <option value="week">Last Week</option>
           <option value="month">Last Month</option>
-          <option value="year">Last Year</option>
+          <option value="quarter">Last Year</option>
         </select>
       </div>
 
@@ -59,7 +92,9 @@ export default function DemographicsContent({ zones, user }: { zones: any, user:
             </div>
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Total Visitors</p>
-              <h3 className="text-xl font-bold">{totalVisitors.toLocaleString()}</h3>
+              <h3 className="text-xl font-bold">
+                {demographics?.total_count?.toLocaleString() || 0}
+              </h3>
             </div>
           </div>
         </div>
@@ -71,7 +106,7 @@ export default function DemographicsContent({ zones, user }: { zones: any, user:
             </div>
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Daily Average</p>
-              <h3 className="text-xl font-bold">{Math.round(totalVisitors / 7).toLocaleString()}</h3>
+              <h3 className="text-xl font-bold">{Math.round(demographics?.daily_average).toLocaleString()}</h3>
             </div>
           </div>
         </div>
@@ -84,7 +119,7 @@ export default function DemographicsContent({ zones, user }: { zones: any, user:
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Male / Female Ratio</p>
               <h3 className="text-xl font-bold">
-                {Math.round((maleVisitors / femaleVisitors) * 100) / 100}
+                {Math.round((demographics?.gender_distribution?.Male / demographics?.gender_distribution?.Female) * 100) / 100 || 0}
               </h3>
             </div>
           </div>
@@ -110,7 +145,7 @@ export default function DemographicsContent({ zones, user }: { zones: any, user:
           <h3 className="text-lg font-semibold mb-4">Age Distribution</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={mockData.ageGroups}>
+              <BarChart data={demographics?.age_groups || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="age" />
                 <YAxis />

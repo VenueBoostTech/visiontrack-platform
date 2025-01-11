@@ -25,17 +25,11 @@ import {
   Cell,
 } from "recharts";
 import toast from "react-hot-toast";
+import vtClient from "../../../../lib/vt-external-api/client";
+import { VTDemographicsService } from "@/lib/vt-external-api/services/vt-demographics.service";
 
 // Mock data
 const mockData = {
-  ageGroups: [
-    { age: "18-24", count: 342, male: 180, female: 162 },
-    { age: "25-34", count: 456, male: 245, female: 211 },
-    { age: "35-44", count: 384, male: 198, female: 186 },
-    { age: "45-54", count: 298, male: 158, female: 140 },
-    { age: "55-64", count: 246, male: 128, female: 118 },
-    { age: "65+", count: 187, male: 95, female: 92 },
-  ],
   shoppingPatterns: [
     { hour: "09", weekday: 120, weekend: 180 },
     { hour: "11", weekday: 280, weekend: 350 },
@@ -57,36 +51,66 @@ const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
 export default function RetailDemographics({ zones, user }: { zones: any, user: any }) {
   const [timeRange, setTimeRange] = useState("week");
   const [selectedZone, setSelectedZone] = useState("all");
-  const [demographics, setDemographics] = useState(null);
+  const [demographics, setDemographics] = useState<any>(null);
 
-  const getDemographics = async (id: string) => {
-    const response = await fetch(`/api/user/demographics/${id}`);
-    const data = await response.json();
-    if (data.ok) {
-      setDemographics(data)
-      toast.success("Demographics fetched successfully");
-    } else {
+  const getDemographics = async (vtId: string, timeRange: string) => {
+    try {
+      if (user.ownedBusiness.vtCredentials && vtId && timeRange) {
+        vtClient.setCredentials({
+          platform_id: user.ownedBusiness.vtCredentials.businessId,
+          api_key: user.ownedBusiness.vtCredentials.api_key,
+          business_id: user.ownedBusiness.vtCredentials.platform_id,
+        });
+
+        //get demographics
+        const response: any = await VTDemographicsService.getDemographics(vtId, timeRange);
+
+        //Sort age_groups by age
+        response.age_groups = response.age_groups.sort((a: any, b: any) => {
+          const getAgeRange = (age: any) => {
+            const match = age.match(/(\d+)-(\d+)/);
+            return match ? parseInt(match[1]) : 0;
+          };
+          // Remove parentheses from the age and update the key
+          a.age = a.age.replace(/[()]/g, '');
+          b.age = b.age.replace(/[()]/g, '');
+
+          return getAgeRange(a.age) - getAgeRange(b.age);
+        });
+
+        response.average_age = calculateAverageAge(response);
+
+        setDemographics(response);
+      }
+    } catch (error) {
       toast.error("Failed to fetch demographics");
     }
   }
 
-  useEffect(() => {
-    getDemographics(selectedZone);
-  }, [selectedZone]);
+  //calculate average age
+  function calculateAverageAge(data: any): number {
+    let totalWeightedAge = 0;
+    const totalCount = data.total_count;
 
-  // Calculate total visitors and gender ratio
-  const totalVisitors = mockData.ageGroups.reduce(
-    (sum, group) => sum + group.count,
-    0
-  );
-  const maleVisitors = mockData.ageGroups.reduce(
-    (sum, group) => sum + group.male,
-    0
-  );
-  const femaleVisitors = mockData.ageGroups.reduce(
-    (sum, group) => sum + group.female,
-    0
-  );
+    for (const group of data.age_groups) {
+      const match = group.age.match(/(\d+)-(\d+)/);
+      if (match) {
+        const low = parseInt(match[1], 10);
+        const high = parseInt(match[2], 10);
+        const midpoint = (low + high) / 2;
+
+        totalWeightedAge += midpoint * group.count;
+      }
+    }
+
+    return totalCount > 0 ? totalWeightedAge / totalCount : 0;
+  }
+
+  useEffect(() => {
+    getDemographics(selectedZone, timeRange);
+  }, [selectedZone, timeRange]);
+
+
 
   return (
     <div className="space-y-6">
@@ -136,7 +160,7 @@ export default function RetailDemographics({ zones, user }: { zones: any, user: 
                 <p className="text-sm text-gray-500">Total Customers</p>
                 <div className="flex items-center gap-2">
                   <h3 className="text-2xl font-bold">
-                    {totalVisitors.toLocaleString()}
+                    {demographics?.total_count?.toLocaleString() || 0}
                   </h3>
                   <span className="text-xs text-green-500 flex items-center">
                     <ArrowUp className="w-3 h-3" /> 12%
@@ -157,7 +181,7 @@ export default function RetailDemographics({ zones, user }: { zones: any, user: 
                 <p className="text-sm text-gray-500">Gender Ratio</p>
                 <div className="flex items-center gap-2">
                   <h3 className="text-2xl font-bold">
-                    {Math.round((maleVisitors / femaleVisitors) * 100) / 100}
+                    {Math.round((demographics?.gender_distribution?.Male / demographics?.gender_distribution?.Female) * 100) / 100 || 0}
                   </h3>
                   <span className="text-xs text-gray-500">M/F</span>
                 </div>
@@ -188,7 +212,7 @@ export default function RetailDemographics({ zones, user }: { zones: any, user: 
               </div>
               <div>
                 <p className="text-sm text-gray-500">Avg. Age</p>
-                <h3 className="text-2xl font-bold">34.5</h3>
+                <h3 className="text-2xl font-bold">{demographics?.average_age?.toFixed(2) || 0}</h3>
               </div>
             </div>
           </CardContent>
@@ -204,16 +228,21 @@ export default function RetailDemographics({ zones, user }: { zones: any, user: 
           </CardHeader>
           <CardContent>
             <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={mockData.ageGroups}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="age" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="male" name="Male" fill="#3b82f6" />
-                  <Bar dataKey="female" name="Female" fill="#ec4899" />
-                </BarChart>
-              </ResponsiveContainer>
+              {demographics?.age_groups ?
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={demographics.age_groups}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="age" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="male" name="Male" fill="#3b82f6" />
+                    <Bar dataKey="female" name="Female" fill="#ec4899" />
+                  </BarChart>
+                </ResponsiveContainer> :
+                <div className="h-75 w-full flex items-center justify-center">
+                  <span className=" font-bold">No Age groups found for this zone</span>
+                </div>
+              }
             </div>
           </CardContent>
         </Card>
