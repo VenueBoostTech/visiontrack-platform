@@ -42,10 +42,10 @@ const mockData = {
 };
 
 export default function RetailHeatmaps({ zones, user }: { zones: any, user: any }) {
-  const [timeRange, setTimeRange] = useState('today');
+  const [timeRange, setTimeRange] = useState('last_24_hours');
   const [viewType, setViewType] = useState('dwell');
-
-  const getHeatmap = async (zone: string, timeRange: string) => {
+  const [heatmapData, setHeatmapData] = useState<any>([]);
+  const getHeatmap = async (timeRange: string) => {
     try {
       if (user.ownedBusiness.vtCredentials && timeRange) {
         vtClient.setCredentials({
@@ -54,9 +54,16 @@ export default function RetailHeatmaps({ zones, user }: { zones: any, user: any 
           business_id: user.ownedBusiness.vtCredentials.platform_id,
         });
 
-        //get heatmap
-        // const response: any = await VTHeatmapService.getHeatmap(zone, timeRange, propertyId);
-
+        const response: any = await VTHeatmapService.getHeatmap('', timeRange);
+        if (response.points.length > 0) {
+          setHeatmapData(response.points.map((point: any) => ({
+            x: point.x,
+            y: point.y,
+            value: point.weight
+          })));
+        } else {
+          setHeatmapData([]);
+        }
       }
     } catch (error) {
       toast.error("Failed to fetch heatmap");
@@ -65,8 +72,8 @@ export default function RetailHeatmaps({ zones, user }: { zones: any, user: any 
 
 
   useEffect(() => {
-    getHeatmap("all", timeRange);
-  }, [timeRange]);
+    getHeatmap(timeRange);
+  }, [timeRange, viewType]);
 
   return (
     <div className="space-y-6">
@@ -93,9 +100,9 @@ export default function RetailHeatmaps({ zones, user }: { zones: any, user: any 
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
           >
-            <option value="today">Today</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
+            <option value="last_24_hours">Today</option>
+            <option value="last_week">This Week</option>
+            <option value="last_month">This Month</option>
           </select>
         </div>
       </div>
@@ -217,7 +224,7 @@ export default function RetailHeatmaps({ zones, user }: { zones: any, user: any 
                   }}
                 />
                 <Scatter
-                  data={mockData.heatmapPoints}
+                  data={heatmapData}
                   fill="#3b82f6"
                   opacity={0.6}
                 />

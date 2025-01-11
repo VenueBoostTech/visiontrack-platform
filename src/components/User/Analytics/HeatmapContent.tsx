@@ -5,13 +5,8 @@ import { Map, Activity, Users, ArrowUpRight, Clock } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import toast from 'react-hot-toast';
 import vtClient from "../../../lib/vt-external-api/client"
+import { VTHeatmapService } from '@/lib/vt-external-api/services/vt-heatmap.service';
 
-// Mock data for heatmap points
-const mockHeatmapData = Array.from({ length: 50 }, () => ({
-  x: Math.floor(Math.random() * 100),
-  y: Math.floor(Math.random() * 100),
-  value: Math.floor(Math.random() * 100) // intensity
-}));
 
 const mockTimeData = [
   { hour: '00:00', value: 25 },
@@ -23,30 +18,39 @@ const mockTimeData = [
 ];
 
 export default function HeatmapContent({ zones, user }: { zones: any, user: any }) {
-  const [selectedZone, setSelectedZone] = useState('all');
-  const [timeRange, setTimeRange] = useState('day');
-
-  const getHeatmap = async (vtId: string, timeRange: string, propertyId: string) => {
+  const [selectedZone, setSelectedZone] = useState('');
+  const [filterBy, setFilterBy] = useState('last_24_hours');
+  const [heatmapData, setHeatmapData] = useState<any>([]);
+  const getHeatmap = async (vtId: string, filterBy: string) => {
     try {
-      if (user.ownedBusiness.vtCredentials && vtId && timeRange && propertyId) {
+      if (user.ownedBusiness.vtCredentials && filterBy) {
         vtClient.setCredentials({
           platform_id: user.ownedBusiness.vtCredentials.businessId,
           api_key: user.ownedBusiness.vtCredentials.api_key,
           business_id: user.ownedBusiness.vtCredentials.platform_id,
         });
 
-        //get heatmap
-        // const response: any = await VTHeatmapService.getHeatmap(vtId, timeRange, propertyId);
+        const response: any = await VTHeatmapService.getHeatmap(vtId, filterBy);
+        if (response.points.length > 0) {
+          setHeatmapData(response.points.map((point: any) => ({
+            x: point.x,
+            y: point.y,
+            value: point.weight
+          })));
+        } else {
+          setHeatmapData([]);
+        }
+
 
       }
     } catch (error) {
-      toast.error("Failed to fetch heatmap");
+      setHeatmapData([]);
     }
   }
 
   useEffect(() => {
-    getHeatmap(selectedZone, timeRange, zones[0].property.vtId);
-  }, [selectedZone, timeRange]);
+    getHeatmap(selectedZone, filterBy);
+  }, [selectedZone, filterBy]);
 
   return (
     <div className="px-6 space-y-6">
@@ -64,7 +68,7 @@ export default function HeatmapContent({ zones, user }: { zones: any, user: any 
             value={selectedZone}
             onChange={(e) => setSelectedZone(e.target.value)}
           >
-            <option value="all">All Zones</option>
+            <option value="">All Zones</option>
             {
               zones.map((zone: any) => (
                 <option key={zone.vtId} value={zone.vtId}>{zone.name}</option>
@@ -73,12 +77,12 @@ export default function HeatmapContent({ zones, user }: { zones: any, user: any 
           </select>
           <select
             className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800"
-            value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value)}
+            value={filterBy}
+            onChange={(e) => setFilterBy(e.target.value)}
           >
-            <option value="day">Last 24 Hours</option>
-            <option value="week">Last Week</option>
-            <option value="month">Last Month</option>
+            <option value="last_24_hours">Last 24 Hours</option>
+            <option value="last_week">Last Week</option>
+            <option value="last_month">Last Month</option>
           </select>
         </div>
       </div>
@@ -92,7 +96,7 @@ export default function HeatmapContent({ zones, user }: { zones: any, user: any 
             </div>
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Active Zones</p>
-              <h3 className="text-xl font-bold">8</h3>
+              <h3 className="text-xl font-bold">{zones.length}</h3>
             </div>
           </div>
         </div>
@@ -176,7 +180,7 @@ export default function HeatmapContent({ zones, user }: { zones: any, user: any 
                   }}
                 />
                 <Scatter
-                  data={mockHeatmapData}
+                  data={heatmapData}
                   fill="#3b82f6"
                   opacity={0.6}
                 />

@@ -69,9 +69,9 @@ export default async function HeatmapsPage() {
   return (
     <div className="px-5">
       {businessType === 'RETAIL' ? (
-        <RetailHeatmaps zones={zones} user={owner}/>
+        <RetailHeatmaps zones={zones} user={owner} />
       ) : (
-        <HeatmapContent zones={zones} user={owner}/>
+        <HeatmapContent zones={zones} user={owner} />
       )}
     </div>
   );
