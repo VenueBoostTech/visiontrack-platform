@@ -33,6 +33,11 @@ export const VT_ENDPOINTS = {
     DELETE: (id: string) => `/vt/api/v1/zone/zones/${id}`
   },
   DEMOGRAPHICS: {
-    GET: (id: string) => `/vt/api/v1/spaceAnalytics/zones/${id}/analytics/demographics`
+    GET: (id: string, timeRange: string) =>
+      `/vt/api/v1/spaceAnalytics/analytics/demographics?filter_by=${timeRange}${id === "all" ? "" : `&zone_id=${id}`}`
+  },
+  HEATMAP: {
+    GET: (zoneId: string, filter_by: string) =>
+      `/vt/api/v1/spaceAnalytics/analytics/heatmaps?filter_by=${filter_by}${zoneId === "" ? "" : `&zone_id=${zoneId}`}`
   },
 } as const;
