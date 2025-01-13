@@ -5,7 +5,7 @@ import { authOptions } from "@/libs/auth";
 import RetailHeatmaps from "@/components/User/Analytics/Retail/RetailHeatmaps";
 import HeatmapContent from "@/components/User/Analytics/HeatmapContent";
 import { redirect } from "next/navigation";
-
+import { prisma } from "@/libs/prismaDb";
 export const metadata: Metadata = {
   title: "Heatmap Analytics - VisionTrack",
   description: "Analyze movement patterns and high-traffic areas",

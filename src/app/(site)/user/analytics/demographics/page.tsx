@@ -5,7 +5,7 @@ import { authOptions } from "@/libs/auth";
 import { redirect } from "next/navigation";
 import RetailDemographics from "@/components/User/Analytics/Retail/RetailDemographics";
 import DemographicsContent from "@/components/User/Analytics/DemographicsContent";
-
+import { prisma } from "@/libs/prismaDb";
 export const metadata: Metadata = {
   title: "Demographics Analytics - VisionTrack",
   description: "Analyze visitor demographics and patterns",
