@@ -10,7 +10,7 @@ const cameraSchema = z.object({
   name: z.string().min(1, "Name is required"),
   rtspUrl: z.string(),
   status: z.enum(["ACTIVE", "INACTIVE", "MAINTENANCE"]),
-  capabilities: z.array(z.string()).optional(),
+  capabilities: z.record(z.boolean()).optional(),
   store_id: z.union([z.string(), z.null()]).optional(),
   location: z.union([z.string(), z.null()]).optional(),
   direction: z.union([z.string(), z.null()]).optional(),
@@ -135,7 +135,7 @@ export async function PUT(
     }
 
     // Validate input data
-    const validationResult = cameraSchema.safeParse(data);
+    const validationResult: any = cameraSchema.safeParse(data);    
     if (!validationResult.success) {
       return NextResponse.json(
         { error: validationResult.error.errors[0].message },
@@ -177,7 +177,6 @@ export async function PUT(
         ...(validationResult.data.location ? { floor: validationResult.data.location } : {}),
         ...(validationResult.data.direction ? { floor: validationResult.data.direction } : {}),
         status: validationResult.data.status,
-        capabilities: validationResult.data.capabilities,
       }
       if (zone.store) {
         payload = {
@@ -190,8 +189,21 @@ export async function PUT(
           store_id: null,
         }
       }
+      let cameraCapability: any = []
+
+      if (validationResult.data.capabilities) {
+        Object.keys(validationResult.data.capabilities).forEach(key => {
+          if (validationResult.data.capabilities[key]) {
+            cameraCapability.push(key);
+          }
+        });
+        payload = {
+          ...payload,
+          capabilities: cameraCapability,
+        }
+      }      
       const response: any = await VTCameraService.updateCamera(camera.vtId, payload);
-    }    
+    }
 
     const { propertyId, ...updateData } = data
     const updatedCamera = await prisma.camera.update({

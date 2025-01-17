@@ -40,4 +40,8 @@ export const VT_ENDPOINTS = {
     GET: (zoneId: string, filter_by: string) =>
       `/vt/api/v1/spaceAnalytics/analytics/heatmaps?filter_by=${filter_by}${zoneId === "" ? "" : `&zone_id=${zoneId}`}`
   },
+  CUSTOMER_TRAFFIC: {
+    GET: (zoneId: string, timeRange: string) =>
+      `/api/entrylog/summary/?filter_by=${timeRange}${zoneId === "" ? "" : `&zone_id=${zoneId}`}`
+  },
 } as const;

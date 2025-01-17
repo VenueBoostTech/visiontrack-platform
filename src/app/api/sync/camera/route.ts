@@ -4,7 +4,7 @@ import { VTCameraService } from "@/lib/vt-external-api/services/vt-camera.servic
 
 export async function GET(request: Request) {
     try {
-        const cameras = await prisma.camera.findMany({
+        const cameras: any = await prisma.camera.findMany({
             where: {
                 vtId: null
             },
@@ -30,7 +30,7 @@ export async function GET(request: Request) {
         });
 
         if (!cameras.length) {
-            return new Response(JSON.stringify({ message: "No cameras found without vtId" }), {
+            return new Response(JSON.stringify({ message: `Successfully synced 0 cameras` }), {
                 status: 404,
                 headers: {
                     'Content-Type': 'application/json',
@@ -56,13 +56,26 @@ export async function GET(request: Request) {
                     ...(camera.location ? { floor: camera.location } : {}),
                     ...(camera.direction ? { floor: camera.direction } : {}),
                     status: camera.status,
-                    capabilities: camera.capabilities,
                 }
                 if (camera.zone.storeId) {
                     payload = {
                         ...payload,
                         store_id: camera.zone.storeId,
                     }
+                }
+                let cameraCapability: any = []
+
+                if (camera.capabilities) {
+                    Object.keys(camera.capabilities).forEach(key => {
+                        if (camera.capabilities[key]) {
+                            cameraCapability.push(key);
+                        }
+                    });
+                }
+
+                payload = {
+                    ...payload,
+                    capabilities: cameraCapability,
                 }
 
                 const vtCamera: any = await VTCameraService.createCamera(payload);

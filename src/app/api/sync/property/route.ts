@@ -17,7 +17,7 @@ export async function GET(request: Request) {
         });
 
         if (!properties.length) {
-            return new Response(JSON.stringify({ message: "No properties found without vtId" }), {
+            return new Response(JSON.stringify({ message: `Successfully synced 0 properties` }), {
                 status: 404,
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
                 syncCount += 1
             }
         }
-       
+
         return new Response(JSON.stringify({ message: `Successfully synced ${syncCount} properties` }), {
             status: 200,
             headers: {
