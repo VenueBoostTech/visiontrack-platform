@@ -20,7 +20,7 @@ export async function GET(request: Request) {
         });
 
         if (!buildings.length) {
-            return new Response(JSON.stringify({ message: "No buildings found without vtId" }), {
+            return new Response(JSON.stringify({ message: `Successfully synced 0 buildings` }), {
                 status: 404,
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
         for (const building of buildings) {
             if (building.property?.business?.vtCredentials && building.property.vtId) {
                 console.log(building.property?.business?.vtCredentials);
-                
+
                 vtClient.setCredentials({
                     platform_id: building.property.business.vtCredentials.businessId,
                     api_key: building.property.business.vtCredentials.api_key,

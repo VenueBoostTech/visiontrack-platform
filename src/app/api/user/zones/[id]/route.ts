@@ -12,7 +12,7 @@ const zoneSchema = z.object({
   propertyId: z.string(),
   buildingId: z.string(),
   type: z.string(),
-  floor: z.number().optional(),
+  floor: z.union([z.number(), z.null()]).optional(),
   storeId: z.string().optional(),
 });
 
@@ -131,6 +131,19 @@ export async function PUT(
     if (!building) {
       return NextResponse.json({ error: 'Building not found' }, { status: 404 });
     }
+    const property = await prisma.property.findFirst({
+      where: {
+        id: data.propertyId,
+        businessId: user.ownedBusiness.id,
+      },
+    });
+
+    if (!property) {
+      return NextResponse.json(
+        { error: "Property not found" },
+        { status: 404 }
+      );
+    }
 
     const zoneData = {
       name: data.name,
@@ -150,8 +163,8 @@ export async function PUT(
 
       const response: any = await VTZoneService.updateZone({
         id: existingZone.vtId,
-        property_id: validationResult.data.propertyId,
-        building_id: validationResult.data.buildingId,
+        property_id: property.vtId,
+        building_id: building.vtId,
         name: validationResult.data.name,
         type: validationResult.data.type,
         ...(validationResult.data.floor ? { floor: validationResult.data.floor } : {})

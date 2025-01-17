@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Camera,
@@ -9,12 +9,87 @@ import {
   PlaySquare,
   Download,
   Share2,
+  Plus,
 } from "lucide-react";
 import ReactPlayer from "react-player";
+import Modal from "@/components/Common/Modal";
+import CameraForm from "../Cameras/CameraForm";
+import toast from "react-hot-toast";
 
 export default function LiveViewContent({ cameras }: any) {
+  const [allCameras, setAllCameras] = useState(cameras);
   const [selectedCamera, setSelectedCamera] = useState(cameras[0]);
-  const [layout, setLayout] = useState("single");
+  const [currentCameras, setCurrentCameras] = useState<any[]>(cameras.slice(0, 1));
+  const [layout, setLayout] = useState("1x1");
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isClient, setIsClient] = useState(false); // To track client-side rendering
+  const playerRef = useRef<(ReactPlayer | null)[]>([]);
+
+  useEffect(() => {
+    // Set after the first render to ensure it only runs on the client
+    setIsClient(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    if (!isSubmitting) {
+      setShowCreateModal(false);
+    }
+  }, [isSubmitting]);
+
+  const handleCreateCamera = async (formData: any) => {
+    try {
+      setIsSubmitting(true);
+      const response = await fetch("/api/user/cameras", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create camera");
+      }
+
+      const newCamera = await response.json();
+      setCurrentCameras((prev: any) => [newCamera, ...prev]);
+      setAllCameras((prev: any) => [newCamera, ...prev]);
+      toast.success("Camera added successfully");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create camera"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleFullscreen = (index: number) => {
+    if (playerRef.current[index]) {
+      const playerContainer = playerRef.current[index]?.wrapper;
+      if (playerContainer) {
+        if (playerContainer.requestFullscreen) {
+          playerContainer.requestFullscreen();
+        } else if (playerContainer.webkitRequestFullscreen) { // Safari
+          playerContainer.webkitRequestFullscreen();
+        } else if (playerContainer.msRequestFullscreen) { // IE/Edge
+          playerContainer.msRequestFullscreen();
+        }
+      }
+    }
+  };
+
+  const getGridLayout = () => {
+    switch (layout) {
+      case '1x1': return 'grid-cols-1';
+      case '2x2': return 'grid-cols-2';
+      case '3x3': return 'grid-cols-3';
+      default: return 'grid-cols-2';
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -29,9 +104,14 @@ export default function LiveViewContent({ cameras }: any) {
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <select
             className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
-            onChange={(e) => setLayout(e.target.value)}
+            onChange={(e) => {
+              setLayout(e.target.value);
+              setSelectedCamera(e.target.value === "1x1" ? allCameras[0] : null);
+              setCurrentCameras(allCameras);
+            }}
+            value={layout}
           >
-            <option value="single">Single View</option>
+            <option value="1x1">Single View</option>
             <option value="2x2">2x2 Grid</option>
             <option value="3x3">3x3 Grid</option>
           </select>
@@ -48,15 +128,18 @@ export default function LiveViewContent({ cameras }: any) {
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y">
-                {cameras.map((camera: any) => (
+                {allCameras.map((camera: any) => (
                   <button
                     key={camera.id}
-                    onClick={() => setSelectedCamera(camera)}
-                    className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
-                      selectedCamera.id === camera.id
-                        ? "bg-gray-50 dark:bg-gray-800"
-                        : ""
-                    }`}
+                    onClick={() => {
+                      setSelectedCamera(camera);
+                      setCurrentCameras([camera]);
+                      setLayout("1x1");
+                    }}
+                    className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${selectedCamera?.id === camera.id
+                      ? "bg-gray-200 dark:bg-gray-300"
+                      : ""
+                      }`}
                   >
                     <Camera className="w-4 h-4" />
                     <div className="flex-1 text-left">
@@ -66,11 +149,10 @@ export default function LiveViewContent({ cameras }: any) {
                       </p>
                     </div>
                     <span
-                      className={`w-2 h-2 rounded-full ${
-                        camera.status === "ACTIVE"
-                          ? "bg-green-500"
-                          : "bg-red-500"
-                      }`}
+                      className={`w-2 h-2 rounded-full ${camera.status === "ACTIVE"
+                        ? "bg-green-500"
+                        : "bg-red-500"
+                        }`}
                     />
                   </button>
                 ))}
@@ -81,54 +163,69 @@ export default function LiveViewContent({ cameras }: any) {
 
         {/* Video Feed */}
         <div className="md:col-span-3">
-          <Card>
-            <CardContent className="p-0">
-              <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden">
-                <ReactPlayer
-                  url={selectedCamera.rtspUrl}
-                  playing
-                  controls
-                  width="100%"
-                  height="90%"
-                  config={{
-                    file: {
-                      attributes: {
-                        controlsList: "nodownload",
-                      },
-                    },
-                  }}
-                />
+          <Card className={`grid ${getGridLayout()} gap-4 aspect-[16/9]`}>
+            {isClient && Array.from({ length: parseInt(layout[0]) * parseInt(layout[2]) }).map((_, index) => (
+              <CardContent key={index} className="p-0">
+                <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden">
+                  {currentCameras[index] ? (
+                    <>
+                      <ReactPlayer
+                        ref={(el) => { playerRef.current[index] = el; }}
+                        url={currentCameras[index].rtspUrl}
+                        playing
+                        controls
+                        width="100%"
+                        height="90%"
+                        config={{
+                          file: {
+                            attributes: {
+                              controlsList: "nodownload",
+                            },
+                          },
+                        }}
+                      />
 
-                {/* Camera Info Overlay */}
-                <div className="absolute top-4 left-4 bg-black/50 rounded-lg p-2 text-white">
-                  <p className="text-sm">{selectedCamera.name}</p>
-                  <p className="text-xs text-gray-300">{selectedCamera.id}</p>
-                </div>
+                      {/* Camera Info Overlay */}
+                      <div className="absolute top-4 left-4 bg-black/50 rounded-lg p-2 text-white">
+                        <p className="text-sm">{currentCameras[index].name}</p>
+                        <p className="text-xs text-gray-300">{currentCameras[index].id}</p>
+                      </div>
 
-                {/* Controls Overlay */}
-                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
-                  <div className="flex gap-2">
-                    <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
-                      <PlaySquare className="w-5 h-5" />
+                      {/* Controls Overlay */}
+                      <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                        <div className="flex gap-2">
+                          <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
+                            <PlaySquare className="w-5 h-5" />
+                          </button>
+                          <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
+                            <Volume2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                        <div className="flex gap-2">
+                          <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
+                            <Download className="w-5 h-5" />
+                          </button>
+                          <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
+                            <Share2 className="w-5 h-5" />
+                          </button>
+                          <button onClick={() => handleFullscreen(index)} className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors" >
+                            <Maximize2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <button
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-gray-400 hover:bg-gray-800/50"
+                      onClick={() => { setShowCreateModal(true) }}
+                    >
+                      <Plus className="w-8 h-8" />
+                      <span>Add Camera</span>
                     </button>
-                    <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
-                      <Volume2 className="w-5 h-5" />
-                    </button>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
-                      <Download className="w-5 h-5" />
-                    </button>
-                    <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
-                      <Share2 className="w-5 h-5" />
-                    </button>
-                    <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
-                      <Maximize2 className="w-5 h-5" />
-                    </button>
-                  </div>
+                  )}
                 </div>
-              </div>
-            </CardContent>
+              </CardContent>
+            ))}
           </Card>
 
           {/* Camera Settings */}
@@ -185,6 +282,19 @@ export default function LiveViewContent({ cameras }: any) {
           </div>
         </div>
       </div>
+
+      {/* Create Camera Modal */}
+      <Modal
+        isOpen={showCreateModal}
+        onClose={handleCloseModal}
+        title="Add New Camera"
+      >
+        <CameraForm
+          onSubmit={handleCreateCamera}
+          onClose={handleCloseModal}
+          isSubmitting={isSubmitting}
+        />
+      </Modal>
     </div>
   );
 }

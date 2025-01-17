@@ -85,7 +85,7 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
   const getZonesForFloor = (floor: number) => {
     
     return building.zones.filter(zone => {
-      const zoneFloor = parseInt(zone.floor.toString());
+      const zoneFloor = parseInt(zone?.floor?.toString());
       const targetFloor = parseInt(floor.toString());
       
       return zoneFloor === targetFloor;

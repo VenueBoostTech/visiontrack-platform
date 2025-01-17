@@ -1,6 +1,6 @@
 // app/user/analytics/traffic/page.tsx
+import RetailConversionAnalytics from "@/components/User/Analytics/Retail/RetailConversionAnalytics";
 import { Metadata } from "next";
-import RetailConversionAnalytics from "@/components/User/Analytics/Retail/RetailTrafficAnalytics";
 
 export const metadata: Metadata = {
   title: "Conversion Analytics - VisionTrack",
