@@ -6,7 +6,7 @@ import { VT_ENDPOINTS } from "../endpoints";
 export interface CreateVTBuildings {
   name: string;
   property_id: string;
-  below_ground_floor: number | null;
+  below_ground_floor?: number | null;
   total_floors: number | null;
 }
 
@@ -14,7 +14,7 @@ export interface UpdateVTBuildings {
   id: string;
   name: string;
   property_id: string | null;
-  below_ground_floor: number | null;
+  below_ground_floor?: number | null;
   total_floors: number | null;
 }
 

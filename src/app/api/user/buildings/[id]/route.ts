@@ -11,7 +11,7 @@ const buildingSchema = z.object({
   name: z.string().min(1, "Name is required"),
   propertyId: z.string().min(1, "Property id is required"),
   floorCount: z.number().min(1, "Total floor is required"),
-  belowGroundFloors: z.number().min(1, "Ground floor is required"),
+  belowGroundFloors: z.union([z.number(), z.null()]).optional(),
 });
 
 
@@ -90,7 +90,7 @@ export async function PUT(
         id: building.vtId,
         name: validationResult.data.name,
         property_id: property.vtId,
-        below_ground_floor: validationResult.data.belowGroundFloors,
+        ...(validationResult.data.belowGroundFloors ? { belowGroundFloors: validationResult.data.belowGroundFloors } : {}),
         total_floors: validationResult.data.floorCount,
       });
     }

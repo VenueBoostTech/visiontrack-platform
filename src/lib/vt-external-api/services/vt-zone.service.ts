@@ -15,8 +15,8 @@ export interface CreateVTZones {
 export interface UpdateVTZones {
   id: string;
   name: string;
-  property_id: string;
-  building_id: string;
+  property_id: string | null;
+  building_id: string | null;
   type: string;
   floor?: number;
   store_id?: string;

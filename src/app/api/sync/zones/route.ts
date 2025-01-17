@@ -25,14 +25,14 @@ export async function GET(request: Request) {
         });
 
         if (!zones.length) {
-            return new Response(JSON.stringify({ message: "No zones found without vtId" }), {
+            return new Response(JSON.stringify({ message: `Successfully synced 0 zones` }), {
                 status: 404,
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
         }
-        
+
         let syncCount = 0;
         for (const zone of zones) {
             if (zone.building?.property?.business?.vtCredentials && zone.building.vtId) {

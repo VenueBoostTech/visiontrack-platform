@@ -56,7 +56,7 @@ interface CameraFormData {
   status: CameraStatus;
   direction?: string;
   coverageArea?: any;
-  capabilities?: string[];
+  capabilities?: Record<string, boolean>;
   zoneId: string;
   storeId?: string;
   propertyId?: string;
@@ -81,7 +81,8 @@ export default function CameraForm({
   const [selectedBuilding, setSelectedBuilding] = useState<string>('');
   const [selectedZone, setSelectedZone] = useState<string>(initialData?.zoneId || '');
   const [selectedZoneData, setSelectedZoneData] = useState<Zone | null>(null);
-  const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>([]);
+  const [selectedCapabilities, setSelectedCapabilities] = useState<any>(initialData?.capabilities || {});
+  
   const [loading, setLoading] = useState(true);
 
   const capabilities = [
@@ -108,8 +109,7 @@ export default function CameraForm({
           setSelectedZone(zoneData.id);
           setSelectedBuilding(zoneData.building.id);
           setSelectedProperty(zoneData.building.property.id);
-          const currentCapabilities = zoneData?.cameras.find((cam: any) => cam.vtId === initialData.vtId).capabilities || [];
-          setSelectedCapabilities(currentCapabilities);
+
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -333,14 +333,18 @@ export default function CameraForm({
                     <label key={capability} className="flex items-center gap-2 text-sm">
                       <input
                         type="checkbox"
-                        checked={selectedCapabilities.includes(capability)}
+                        checked={selectedCapabilities[capability] ?? false}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setSelectedCapabilities([...selectedCapabilities, capability]);
+                            setSelectedCapabilities({
+                              ...selectedCapabilities,
+                              [capability]: true
+                            });
                           } else {
-                            setSelectedCapabilities(
-                              selectedCapabilities.filter(cap => cap !== capability)
-                            );
+                            setSelectedCapabilities({
+                              ...selectedCapabilities,
+                              [capability]: false
+                            });
                           }
                         }}
                         className="rounded border-gray-300 dark:border-gray-600"
