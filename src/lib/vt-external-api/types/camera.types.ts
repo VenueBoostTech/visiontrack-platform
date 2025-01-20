@@ -1,4 +1,20 @@
 // lib/vt-external-api/types/camera.types.ts
+
+export interface VTCameraStreamResponse {
+  status: 'started' | 'stopped';
+  stream_url?: string;
+  camera_id: string;
+  camera_status?: string;
+  is_active?: boolean;
+}
+
+export interface VTCameraStreamStatus {
+  is_active: boolean;
+  stream_url: string | null;
+  camera_id: string;
+  camera_status: string;
+}
+
 export interface VTCamera {
   camera_id: string;
   rtsp_url: string;
@@ -12,6 +28,7 @@ export interface VTCamera {
   coverage_area: any;
   id: string;
   last_active: string;
+  stream_status?: VTCameraStreamStatus;
 }
 
 export interface CreateVTCameraDto {
@@ -46,3 +63,5 @@ export interface VTCameraQueryParams {
   skip?: number;
   limit?: number;
 }
+
+export interface EmptyRequest {}

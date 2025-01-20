@@ -2,7 +2,14 @@
 import vtClient from '../client';
 import { VT_ENDPOINTS } from '../endpoints';
 import { VTApiResponse } from '../types';
-import { VTCamera, VTCameraQueryParams, CreateVTCameraDto, UpdateVTCameraDto } from '../types/camera.types';
+import { 
+  VTCamera,
+  VTCameraQueryParams,
+  CreateVTCameraDto,
+  UpdateVTCameraDto,
+  VTCameraStreamResponse,
+  EmptyRequest
+} from '../types/camera.types';
 
 export const VTCameraService = {
   listCameras: async (params?: VTCameraQueryParams): Promise<VTApiResponse<VTCamera[]>> => {
@@ -39,6 +46,27 @@ export const VTCameraService = {
   deleteCamera: async (cameraId: string): Promise<VTApiResponse<VTCamera>> => {
     return await vtClient.delete<VTApiResponse<VTCamera>>(
       VT_ENDPOINTS.CAMERAS.DETAIL(cameraId)
+    );
+  },
+
+  // Stream control endpoints
+  startStream: async (cameraId: string): Promise<VTApiResponse<VTCameraStreamResponse>> => {
+    return await vtClient.post<VTApiResponse<VTCameraStreamResponse>>(
+      VT_ENDPOINTS.CAMERAS.START_STREAM(cameraId),
+      {} as EmptyRequest
+    );
+  },
+
+  stopStream: async (cameraId: string): Promise<VTApiResponse<void>> => {
+    return await vtClient.post<VTApiResponse<void>>(
+      VT_ENDPOINTS.CAMERAS.STOP_STREAM(cameraId),
+      {} as EmptyRequest
+    );
+  },
+
+  getStreamStatus: async (cameraId: string): Promise<VTApiResponse<VTCameraStreamResponse>> => {
+    return await vtClient.get<VTApiResponse<VTCameraStreamResponse>>(
+      VT_ENDPOINTS.CAMERAS.STREAM_STATUS(cameraId)
     );
   }
 };
