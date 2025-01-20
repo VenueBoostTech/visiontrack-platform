@@ -10,6 +10,9 @@ export const VT_ENDPOINTS = {
     DETAIL: (id: string) => `/api/camera/${id}`,
     UPDATE: (id: string) => `/api/camera/${id}`,
     POST: "/api/camera/",
+    START_STREAM: (id: string) => `/api/camera/${id}/stream/start`,
+    STOP_STREAM: (id: string) => `/api/camera/${id}/stream/stop`,
+    STREAM_STATUS: (id: string) => `/api/camera/${id}/stream/status`
   },
   SUPERADMIN: {
     GET: "/api/superadmin/businesses/",

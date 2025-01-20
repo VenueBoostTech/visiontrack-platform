@@ -154,44 +154,46 @@ async function main() {
    ];
 
    for (const prop of properties) {
-       const property = await prisma.property.create({
-           data: {
-               name: prop.name,
-               type: prop.type,
-               address: prop.address,
-               businessId: business.id,
-               buildings: {
-                   create: {
-                       name: prop.buildingName,
-                       floorCount: prop.floorCount
-                   }
-               }
-           },
-           include: {
-               buildings: true
-           }
-       });
+    const property = await prisma.property.create({
+        data: {
+            name: prop.name,
+            type: prop.type,
+            address: prop.address,
+            businessId: business.id,
+            buildings: {
+                create: {
+                    name: prop.buildingName,
+                    floorCount: prop.floorCount,
+                    businessId: business.id  // Add this line
+                }
+            }
+        },
+        include: {
+            buildings: true
+        }
+    });
 
-       // Create zones with proper enum
-       const zones = [
-           ZoneType.ENTRANCE,
-           ZoneType.LOBBY,
-           ZoneType.PARKING,
-           ZoneType.COMMON_AREA
-       ];
+    // Create zones with proper enum
+    const zones = [
+        ZoneType.ENTRANCE,
+        ZoneType.LOBBY,
+        ZoneType.PARKING,
+        ZoneType.COMMON_AREA
+    ];
 
-       for (const zoneType of zones) {
-           await prisma.zone.create({
-               data: {
-                   name: `${prop.buildingName} ${zoneType}`,
-                   type: zoneType,
-                   propertyId: property.id,
-                   buildingId: property.buildings[0].id,
-                   floor: zoneType === ZoneType.PARKING ? -1 : 1
-               }
-           });
-       }
-   }
+    for (const zoneType of zones) {
+        await prisma.zone.create({
+            data: {
+                name: `${prop.buildingName} ${zoneType}`,
+                type: zoneType,
+                propertyId: property.id,
+                buildingId: property.buildings[0].id,
+                floor: zoneType === ZoneType.PARKING ? -1 : 1,
+                businessId: business.id  // Add this for zones too
+            }
+        });
+    }
+}
 
    console.log(`Seeding finished.`);
 }
