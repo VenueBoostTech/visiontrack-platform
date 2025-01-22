@@ -175,7 +175,7 @@ export async function POST(request: Request) {
         building_id: building.vtId,
         name: validationResult.data.name,
         type: validationResult.data.type,
-        ...(validationResult.data.floor ? { floor: validationResult.data.floor } : {})
+        ...(validationResult.data.floor ? { floor_number: validationResult.data.floor } : {})
       });
       vtId = response.id;
     }
