@@ -40,5 +40,23 @@ export const VTCameraService = {
     return await vtClient.delete<VTApiResponse<VTCamera>>(
       VT_ENDPOINTS.CAMERAS.DETAIL(cameraId)
     );
+  },
+
+  startCameraStream: async (cameraId: string): Promise<VTApiResponse<VTCamera>> => {
+    return await vtClient.post<VTApiResponse<VTCamera>>(
+      VT_ENDPOINTS.CAMERAS.START_STREAM(cameraId), null
+    );
+  },
+
+  stopCameraStream: async (cameraId: string): Promise<VTApiResponse<VTCamera>> => {
+    return await vtClient.post<VTApiResponse<VTCamera>>(
+      VT_ENDPOINTS.CAMERAS.STOP_STREAM(cameraId), null
+    );
+  },
+
+  getCameraStreamStatus: async (cameraId: string): Promise<VTApiResponse<VTCamera>> => {
+    return await vtClient.get<VTApiResponse<VTCamera>>(
+      VT_ENDPOINTS.CAMERAS.STREAM_STATUS(cameraId)
+    );
   }
 };

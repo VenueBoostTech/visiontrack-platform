@@ -15,8 +15,10 @@ import ReactPlayer from "react-player";
 import Modal from "@/components/Common/Modal";
 import CameraForm from "../Cameras/CameraForm";
 import toast from "react-hot-toast";
+import vtClient from '../../../lib/vt-external-api/client'
+import { VTCameraService } from "@/lib/vt-external-api/services/vt-camera.service";
 
-export default function LiveViewContent({ cameras }: any) {
+export default function LiveViewContent({ cameras, user }: any) {
   const [allCameras, setAllCameras] = useState(cameras);
   const [selectedCamera, setSelectedCamera] = useState(cameras[0]);
   const [currentCameras, setCurrentCameras] = useState<any[]>(cameras.slice(0, 1));
@@ -25,6 +27,7 @@ export default function LiveViewContent({ cameras }: any) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isClient, setIsClient] = useState(false); // To track client-side rendering
   const playerRef = useRef<(ReactPlayer | null)[]>([]);
+  const hasFetched = useRef(false); // Track if the stream URLs have been fetched  
 
   useEffect(() => {
     // Set after the first render to ensure it only runs on the client
@@ -54,6 +57,7 @@ export default function LiveViewContent({ cameras }: any) {
       }
 
       const newCamera = await response.json();
+      hasFetched.current = false;
       setCurrentCameras((prev: any) => [newCamera, ...prev]);
       setAllCameras((prev: any) => [newCamera, ...prev]);
       toast.success("Camera added successfully");
@@ -82,6 +86,40 @@ export default function LiveViewContent({ cameras }: any) {
     }
   };
 
+  useEffect(() => {
+    const getCameraStreamUrl = async (cameras: any) => {
+      try {
+        if (user.ownedBusiness.vtCredentials && cameras) {
+          vtClient.setCredentials({
+            platform_id: user.ownedBusiness.vtCredentials.businessId,
+            api_key: user.ownedBusiness.vtCredentials.api_key,
+            business_id: user.ownedBusiness.vtCredentials.platform_id,
+          });
+
+          const newCameras = [...cameras];
+          cameras.forEach(async (camera: any, index: number) => {
+            // const streamStatus: any = await VTCameraService.getCameraStreamStatus(camera.id);
+            // if (streamStatus.is_active) {
+            //   await VTCameraService.stopCameraStream(camera.id);
+            // }
+
+            const startResponse: any = await VTCameraService.startCameraStream(camera.id);
+            newCameras[index] = { ...newCameras[index], stream_url: `https://coreapi.visiontrack.xyz${startResponse.stream_url}` };
+          });
+
+          setCurrentCameras(newCameras);
+        }
+      } catch (error) {
+        toast.error("Failed to fetch camera stream");
+      }
+    };
+
+    if (!hasFetched.current) {
+      getCameraStreamUrl(currentCameras);
+      hasFetched.current = true;
+    }
+  }, [selectedCamera, currentCameras]);
+
   const getGridLayout = () => {
     switch (layout) {
       case '1x1': return 'grid-cols-1';
@@ -105,9 +143,12 @@ export default function LiveViewContent({ cameras }: any) {
           <select
             className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 w-full sm:w-auto"
             onChange={(e) => {
+              hasFetched.current = false;
               setLayout(e.target.value);
               setSelectedCamera(e.target.value === "1x1" ? allCameras[0] : null);
-              setCurrentCameras(allCameras);
+              e.target.value === "2x2" ? setCurrentCameras(allCameras.slice(0, 4)) :
+                e.target.value === "3x3" ? setCurrentCameras(allCameras.slice(0, 9)) :
+                  setCurrentCameras(allCameras.slice(0, 1));
             }}
             value={layout}
           >
@@ -132,6 +173,7 @@ export default function LiveViewContent({ cameras }: any) {
                   <button
                     key={camera.id}
                     onClick={() => {
+                      hasFetched.current = false;
                       setSelectedCamera(camera);
                       setCurrentCameras([camera]);
                       setLayout("1x1");
@@ -168,52 +210,56 @@ export default function LiveViewContent({ cameras }: any) {
               <CardContent key={index} className="p-0">
                 <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden">
                   {currentCameras[index] ? (
-                    <>
-                      <ReactPlayer
-                        ref={(el) => { playerRef.current[index] = el; }}
-                        url={currentCameras[index].rtspUrl}
-                        playing
-                        controls
-                        width="100%"
-                        height="90%"
-                        config={{
-                          file: {
-                            attributes: {
-                              controlsList: "nodownload",
+                    currentCameras[index].stream_url ?
+                      <>
+                        <ReactPlayer
+                          ref={(el) => { playerRef.current[index] = el; }}
+                          url={currentCameras[index].stream_url}
+                          playing
+                          muted
+                          width="100%"
+                          height="90%"
+                          config={{
+                            file: {
+                              attributes: {
+                                controlsList: "nodownload",
+                              },
                             },
-                          },
-                        }}
-                      />
+                          }}
+                        />
 
-                      {/* Camera Info Overlay */}
-                      <div className="absolute top-4 left-4 bg-black/50 rounded-lg p-2 text-white">
-                        <p className="text-sm">{currentCameras[index].name}</p>
-                        <p className="text-xs text-gray-300">{currentCameras[index].id}</p>
-                      </div>
+                        {/* Camera Info Overlay */}
+                        <div className="absolute top-4 left-4 bg-black/50 rounded-lg p-2 text-white">
+                          <p className="text-sm">{currentCameras[index].name}</p>
+                          <p className="text-xs text-gray-300">{currentCameras[index].id}</p>
+                        </div>
 
-                      {/* Controls Overlay */}
-                      <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
-                        <div className="flex gap-2">
-                          <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
-                            <PlaySquare className="w-5 h-5" />
-                          </button>
-                          <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
-                            <Volume2 className="w-5 h-5" />
-                          </button>
+                        {/* Controls Overlay */}
+                        <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                          <div className="flex gap-2">
+                            <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
+                              <PlaySquare className="w-5 h-5" />
+                            </button>
+                            <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
+                              <Volume2 className="w-5 h-5" />
+                            </button>
+                          </div>
+                          <div className="flex gap-2">
+                            <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
+                              <Download className="w-5 h-5" />
+                            </button>
+                            <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
+                              <Share2 className="w-5 h-5" />
+                            </button>
+                            <button onClick={() => handleFullscreen(index)} className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors" >
+                              <Maximize2 className="w-5 h-5" />
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex gap-2">
-                          <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
-                            <Download className="w-5 h-5" />
-                          </button>
-                          <button className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors">
-                            <Share2 className="w-5 h-5" />
-                          </button>
-                          <button onClick={() => handleFullscreen(index)} className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors" >
-                            <Maximize2 className="w-5 h-5" />
-                          </button>
-                        </div>
+                      </> :
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white" />
                       </div>
-                    </>
                   ) : (
                     <button
                       className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-gray-400 hover:bg-gray-800/50"

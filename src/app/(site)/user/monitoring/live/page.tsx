@@ -18,57 +18,61 @@ async function getCameras() {
   }
 
   // Get business owner and their business
+  // Get business owner
   const owner = await prisma.user.findFirst({
     where: {
       id: session.user.id,
       role: "BUSINESS_OWNER",
     },
     include: {
-      ownedBusiness: true,
+      ownedBusiness: {
+        include: {
+          vtCredentials: true,
+        },
+      },
     },
   });
-
-  if (!owner?.ownedBusiness) {
-    return [];
-  }
 
   // Get cameras for zones in properties belonging to this business
-  const cameras = await prisma.camera.findMany({
-    where: {
-      zone: {
-        property: {
-          businessId: owner.ownedBusiness.id,
-        },
-      },
-    },
-    include: {
-      zone: {
-        include: {
-          building: {
-            include: {
-              property: true,
-            },
+  let cameras: any[] = [];
+  if (owner?.ownedBusiness) {
+    cameras = await prisma.camera.findMany({
+      where: {
+        zone: {
+          property: {
+            businessId: owner.ownedBusiness.id,
           },
-          store: true,
         },
       },
-      store: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+      include: {
+        zone: {
+          include: {
+            building: {
+              include: {
+                property: true,
+              },
+            },
+            store: true,
+          },
+        },
+        store: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
 
-  return cameras;
+  return { cameras, owner };
 }
 
 const MonitoringLivePage = async () => {
-  const cameras = await getCameras();
+  const { cameras, owner } = await getCameras();
 
   return (
     <>
       <div className="px-5">
-        <LiveViewContent cameras={cameras} />
+        <LiveViewContent cameras={cameras} user={owner} />
       </div>
     </>
   );

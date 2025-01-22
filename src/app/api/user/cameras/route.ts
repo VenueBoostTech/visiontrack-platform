@@ -1,5 +1,5 @@
 // app/api/cameras/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prismaDb";
 import { getAuthSession } from "@/libs/auth";
 import { VTCameraService } from "@/lib/vt-external-api/services/vt-camera.service";
@@ -18,7 +18,7 @@ const cameraSchema = z.object({
 });
 
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getAuthSession();
     if (!session?.user) {
@@ -51,14 +51,28 @@ export async function GET() {
       return NextResponse.json([]);
     }
 
-    const cameras = await prisma.camera.findMany({
-      where: {
-        zone: {
-          property: {
-            businessId: businessId,
-          },
+    // Get camera with filters
+    const name: string = request.nextUrl.searchParams.get("name") || ""
+    const type: string = request.nextUrl.searchParams.get("type") || ""
+    const status: string = request.nextUrl.searchParams.get("status") || ""
+    const zoneId: string = request.nextUrl.searchParams.get("zone") || ""
+    const buildingId: string = request.nextUrl.searchParams.get("building") || ""
+
+    const where: any = {
+      zone: {
+        property: {
+          businessId: businessId,
         },
       },
+      ...(zoneId ? { zone: { vtId: zoneId } } : {}),
+      ...(type ? { type: type } : {}),
+      ...(status ? { status: status } : {}),
+      ...(name ? { name: { contains: name, mode: "insensitive", }, } : {}),
+      ...(buildingId ? { zone: { building: { vtId: buildingId } } } : {}),
+    }
+
+    const cameras = await prisma.camera.findMany({
+      where: where,
       include: {
         zone: {
           include: {
