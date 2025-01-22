@@ -8,7 +8,7 @@ export interface CreateVTZones {
   property_id: string | null;
   building_id: string | null;
   type: string;
-  floor?: number;
+  floor_number?: number;
   store_id?: string;
 }
 
@@ -18,7 +18,7 @@ export interface UpdateVTZones {
   property_id: string | null;
   building_id: string | null;
   type: string;
-  floor?: number;
+  floor_number?: number;
   store_id?: string;
 }
 
@@ -43,7 +43,7 @@ export const VTZoneService = {
           building_id: data.building_id,
           name: data.name,
           type: data.type,
-          ...(data.floor ? { floor: data.floor } : {})
+          ...(data.floor_number ? { floor_number: data.floor_number } : {})
         }
       );
       // @ts-ignore

@@ -49,23 +49,20 @@ export const VTCameraService = {
     );
   },
 
-  // Stream control endpoints
-  startStream: async (cameraId: string): Promise<VTApiResponse<VTCameraStreamResponse>> => {
-    return await vtClient.post<VTApiResponse<VTCameraStreamResponse>>(
-      VT_ENDPOINTS.CAMERAS.START_STREAM(cameraId),
-      {} as EmptyRequest
+  startCameraStream: async (cameraId: string): Promise<VTApiResponse<VTCamera>> => {
+    return await vtClient.post<VTApiResponse<VTCamera>>(
+      VT_ENDPOINTS.CAMERAS.START_STREAM(cameraId), null
     );
   },
 
-  stopStream: async (cameraId: string): Promise<VTApiResponse<void>> => {
-    return await vtClient.post<VTApiResponse<void>>(
-      VT_ENDPOINTS.CAMERAS.STOP_STREAM(cameraId),
-      {} as EmptyRequest
+  stopCameraStream: async (cameraId: string): Promise<VTApiResponse<VTCamera>> => {
+    return await vtClient.post<VTApiResponse<VTCamera>>(
+      VT_ENDPOINTS.CAMERAS.STOP_STREAM(cameraId), null
     );
   },
 
-  getStreamStatus: async (cameraId: string): Promise<VTApiResponse<VTCameraStreamResponse>> => {
-    return await vtClient.get<VTApiResponse<VTCameraStreamResponse>>(
+  getCameraStreamStatus: async (cameraId: string): Promise<VTApiResponse<VTCamera>> => {
+    return await vtClient.get<VTApiResponse<VTCamera>>(
       VT_ENDPOINTS.CAMERAS.STREAM_STATUS(cameraId)
     );
   }

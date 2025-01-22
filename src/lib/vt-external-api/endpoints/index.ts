@@ -12,8 +12,9 @@ export const VT_ENDPOINTS = {
     POST: "/api/camera/",
     START_STREAM: (id: string) => `/api/camera/${id}/stream/start`,
     STOP_STREAM: (id: string) => `/api/camera/${id}/stream/stop`,
-    STREAM_STATUS: (id: string) => `/api/camera/${id}/stream/status`
+    STREAM_STATUS: (id: string) => `/api/camera/${id}/stream/status`,
   },
+
   SUPERADMIN: {
     GET: "/api/superadmin/businesses/",
     CREATE: "/api/superadmin/businesses/",
@@ -28,7 +29,7 @@ export const VT_ENDPOINTS = {
   BUILDING: {
     CREATE: "vt/api/v1/property/buildings/",
     UPDATE: (id: string) => `vt/api/v1/property/buildings/${id}`,
-    DELETE: (id: string) => `vt/api/v1/property/properties/${id}`,
+    DELETE: (id: string) => `vt/api/v1/property/buildings/${id}`,
   },
   ZONE: {
     CREATE: (id: string) => `vt/api/v1/zone/properties/${id}/zones`,

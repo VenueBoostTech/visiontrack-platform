@@ -14,6 +14,55 @@ const buildingSchema = z.object({
   belowGroundFloors: z.union([z.number(), z.null()]).optional(),
 });
 
+export async function GET() {
+  try {
+    const session = await getAuthSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Get user's business
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { ownedBusiness: true },
+    });
+
+    if (!user?.ownedBusiness) {
+      return NextResponse.json(
+        { error: "Business not found" },
+        { status: 404 }
+      );
+    }
+
+    const buildings = await prisma.building.findMany({
+      where: {
+        property: {
+          businessId: user.ownedBusiness.id,
+        },
+      },
+      include: {
+        property: true,
+        zones: {
+          include: {
+            property: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return NextResponse.json(buildings);
+  } catch (error) {
+    console.error("Buildings GET error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch buildings" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const session = await getAuthSession();
