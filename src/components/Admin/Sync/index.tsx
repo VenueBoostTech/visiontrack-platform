@@ -24,25 +24,25 @@ const syncTypes = [
     id: "property", 
     name: "Properties", 
     icon: <Home className="w-5 h-5" />,
-    description: "Sync all properties from VisionTrack" 
+    description: "Sync all properties from VisionTrack AI Engine" 
   },
   { 
     id: "building", 
     name: "Buildings", 
     icon: <Building2 className="w-5 h-5" />,
-    description: "Sync all buildings from VisionTrack" 
+    description: "Sync all buildings from VisionTrack AI Engine" 
   },
   { 
     id: "zones", 
     name: "Zones", 
     icon: <Map className="w-5 h-5" />,
-    description: "Sync all zones from VisionTrack" 
+    description: "Sync all zones from VisionTrack AI Engine" 
   },
   { 
     id: "camera", 
     name: "Cameras", 
     icon: <Camera className="w-5 h-5" />,
-    description: "Sync all cameras from VisionTrack" 
+    description: "Sync all cameras from VisionTrack AI Engine" 
   }
 ];
 
@@ -286,7 +286,7 @@ const SyncList = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {syncTypes.map((syncType) => (
           <Card key={syncType.id}>
-            <CardContent className="p-4">
+            <CardContent className="p-2">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
                   <div className={`p-2 rounded-lg ${
