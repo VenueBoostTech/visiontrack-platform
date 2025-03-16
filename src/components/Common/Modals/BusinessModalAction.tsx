@@ -2,14 +2,23 @@
 
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import BusinessForm, { BusinessFormData } from "@/components/BusinessForm";
 import Modal from "@/components/Common/Modal";
+import { Button } from "@/components/ui/button";
 
-export default function BusinessModalAction({ onSuccess }: { onSuccess?: () => void }) {
+interface BusinessModalActionProps {
+  onSuccess?: () => void;
+}
+
+export default function BusinessModalAction({ onSuccess }: BusinessModalActionProps) {
   const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (data: BusinessFormData) => {
     try {
+      setIsSubmitting(true);
+      
       const response = await fetch("/api/business", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -30,32 +39,44 @@ export default function BusinessModalAction({ onSuccess }: { onSuccess?: () => v
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || 'Failed to create business');
+      }
+      
+      toast.success("Business created successfully!");
+      setOpen(false);
       onSuccess?.();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating business:", error);
-      throw error;
+      toast.error(error.message || "Failed to create business");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <>
-      <button
+      <Button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
+        className="bg-primary hover:bg-primary/90 text-white"
       >
         <Plus className="w-4 h-4 mr-2" />
-        Add Business
-      </button>
+        <span className="hidden sm:inline">Add Business</span>
+        <span className="sm:hidden">Add</span>
+      </Button>
 
       <Modal
         title="Create New Business"
-        description="Add a new business and assign an owner."
+        description="Add a new business and assign an owner to manage it."
         isOpen={open}
-        onClose={() => setOpen(false)}
+        onClose={() => !isSubmitting && setOpen(false)}
       >
         <BusinessForm
           onSubmit={handleSubmit}
-          onClose={() => setOpen(false)}
+          onClose={() => !isSubmitting && setOpen(false)}
+          isSubmitting={isSubmitting}
+          mode="create"
         />
       </Modal>
     </>
