@@ -507,7 +507,7 @@ export const adminSidebarData: Sidebar[] = [
 		{
 		  id: "7-3",
 		  title: "Manual Sync",
-		  path: "/admin/sync/manual",
+		  path: "/admin/sync",
 		  icon: <FolderSync className="w-4 h-4" />
 		}
 	  ]
