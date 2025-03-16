@@ -16,7 +16,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
-import DeleteModal from "@/components/Common/Modals/DeleteModal";
+import AreYouSureModal from "@/components/Common/Modals/AreYouSureModal";
 
 // Define sync types and their metadata
 const syncTypes = [
@@ -440,12 +440,12 @@ const SyncList = () => {
       </Card>
 
       {/* Confirmation Modal */}
-      <DeleteModal
-        showDeleteModal={showConfirmModal}
-        setShowDeleteModal={setShowConfirmModal}
-        deleteText={`Sync ${syncTypes.find(t => t.id === syncToConfirm)?.name || ''}`}
+      <AreYouSureModal
+        showAreYouSureModal={showConfirmModal}
+        setShowAreYouSureModal={setShowConfirmModal}
+        areYouSureText={`Sync ${syncTypes.find(t => t.id === syncToConfirm)?.name || ''}`}
         message={`Are you sure you want to sync ${syncTypes.find(t => t.id === syncToConfirm)?.name || ''}? This operation might take some time.`}
-        handleDelete={performSync}
+        handleAreYouSure={performSync}
         loading={isLoading[syncToConfirm]}
       />
     </div>
