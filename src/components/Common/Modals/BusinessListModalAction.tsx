@@ -51,7 +51,7 @@ export default function BusinessListModalAction({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
+        className="inline-flex items-center gap-2 px-4 h-9 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
       >
         <Plus className="w-4 h-4 mr-2" />
         Sync Business
