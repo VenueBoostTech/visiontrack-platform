@@ -351,7 +351,7 @@ const SyncList = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs defaultValue="property" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="w-full justify-start px-6 pt-2 border-b">
               {syncTypes.map((type) => (
                 <TabsTrigger 
