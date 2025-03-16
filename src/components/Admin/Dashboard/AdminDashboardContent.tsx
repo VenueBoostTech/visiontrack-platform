@@ -59,9 +59,8 @@ export default function AdminDashboardContent() {
   ];
 
   return (
-    <div className="space-y-6 p-6">
-      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-
+    <div className="space-y-6">
+  
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
           <Link key={stat.title} href={stat.link}>
