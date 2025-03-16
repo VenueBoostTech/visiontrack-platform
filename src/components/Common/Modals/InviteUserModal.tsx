@@ -1,121 +1,184 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import ModalCloseButton from "./ModalCloseButton";
-import Loader from "../Loader";
-import InputGroup from "../Dashboard/InputGroup";
-import InputSelect from "../InputSelect";
-import FormButton from "../Dashboard/FormButton";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 
-export default function InviteUserModal(props: any) {
-	const { showModal, setShowModal, text } = props;
-	const [data, setData] = useState({
-		email: "",
-		role: "",
-	});
+// Schema for validation
+const inviteUserSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  role: z.string().min(1, "Please select a user role"),
+});
 
-	const [loading, setLoading] = useState(false);
+type InviteUserFormData = z.infer<typeof inviteUserSchema>;
 
-	const handleSubmit = async (e: any) => {
-		e.preventDefault();
-		setLoading(true);
-		if (!data.email || !data.role) {
-			setLoading(false);
-			return toast.error("Please fill in all fields!");
-		}
+interface InviteUserModalProps {
+  showModal: boolean;
+  setShowModal: (show: boolean) => void;
+  text: string;
+}
 
-		try {
-			const invite = await axios.post("/api/user/invite/send", data);
-			toast.success(invite.data);
-			setLoading(false);
-		} catch (error: any) {
-			toast.error(error?.response.data);
-			setLoading(false);
-		}
+export default function InviteUserModal({ showModal, setShowModal, text }: InviteUserModalProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Create form with validation
+  const form = useForm<InviteUserFormData>({
+    resolver: zodResolver(inviteUserSchema),
+    defaultValues: {
+      email: "",
+      role: "",
+    },
+  });
 
-		setShowModal(false);
-	};
+  // Reset form when modal opens/closes
+  useEffect(() => {
+    if (showModal) {
+      form.reset();
+    }
+  }, [showModal, form]);
 
-	// ===== click outside of dropdown =====
-	const divRef = useRef<HTMLDivElement | null>(null);
-	useEffect(() => {
-		if (typeof window !== "undefined") {
-			const handleClickOutside = (event: MouseEvent) => {
-				if (divRef.current && !divRef.current.contains(event.target as Node)) {
-					setShowModal(false);
-				}
-			};
+  const handleSubmit = async (data: InviteUserFormData) => {
+    setIsSubmitting(true);
+    
+    try {
+      const invite = await axios.post("/api/user/invite/send", data);
+      toast.success(invite.data);
+      setShowModal(false);
+    } catch (error: any) {
+      toast.error(error?.response?.data || "Failed to send invitation");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-			document.addEventListener("mousedown", handleClickOutside);
-			return () => {
-				document.removeEventListener("mousedown", handleClickOutside);
-			};
-		}
-	});
-	return (
-		<>
-			{showModal && (
-				<div
-					className={`py-7.6 fixed left-0 top-0 z-99999 flex h-screen w-full items-center justify-center bg-black/90 px-4 dark:bg-dark/70 sm:px-8 `}
-				>
-					<div
-						ref={divRef}
-						className='shadow-7 relative h-auto max-h-[calc(100vh-60px)] w-full max-w-[600px] scale-100 transform overflow-y-auto rounded-[25px] bg-white transition-all dark:bg-black'
-					>
-						<ModalCloseButton closeModal={setShowModal} />
+  // Click outside to close
+  const modalRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setShowModal(false);
+      }
+    };
 
-						<div className='flex flex-wrap gap-5.5 border-b border-stroke p-4 dark:border-stroke-dark sm:p-7.5 xl:p-10'>
-							<h3 className='mb-1.5 font-satoshi text-custom-2xl font-bold tracking-[-.5px] text-dark dark:text-white'>
-								Add New User
-							</h3>
+    if (showModal) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showModal, setShowModal]);
 
-							<form className='w-full space-y-4' onSubmit={handleSubmit}>
-								<InputGroup
-									label='User Email'
-									type='email'
-									name='email'
-									value={data.email}
-									placeholder={"jhon@gmail.com"}
-									required={true}
-									handleChange={(e: any) =>
-										setData({ ...data, email: e.target.value })
-									}
-								/>
-								<InputSelect
-									name='role'
-									label='Select User Role'
-									options={[
-										// {
-										// 	label: "User",
-										// 	value: "USER",
-										// },
-										{
-											label: "Admin",
-											value: "ADMIN",
-										},
-									]}
-									placeholder='Select Role'
-									value={data.role}
-									required={true}
-									onChange={(e: any) =>
-										setData({ ...data, role: e.target.value })
-									}
-								/>
-								<FormButton>
-									{!loading ? (
-										<>{text}</>
-									) : (
-										<>
-											{text}
-											<Loader style='border-white dark:border-white' />
-										</>
-									)}
-								</FormButton>
-							</form>
-						</div>
-					</div>
-				</div>
-			)}
-		</>
-	);
+  // Handle escape key
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShowModal(false);
+      }
+    };
+
+    if (showModal) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [showModal, setShowModal]);
+
+  if (!showModal) return null;
+
+  return (
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 px-4 py-7.6 dark:bg-dark/70 sm:px-8">
+      <div 
+        ref={modalRef}
+        className="relative w-full max-w-[600px] max-h-[calc(100vh-60px)] overflow-y-auto rounded-lg border bg-white shadow-lg dark:bg-gray-900"
+      >
+        <ModalCloseButton closeModal={setShowModal} />
+        
+        <div className="p-6">
+          <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">
+            Add New User
+          </h2>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>User Email</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="john@example.com" 
+                        type="email"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>User Role</FormLabel>
+                    <FormControl>
+                      <select
+                        className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        {...field}
+                      >
+                        <option value="">Select a role</option>
+                        <option value="ADMIN">Admin</option>
+                        <option value="BUSINESS_OWNER">Business Owner</option>
+                        <option value="STAFF">Staff</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
+                <Button 
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowModal(false)}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+                
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+				  className="text-white"
+                >
+                  {isSubmitting ? 'Sending...' : text}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
+      </div>
+    </div>
+  );
 }
