@@ -41,7 +41,7 @@ const SignupWithPassword = () => {
 		setLoading(true);
 
 		try {
-			const res = await axios.post("/api/user/register", {
+			const res = await axios.post("/api/platform/register", {
 				name,
 				email,
 				password,

@@ -1,4 +1,4 @@
-// components/User/Security/Retail/POSOverview.tsx
+// components/Platform/Security/Retail/POSOverview.tsx
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

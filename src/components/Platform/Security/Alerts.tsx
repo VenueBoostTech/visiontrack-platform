@@ -199,7 +199,7 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
         enabled: true,
       };
   
-      const response = await fetch("/api/user/alert-rule", {
+      const response = await fetch("/api/platform/alert-rule", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formattedData),
@@ -251,7 +251,7 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
         )
       };
   
-      const response = await fetch(`/api/user/alert-rule/${ruleId}`, {
+      const response = await fetch(`/api/platform/alert-rule/${ruleId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formattedData),
@@ -308,7 +308,7 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/user/alert-rule/${selectedRule.id}`, {
+      const response = await fetch(`/api/platform/alert-rule/${selectedRule.id}`, {
         method: "DELETE",
       });
 

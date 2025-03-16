@@ -1,4 +1,4 @@
-// components/User/Stores/StoresContent.tsx
+// components/Platform/Stores/StoresContent.tsx
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
@@ -42,7 +42,7 @@ export default function StoreContent({
   const handleCreate = async (data: any) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/user/stores", {
+      const response = await fetch("/api/platform/stores", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -70,7 +70,7 @@ export default function StoreContent({
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/user/stores/${selectedStore.id}`, {
+      const response = await fetch(`/api/platform/stores/${selectedStore.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -101,7 +101,7 @@ export default function StoreContent({
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/user/stores/${selectedStore.id}`, {
+      const response = await fetch(`/api/platform/stores/${selectedStore.id}`, {
         method: "DELETE",
       });
 

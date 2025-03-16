@@ -1,4 +1,4 @@
-// components/User/Security/Tabs/MonitoringSystem.tsx
+// components/Platform/Security/Tabs/MonitoringSystem.tsx
 "use client";
 
 import { useState } from 'react';

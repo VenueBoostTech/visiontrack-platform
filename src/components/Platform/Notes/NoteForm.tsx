@@ -1,4 +1,4 @@
-// components/User/Notes/NoteForm.tsx
+// components/Platform/Notes/NoteForm.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -33,8 +33,8 @@ export default function NoteForm({
    const fetchData = async () => {
      try {
        const [camerasRes, zonesRes] = await Promise.all([
-         fetch('/api/user/cameras'),
-         fetch('/api/user/zones')
+         fetch('/api/platform/cameras'),
+         fetch('/api/platform/zones')
        ]);
        
        const [camerasData, zonesData] = await Promise.all([

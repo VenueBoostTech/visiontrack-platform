@@ -45,7 +45,7 @@ export default function LiveViewContent({ cameras, user }: any) {
   const handleCreateCamera = async (formData: any) => {
     try {
       setIsSubmitting(true);
-      const response = await fetch("/api/user/cameras", {
+      const response = await fetch("/api/platform/cameras", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

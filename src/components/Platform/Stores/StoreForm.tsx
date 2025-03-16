@@ -1,4 +1,4 @@
-// components/User/Zones/ZoneForm.tsx
+// components/Platform/Zones/ZoneForm.tsx
 "use client";
 
 import { useState } from "react";

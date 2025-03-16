@@ -17,7 +17,7 @@ const AccountSettings = () => {
 	const handleDelete = async () => {
 		setLoading(true);
 		try {
-			await axios.delete("/api/user/delete", {
+			await axios.delete("/api/platform/delete", {
 				data: {
 					email: session?.user?.email,
 				},

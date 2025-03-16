@@ -1,4 +1,4 @@
-// components/User/Zones/ZonesContent.tsx
+// components/platform/Zones/ZonesContent.tsx
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -45,7 +45,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
   const handleCreate = async (data: any) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch('/api/user/zones', {
+      const response = await fetch('/api/platform/zones', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -71,7 +71,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
     
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/user/zones/${selectedZone.id}`, {
+      const response = await fetch(`/api/platform/zones/${selectedZone.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -100,7 +100,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/user/zones/${selectedZone.id}`, {
+      const response = await fetch(`/api/platform/zones/${selectedZone.id}`, {
         method: 'DELETE'
       });
 

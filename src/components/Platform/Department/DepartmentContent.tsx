@@ -67,7 +67,7 @@ export default function DepartmentContent({
   const handleCreate = async (data: CreateDepartment) => {
     setIsLoading(true);
     try {
-      const response = await axios.post("/api/user/department", data);
+      const response = await axios.post("/api/platform/department", data);
       setDepartment((prev) => [response.data, ...prev]);
       setShowCreateModal(false);
       toast.success("Department added successfully!");
@@ -84,7 +84,7 @@ export default function DepartmentContent({
     setIsLoading(true);
     try {
       const response = await axios.put(
-        `/api/user/department/${selectDepartment.id}`,
+        `/api/platform/department/${selectDepartment.id}`,
         data
       );
       setDepartment((prev) =>
@@ -105,7 +105,7 @@ export default function DepartmentContent({
 
     setIsLoading(true);
     try {
-      await axios.delete(`/api/user/department/${selectDepartment.id}`);
+      await axios.delete(`/api/platform/department/${selectDepartment.id}`);
       setDepartment((prev) => prev.filter((s) => s.id !== selectDepartment.id));
       toast.success("Department removed successfully");
       setShowDeleteModal(false);

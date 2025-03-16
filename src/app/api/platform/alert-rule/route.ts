@@ -1,4 +1,4 @@
-// app/api/user/alert-rule/route.ts
+// app/api/platform/alert-rule/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/libs/prismaDb";
 import { getAuthSession } from "@/libs/auth";
@@ -66,7 +66,7 @@ export async function GET() {
   }
 }
 
-// app/api/user/alert-rule/route.ts
+// app/api/platform/alert-rule/route.ts
 export async function POST(request: Request) {
   try {
     const session = await getAuthSession();

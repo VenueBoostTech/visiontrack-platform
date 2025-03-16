@@ -1,4 +1,4 @@
-// app/api/user/alert-rule/[alertRuleId]/route.ts
+// app/api/platform/alert-rule/[alertRuleId]/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/libs/prismaDb";
 import { getAuthSession } from "@/libs/auth";

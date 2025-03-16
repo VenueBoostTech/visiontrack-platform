@@ -61,7 +61,7 @@ export default function CamerasContent() {
   const fetchCameras = async (filter: any) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/user/cameras?${new URLSearchParams(filter)}`);
+      const response = await fetch(`/api/platform/cameras?${new URLSearchParams(filter)}`);
       if (!response.ok) throw new Error("Failed to fetch cameras");
       const data = await response.json();
       setCameras(data);
@@ -80,7 +80,7 @@ export default function CamerasContent() {
     if (!cameraToDelete) return;
     try {
       setIsSubmitting(true);
-      const response = await fetch(`/api/user/cameras/${cameraToDelete.id}`, {
+      const response = await fetch(`/api/platform/cameras/${cameraToDelete.id}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete camera");
@@ -101,7 +101,7 @@ export default function CamerasContent() {
   const handleCreateCamera = async (formData: any) => {
     try {
       setIsSubmitting(true);
-      const response = await fetch("/api/user/cameras", {
+      const response = await fetch("/api/platform/cameras", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +130,7 @@ export default function CamerasContent() {
   const handleEditCamera = async (formData: any) => {
     try {
       setIsSubmitting(true);
-      const response = await fetch(`/api/user/cameras/${selectedCamera?.id}`, {
+      const response = await fetch(`/api/platform/cameras/${selectedCamera?.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -164,7 +164,7 @@ export default function CamerasContent() {
     try {
       const newStatus = camera.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
 
-      const zoneResponse = await fetch(`/api/user/zones/${camera.zoneId}`);
+      const zoneResponse = await fetch(`/api/platform/zones/${camera.zoneId}`);
       const zoneData = await zoneResponse.json();
       const propertyId = zoneData.building.property.id
 
@@ -180,7 +180,7 @@ export default function CamerasContent() {
         capabilities: camera.capabilities,
       }
 
-      const response = await fetch(`/api/user/cameras/${camera.id}/status`, {
+      const response = await fetch(`/api/platform/cameras/${camera.id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

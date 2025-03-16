@@ -1,4 +1,4 @@
-// components/User/Security/Retail/LossPreventionOverview.tsx
+// components/Platform/Security/Retail/LossPreventionOverview.tsx
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,4 +1,4 @@
-// components/User/Security/Retail/IncidentManagementOverview.tsx
+// components/Platform/Security/Retail/IncidentManagementOverview.tsx
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

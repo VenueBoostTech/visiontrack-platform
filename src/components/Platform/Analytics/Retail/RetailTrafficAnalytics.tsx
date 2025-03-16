@@ -1,4 +1,4 @@
-// components/User/Analytics/Retail/RetailTrafficAnalytics.tsx
+// components/Platform/Analytics/Retail/RetailTrafficAnalytics.tsx
 "use client";
 
 import { useEffect, useState } from 'react';

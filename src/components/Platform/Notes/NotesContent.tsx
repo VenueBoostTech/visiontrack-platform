@@ -1,4 +1,4 @@
-// components/User/Notes/NotesContent.tsx
+// components/Platform/Notes/NotesContent.tsx
 "use client";
 
 import { useState } from 'react';
@@ -32,7 +32,7 @@ export default function NotesContent({ initialNotes }: { initialNotes: Note[] })
   const handleCreate = async (data: any) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/user/notes', {
+      const response = await fetch('/api/platform/notes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -54,7 +54,7 @@ export default function NotesContent({ initialNotes }: { initialNotes: Note[] })
     if (!selectedNote) return;
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/user/notes/${selectedNote.id}`, {
+      const response = await fetch(`/api/platform/notes/${selectedNote.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -77,7 +77,7 @@ export default function NotesContent({ initialNotes }: { initialNotes: Note[] })
     if (!selectedNote) return;
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/user/notes/${selectedNote.id}`, {
+      const response = await fetch(`/api/platform/notes/${selectedNote.id}`, {
         method: 'DELETE',
       });
       

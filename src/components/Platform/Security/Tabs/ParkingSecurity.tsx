@@ -1,4 +1,4 @@
-// components/User/Security/Tabs/ParkingSecurity.tsx
+// components/Platform/Security/Tabs/ParkingSecurity.tsx
 "use client";
 
 import { useState } from 'react';

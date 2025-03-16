@@ -1,4 +1,4 @@
-// components/User/Zones/ZoneForm.tsx
+// components/Platform/Zones/ZoneForm.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -67,7 +67,7 @@ export default function ZoneForm({
     const fetchProperties = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/user/properties?include=buildings");
+        const response = await fetch("/api/platform/properties?include=buildings");
         if (!response.ok) throw new Error("Failed to fetch properties");
         const data = await response.json();
         setProperties(data);
@@ -86,7 +86,7 @@ export default function ZoneForm({
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const response = await fetch("/api/user/stores");
+        const response = await fetch("/api/platform/stores");
         if (!response.ok) throw new Error("Failed to fetch stores");
         const data = await response.json();
         setStores(data);

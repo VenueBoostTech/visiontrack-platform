@@ -91,7 +91,7 @@ interface CameraData {
     useEffect(() => {
         const fetchCameraDetails = async () => {
           try {
-            const response = await fetch(`/api/user/cameras/${cameraId}`);
+            const response = await fetch(`/api/platform/cameras/${cameraId}`);
             if (!response.ok) throw new Error('Failed to fetch camera details');
             const data = await response.json();
             // Fill in any missing properties with dummy data

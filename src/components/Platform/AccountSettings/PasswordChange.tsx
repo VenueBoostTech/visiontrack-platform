@@ -37,7 +37,7 @@ export default function PasswordChange() {
 		}
 
 		try {
-			await axios.post("/api/user/change-password", {
+			await axios.post("/api/platform/change-password", {
 				password: newPassword,
 				currentPassword: currentPassword,
 				email: session?.user?.email,

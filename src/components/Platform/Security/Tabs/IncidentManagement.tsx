@@ -1,4 +1,4 @@
-// components/User/Security/Tabs/IncidentManagement.tsx
+// components/Platform/Security/Tabs/IncidentManagement.tsx
 "use client";
 
 import { useState } from 'react';

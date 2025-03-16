@@ -1,4 +1,4 @@
-// components/User/Properties/PropertyForm.tsx
+// components/Platform/Properties/PropertyForm.tsx
 "use client";
 
 import { useState } from 'react';

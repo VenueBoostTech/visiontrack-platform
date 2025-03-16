@@ -1,4 +1,4 @@
-// components/User/Security/Retail/CameraOverview.tsx
+// components/Platform/Security/Retail/CameraOverview.tsx
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

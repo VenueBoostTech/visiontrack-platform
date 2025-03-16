@@ -40,7 +40,7 @@ export default function VTCredentialsContent({ initialCredential, businessId }: 
   const handleCreateCredential = async (formData: FormData) => {
     try {
       setIsSubmitting(true);
-      const response = await fetch("/api/user/vt-credentials", {
+      const response = await fetch("/api/platform/vt-credentials", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +74,7 @@ export default function VTCredentialsContent({ initialCredential, businessId }: 
     
     try {
       setIsSubmitting(true);
-      const response = await fetch(`/api/user/vt-credentials/${credential.id}`, {
+      const response = await fetch(`/api/platform/vt-credentials/${credential.id}`, {
         method: "DELETE",
       });
 

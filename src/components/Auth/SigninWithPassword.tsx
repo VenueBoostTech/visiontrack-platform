@@ -43,7 +43,7 @@ export default function SigninWithPassword() {
 		}
 	
 		// // Get business and VT credentials
-		// const owner = await fetch('/api/user/business').then(r => r.json());
+		// const owner = await fetch('/api/platform/business').then(r => r.json());
 		
 		// if (!owner?.ownedBusiness?.vtCredentials) {
 		// 	toast.error("No VT credentials found");

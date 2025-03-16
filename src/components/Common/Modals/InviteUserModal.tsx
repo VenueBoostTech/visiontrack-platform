@@ -55,7 +55,7 @@ export default function InviteUserModal({ showModal, setShowModal, text }: Invit
     setIsSubmitting(true);
     
     try {
-      const invite = await axios.post("/api/user/invite/send", data);
+      const invite = await axios.post("/api/platform/invite/send", data);
       toast.success(invite.data);
       setShowModal(false);
     } catch (error: any) {

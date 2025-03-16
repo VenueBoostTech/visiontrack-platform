@@ -1,4 +1,4 @@
-// app/api/user/vt-credentials/[id]/route.ts
+// app/api/platform/vt-credentials/[id]/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/libs/prismaDb";
 import { getServerSession } from "next-auth";

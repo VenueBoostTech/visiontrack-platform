@@ -111,7 +111,7 @@ export default function EditProfile() {
         return null;
       }
 
-      const res = await fetch("/api/user/update", {
+      const res = await fetch("/api/platform/update", {
         method: "POST",
         body: JSON.stringify(requestBody),
         headers: {

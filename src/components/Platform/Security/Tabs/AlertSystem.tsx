@@ -1,4 +1,4 @@
-// components/User/Security/Tabs/AlertSystem.tsx
+// components/Platform/Security/Tabs/AlertSystem.tsx
 "use client";
 
 import { useState } from 'react';

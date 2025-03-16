@@ -31,12 +31,12 @@ const CameraFilter: React.FC<CameraFilterProps> = ({
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const zones = await fetch('/api/user/zones');
+                const zones = await fetch('/api/platform/zones');
                 if (!zones.ok) throw new Error('Failed to fetch zones');
                 const zonesData = await zones.json();
                 setZones(zonesData);
 
-                const buildings = await fetch('/api/user/buildings');
+                const buildings = await fetch('/api/platform/buildings');
                 if (!buildings.ok) throw new Error('Failed to fetch buildings');
                 const buildingsData = await buildings.json();
                 setBuildings(buildingsData);

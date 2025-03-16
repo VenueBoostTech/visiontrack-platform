@@ -104,7 +104,7 @@ export default function InventoryTracking() {
 
   const getStores = async () => {
     try {
-      const response = await fetch("/api/user/stores");
+      const response = await fetch("/api/platform/stores");
       if (!response.ok) throw new Error("Failed to fetch stores");
       const data = await response.json();
       setStores(data);

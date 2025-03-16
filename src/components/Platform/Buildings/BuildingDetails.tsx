@@ -1,4 +1,4 @@
-// components/User/Buildings/BuildingDetails.tsx
+// components/Platform/Buildings/BuildingDetails.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -64,7 +64,7 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
   useEffect(() => {
     const fetchBuilding = async () => {
       try {
-        const response = await fetch(`/api/user/buildings/${buildingId}`);
+        const response = await fetch(`/api/platform/buildings/${buildingId}`);
         if (response.ok) {
           const data = await response.json();
           setBuilding(data);

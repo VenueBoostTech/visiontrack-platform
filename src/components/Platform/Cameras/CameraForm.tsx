@@ -96,14 +96,14 @@ export default function CameraForm({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/user/properties?include=buildings.zones');
+        const response = await fetch('/api/platform/properties?include=buildings.zones');
         if (!response.ok) throw new Error('Failed to fetch properties');
         const data = await response.json();
         setProperties(data);
 
         // If we have initialData, set the selections and fetch zone details        
         if (initialData?.zoneId) {
-          const zoneResponse = await fetch(`/api/user/zones/${initialData.zoneId}`);
+          const zoneResponse = await fetch(`/api/platform/zones/${initialData.zoneId}`);
           const zoneData = await zoneResponse.json();
           setSelectedZoneData(zoneData);
           setSelectedZone(zoneData.id);
@@ -135,7 +135,7 @@ export default function CameraForm({
 
     if (zoneId) {
       try {
-        const response = await fetch(`/api/user/zones/${zoneId}`);
+        const response = await fetch(`/api/platform/zones/${zoneId}`);
         if (!response.ok) throw new Error('Failed to fetch zone details');
         const zoneData = await response.json();
         setSelectedZoneData(zoneData);

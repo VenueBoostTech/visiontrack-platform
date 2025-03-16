@@ -28,7 +28,7 @@ const InvitedSignin = () => {
 		}
 
 		try {
-			const res = await axios.post(`/api/user/invite/signin`, {
+			const res = await axios.post(`/api/platform/invite/signin`, {
 				password,
 				token,
 			});

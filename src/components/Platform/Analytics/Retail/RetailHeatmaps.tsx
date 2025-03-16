@@ -1,4 +1,4 @@
-// components/User/Analytics/Retail/RetailHeatmaps.tsx
+// components/Platform/Analytics/Retail/RetailHeatmaps.tsx
 "use client";
 
 import { useEffect, useState } from 'react';

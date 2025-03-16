@@ -60,7 +60,7 @@ export default function PropertiesContent({
     
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/user/properties/${propertyToDelete.id}`, {
+      const response = await fetch(`/api/platform/properties/${propertyToDelete.id}`, {
         method: 'DELETE',
       });
       
@@ -83,7 +83,7 @@ export default function PropertiesContent({
   const handleCreate = async (data: PropertyFormData) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/user/properties', {
+      const response = await fetch('/api/platform/properties', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -110,7 +110,7 @@ export default function PropertiesContent({
     
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/user/properties/${selectedProperty.id}`, {
+      const response = await fetch(`/api/platform/properties/${selectedProperty.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

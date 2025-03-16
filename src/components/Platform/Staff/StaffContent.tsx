@@ -41,7 +41,7 @@ export default function StaffContent({
   const handleCreate = async (data: CreateStaffData) => {
     setIsLoading(true);
     try {
-      const response = await axios.post('/api/user/staff', data);
+      const response = await axios.post('/api/platform/staff', data);
       setStaff(prev => [response.data, ...prev]);
       setShowCreateModal(false);
       toast.success("Staff member added successfully!");
@@ -57,7 +57,7 @@ export default function StaffContent({
     
     setIsLoading(true);
     try {
-      const response = await axios.put(`/api/user/staff/${selectedStaff.id}`, data);
+      const response = await axios.put(`/api/platform/staff/${selectedStaff.id}`, data);
       if (response.data.error) {
         throw new Error(response.data.error);
       }
@@ -79,7 +79,7 @@ export default function StaffContent({
 
     setIsLoading(true);
     try {
-      await axios.delete(`/api/user/staff/${selectedStaff.id}`);
+      await axios.delete(`/api/platform/staff/${selectedStaff.id}`);
       setStaff(prev => prev.filter(s => s.id !== selectedStaff.id));
       toast.success('Staff member removed successfully');
       setShowDeleteModal(false);

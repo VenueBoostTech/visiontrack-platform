@@ -1,4 +1,4 @@
-// components/User/Security/Tabs/EmergencySystem.tsx
+// components/Platform/Security/Tabs/EmergencySystem.tsx
 "use client";
 
 import { useState } from 'react';

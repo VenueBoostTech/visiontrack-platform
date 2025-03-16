@@ -1,4 +1,4 @@
-// components/User/BuildingsContent.tsx
+// components/Platform/BuildingsContent.tsx
 "use client";
 
 import { useState } from 'react';
@@ -40,7 +40,7 @@ export default function BuildingsContent({
   const handleCreate = async (data: { name: string; floorCount: number; propertyId: string }) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/user/buildings', {
+      const response = await fetch('/api/platform/buildings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -70,7 +70,7 @@ export default function BuildingsContent({
     
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/user/buildings/${selectedBuilding.id}`, {
+      const response = await fetch(`/api/platform/buildings/${selectedBuilding.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -104,7 +104,7 @@ export default function BuildingsContent({
     
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/user/buildings/${selectedBuilding.id}`, {
+      const response = await fetch(`/api/platform/buildings/${selectedBuilding.id}`, {
         method: 'DELETE',
       });
       

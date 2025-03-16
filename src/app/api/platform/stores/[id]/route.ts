@@ -1,4 +1,4 @@
-// app/api/user/zones/[id]/route.ts
+// app/api/platform/zones/[id]/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/libs/prismaDb";
 import { getAuthSession } from "@/libs/auth";
