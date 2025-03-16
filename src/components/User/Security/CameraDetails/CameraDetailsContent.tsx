@@ -142,7 +142,7 @@ interface CameraData {
         {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-2">
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${
                   camera.status === 'ACTIVE' ? 'bg-green-100' : 'bg-red-100'
@@ -160,7 +160,7 @@ interface CameraData {
           </Card>
   
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-2">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <Clock className="w-6 h-6 text-blue-600" />
@@ -174,7 +174,7 @@ interface CameraData {
           </Card>
   
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-2">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-purple-100 rounded-lg">
                   <Shield className="w-6 h-6 text-purple-600" />
@@ -188,7 +188,7 @@ interface CameraData {
           </Card>
   
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-2">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-amber-100 rounded-lg">
                   <AlertTriangle className="w-6 h-6 text-amber-600" />

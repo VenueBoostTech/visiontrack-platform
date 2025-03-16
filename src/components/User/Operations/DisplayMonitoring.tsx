@@ -133,7 +133,7 @@ export default function DisplayMonitoring() {
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-2">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-100 rounded-lg dark:bg-blue-900">
                 <Monitor className="w-6 h-6 text-blue-600 dark:text-blue-300" />
@@ -154,7 +154,7 @@ export default function DisplayMonitoring() {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-2">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-green-100 rounded-lg dark:bg-green-900">
                 <Eye className="w-6 h-6 text-green-600 dark:text-green-300" />
@@ -175,7 +175,7 @@ export default function DisplayMonitoring() {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-2">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-purple-100 rounded-lg dark:bg-purple-900">
                 <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-300" />
@@ -194,7 +194,7 @@ export default function DisplayMonitoring() {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-2">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-amber-100 rounded-lg dark:bg-amber-900">
                 <Target className="w-6 h-6 text-amber-600 dark:text-amber-300" />

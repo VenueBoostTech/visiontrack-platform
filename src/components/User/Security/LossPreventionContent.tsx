@@ -256,7 +256,7 @@ export default function LossPreventionContent() {
           { name: 'Exit Gates', incidents: 3, trend: '+1', value: '$180' },
         ].map((area) => (
           <Card key={area.name} className="border border-gray-200 dark:border-gray-700">
-            <CardContent className="p-6">
+            <CardContent className="p-2">
               <div className="flex justify-between items-center mb-4">
                 <h4 className="text-base font-semibold text-gray-900 dark:text-gray-100">{area.name}</h4>
                 <div className={`flex items-center gap-1 ${
