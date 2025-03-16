@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/libs/prismaDb";
 import { authOptions } from "@/libs/auth";
-import StaffContent from "@/components/User/Staff/StaffContent";
+import StaffContent from "@/components/Platform/Staff/StaffContent";
 
 async function getDepartment() {
   let departments: any = [];

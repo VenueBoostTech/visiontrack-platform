@@ -1,5 +1,5 @@
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import Visitors from "@/components/User/Security/Visitors";
+import Visitors from "@/components/Platform/Security/Visitors";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

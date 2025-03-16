@@ -1,6 +1,6 @@
 // app/user/analytics/traffic/page.tsx
 import { Metadata } from "next";
-import RetailTrafficAnalytics from "@/components/User/Analytics/Retail/RetailTrafficAnalytics";
+import RetailTrafficAnalytics from "@/components/Platform/Analytics/Retail/RetailTrafficAnalytics";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/libs/auth";

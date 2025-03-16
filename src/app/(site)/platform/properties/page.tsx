@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 import { prisma } from "@/libs/prismaDb";
-import PropertiesContent from "@/components/User/PropertiesContent";
+import PropertiesContent from "@/components/Platform/PropertiesContent";
 
 export const metadata: Metadata = {
   title: `Properties - ${process.env.PLATFORM_NAME}`,

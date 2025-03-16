@@ -2,8 +2,8 @@
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
-import RetailCustomerCounter from "@/components/User/Analytics/Retail/RetailCustomerCounter";
-import PeopleContent from "@/components/User/Analytics/PeopleContent";
+import RetailCustomerCounter from "@/components/Platform/Analytics/Retail/RetailCustomerCounter";
+import PeopleContent from "@/components/Platform/Analytics/PeopleContent";
 
 export const metadata: Metadata = {
   title: "People Counter Analytics - VisionTrack",

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { prisma } from "@/libs/prismaDb";
-import StoreContent from "@/components/User/Stores/StoreContent";
+import StoreContent from "@/components/Platform/Stores/StoreContent";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 import { redirect } from "next/navigation";

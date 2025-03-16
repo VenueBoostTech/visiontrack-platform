@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import StaffMonitoringContent from "@/components/User/Security/StaffMonitoringContent";
+import StaffMonitoringContent from "@/components/Platform/Security/StaffMonitoringContent";
 
 export const metadata: Metadata = {
     title: "Staff Monitoring - VisionTrack",

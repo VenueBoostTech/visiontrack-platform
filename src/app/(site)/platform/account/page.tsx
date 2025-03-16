@@ -1,6 +1,6 @@
 import React from "react";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import AccountSettings from "@/components/User/AccountSettings";
+import AccountSettings from "@/components/Platform/AccountSettings";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

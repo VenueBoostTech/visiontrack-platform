@@ -1,6 +1,6 @@
 // app/user/operations/analytics/page.tsx
 import { Metadata } from "next";
-import StaffOptimization from "@/components/User/Operations/StaffOptimization";
+import StaffOptimization from "@/components/Platform/Operations/StaffOptimization";
 
 export const metadata: Metadata = {
   title: "Staff Optimization - VisionTrack",

@@ -1,5 +1,5 @@
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import Reports from "@/components/User/Security/Reports";
+import Reports from "@/components/Platform/Security/Reports";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

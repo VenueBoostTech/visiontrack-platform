@@ -1,5 +1,5 @@
 import React from "react";
-import Billing from "@/components/User/Billing";
+import Billing from "@/components/Platform/Billing";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
 

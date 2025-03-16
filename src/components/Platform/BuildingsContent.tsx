@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Building2, Edit, Trash2, Plus, Eye } from 'lucide-react';
 import Modal from '@/components/Common/Modal';
 import DeleteModal from '@/components/Common/Modals/DeleteModal';
-import BuildingForm from '@/components/User/BuldingForm';
+import BuildingForm from '@/components/Platform/BuldingForm';
 import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation';
 

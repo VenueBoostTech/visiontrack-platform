@@ -12,11 +12,11 @@ import {
 } from 'lucide-react';
 
 // Component imports
-import IncidentManagementOverview from '@/components/User/Security/Retail/IncidentManagementOverview';
-import LossPreventionOverview from '@/components/User/Security/Retail/LossPreventionOverview';
-import StaffMonitoringOverview from '@/components/User/Security/Retail/StaffMonitoringOverview';
-import POSOverview from '@/components/User/Security/Retail/POSOverview';
-import CameraOverview from '@/components/User/Security/Retail/CameraOverview';
+import IncidentManagementOverview from '@/components/Platform/Security/Retail/IncidentManagementOverview';
+import LossPreventionOverview from '@/components/Platform/Security/Retail/LossPreventionOverview';
+import StaffMonitoringOverview from '@/components/Platform/Security/Retail/StaffMonitoringOverview';
+import POSOverview from '@/components/Platform/Security/Retail/POSOverview';
+import CameraOverview from '@/components/Platform/Security/Retail/CameraOverview';
 
 // Define retail security tabs
 const RETAIL_SECURITY_TABS = [

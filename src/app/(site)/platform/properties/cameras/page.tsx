@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 import { prisma } from "@/libs/prismaDb";
-import CamerasContent from "@/components/User/Cameras/CamerasContent";
+import CamerasContent from "@/components/Platform/Cameras/CamerasContent";
 
 export const metadata: Metadata = {
   title: `Cameras Management - ${process.env.PLATFORM_NAME}`,

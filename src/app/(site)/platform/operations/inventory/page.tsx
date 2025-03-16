@@ -1,6 +1,6 @@
 // app/user/operations/analytics/page.tsx
 import { Metadata } from "next";
-import InventoryTracking from "@/components/User/Operations/InventoryTracking";
+import InventoryTracking from "@/components/Platform/Operations/InventoryTracking";
 
 export const metadata: Metadata = {
   title: "Inventory Tracking - VisionTrack",

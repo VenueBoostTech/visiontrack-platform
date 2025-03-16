@@ -1,6 +1,6 @@
 // app/user/operations/analytics/page.tsx
 import { Metadata } from "next";
-import QueueManagement from "@/components/User/Operations/QueueManagement";
+import QueueManagement from "@/components/Platform/Operations/QueueManagement";
 
 export const metadata: Metadata = {
   title: "Queue Management - VisionTrack",

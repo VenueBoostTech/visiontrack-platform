@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import IncidentManagementContent from "@/components/User/Security/IncidentManagement";
+import IncidentManagementContent from "@/components/Platform/Security/IncidentManagement";
 
 export const metadata: Metadata = {
     title: "Incident Management - VisionTrack",

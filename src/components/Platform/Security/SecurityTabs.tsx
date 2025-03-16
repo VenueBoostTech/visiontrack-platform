@@ -4,10 +4,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Monitor, Car, AlertTriangle, FileText, Bell } from 'lucide-react';
-import MonitoringSystem from '@/components/User/Security/Tabs/MonitoringSystem';
-import EmergencySystem from '@/components/User/Security/Tabs/EmergencySystem';
-import IncidentManagement from '@/components/User/Security/Tabs/IncidentManagement';
-import AlertSystem from '@/components/User/Security/Tabs/AlertSystem';
+import MonitoringSystem from '@/components/Platform/Security/Tabs/MonitoringSystem';
+import EmergencySystem from '@/components/Platform/Security/Tabs/EmergencySystem';
+import IncidentManagement from '@/components/Platform/Security/Tabs/IncidentManagement';
+import AlertSystem from '@/components/Platform/Security/Tabs/AlertSystem';
 
 export default function SecurityTabs() {
   const [activeTab, setActiveTab] = useState('monitoring');

@@ -8,7 +8,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import Modal from '@/components/Common/Modal';
 import DeleteModal from '@/components/Common/Modals/DeleteModal';
-import StaffForm from '@/components/User/Staff/StaffForm';
+import StaffForm from '@/components/Platform/Staff/StaffForm';
 import { CreateStaffData, StaffMember, UpdateStaffData } from '@/types/staff';
 import { Department } from '@/types/department';
 

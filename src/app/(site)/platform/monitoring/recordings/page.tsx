@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import RecordingsContent from "@/components/User/LiveMonitoring/RecordingsContent";
+import RecordingsContent from "@/components/Platform/LiveMonitoring/RecordingsContent";
 
 export const metadata: Metadata = {
 	title: `Monitoring Recordings - ${process.env.PLATFORM_NAME}`,

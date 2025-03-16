@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import LiveViewContent from "@/components/User/LiveMonitoring/LiveViewContent";
+import LiveViewContent from "@/components/Platform/LiveMonitoring/LiveViewContent";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 import { redirect } from "next/navigation";

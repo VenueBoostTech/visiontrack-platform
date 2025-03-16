@@ -1,5 +1,5 @@
 // app/user/analytics/traffic/page.tsx
-import RetailConversionAnalytics from "@/components/User/Analytics/Retail/RetailConversionAnalytics";
+import RetailConversionAnalytics from "@/components/Platform/Analytics/Retail/RetailConversionAnalytics";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

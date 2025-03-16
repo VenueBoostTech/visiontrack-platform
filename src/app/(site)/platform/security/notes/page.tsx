@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 import { prisma } from "@/libs/prismaDb";
-import NotesContent from "@/components/User/Notes/NotesContent";
+import NotesContent from "@/components/Platform/Notes/NotesContent";
 
 export const metadata: Metadata = {
   title: `Security Notes - ${process.env.PLATFORM_NAME}`,

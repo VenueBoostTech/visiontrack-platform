@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import LossPreventionContent from "@/components/User/Security/LossPreventionContent";
+import LossPreventionContent from "@/components/Platform/Security/LossPreventionContent";
 
 export const metadata: Metadata = {
     title: "Loss Prevention - VisionTrack",

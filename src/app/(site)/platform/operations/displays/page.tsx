@@ -1,6 +1,6 @@
 // app/user/operations/analytics/page.tsx
 import { Metadata } from "next";
-import DisplayMonitoring from "@/components/User/Operations/DisplayMonitoring";
+import DisplayMonitoring from "@/components/Platform/Operations/DisplayMonitoring";
 
 export const metadata: Metadata = {
   title: "Display Monitoring - VisionTrack",

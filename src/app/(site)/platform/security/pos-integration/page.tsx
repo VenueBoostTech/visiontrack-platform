@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import PosIntegrationContent from "@/components/User/Security/PosIntegrationContent";
+import PosIntegrationContent from "@/components/Platform/Security/PosIntegrationContent";
 
 export const metadata: Metadata = {
     title: "POS Integration - VisionTrack",

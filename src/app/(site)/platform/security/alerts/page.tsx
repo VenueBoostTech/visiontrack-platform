@@ -1,6 +1,6 @@
 // app/(site)/user/security/alerts/page.tsx
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import Alerts from "@/components/User/Security/Alerts";
+import Alerts from "@/components/Platform/Security/Alerts";
 import { Metadata } from "next";
 import { prisma } from "@/libs/prismaDb";
 import { getServerSession } from "next-auth";

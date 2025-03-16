@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import SecurityTabs from "@/components/User/Security/SecurityTabs";
-import RetailSecurityTabs from "@/components/User/Security/SecurityTabsRetail";
+import SecurityTabs from "@/components/Platform/Security/SecurityTabs";
+import RetailSecurityTabs from "@/components/Platform/Security/SecurityTabsRetail";
 
 export const metadata: Metadata = {
   title: `Security - ${process.env.PLATFORM_NAME}`,

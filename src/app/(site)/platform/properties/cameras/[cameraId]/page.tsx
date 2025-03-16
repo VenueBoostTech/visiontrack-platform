@@ -1,6 +1,6 @@
 // app/user/properties/cameras/[cameraId]/page.tsx
 import { Metadata } from "next";
-import CameraDetailsContent from "@/components/User/Security/CameraDetails/CameraDetailsContent";
+import CameraDetailsContent from "@/components/Platform/Security/CameraDetails/CameraDetailsContent";
 
 export const metadata: Metadata = {
   title: "Camera Details - VisionTrack",

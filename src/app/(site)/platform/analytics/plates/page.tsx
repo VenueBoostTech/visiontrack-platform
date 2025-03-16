@@ -1,7 +1,7 @@
 import React from "react";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import { Metadata } from "next";
-import VehicleContent from "@/components/User/Analytics/VehicleContent";
+import VehicleContent from "@/components/Platform/Analytics/VehicleContent";
 
 export const metadata: Metadata = {
     title: "Analytics Vehicles - VisionTrack",

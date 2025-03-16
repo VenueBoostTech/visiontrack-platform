@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import ParkingContent from "@/components/User/Analytics/ParkingContent";
+import ParkingContent from "@/components/Platform/Analytics/ParkingContent";
 
 export const metadata: Metadata = {
     title: "Analytics Parking - VisionTrack",

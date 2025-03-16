@@ -1,6 +1,6 @@
 // app/user/operations/analytics/page.tsx
 import { Metadata } from "next";
-import StoreAnalytics from "@/components/User/Operations/StoreAnalytics";
+import StoreAnalytics from "@/components/Platform/Operations/StoreAnalytics";
 
 export const metadata: Metadata = {
   title: "Store Analytics - VisionTrack",

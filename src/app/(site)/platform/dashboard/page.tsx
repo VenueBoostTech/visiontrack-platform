@@ -1,7 +1,7 @@
 // app/user/dashboard/page.tsx
 import { Metadata } from "next";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import RetailDashboardContent from "@/components/User/RetailDashboard/RetailDashboardContent";
+import RetailDashboardContent from "@/components/Platform/RetailDashboard/RetailDashboardContent";
 
 export const metadata: Metadata = {
     title: "Dashboard - VisionTrack",

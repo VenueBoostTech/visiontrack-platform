@@ -1,5 +1,5 @@
 import React from "react";
-import PurchaseHistory from "@/components/User/PurchaseHistory";
+import PurchaseHistory from "@/components/Platform/PurchaseHistory";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 
 import { Metadata } from "next";

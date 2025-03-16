@@ -1,7 +1,7 @@
 // app/user/security/access/page.tsx
 import { Metadata } from "next";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import Access from "@/components/User/Security/Access";
+import Access from "@/components/Platform/Security/Access";
 
 export const metadata: Metadata = {
     title: "Security Access - VisionTrack",

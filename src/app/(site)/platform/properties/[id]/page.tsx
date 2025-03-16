@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { PrismaClient } from "@prisma/client";
 // @ts-ignore
-import PropertyDetails from "@/components/User/PropertyDetails";
+import PropertyDetails from "@/components/Platform/PropertyDetails";
 
 const prisma = new PrismaClient();
 

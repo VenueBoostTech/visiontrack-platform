@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import EmergencyResponseContent from "@/components/User/Security/EmergencyResponseContent";
+import EmergencyResponseContent from "@/components/Platform/Security/EmergencyResponseContent";
 
 export const metadata: Metadata = {
     title: "Emergency Response - VisionTrack",

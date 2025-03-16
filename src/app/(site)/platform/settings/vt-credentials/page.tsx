@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 import { prisma } from "@/libs/prismaDb";
-import VTCredentialsContent from "@/components/User/VTCredentialsContent";
+import VTCredentialsContent from "@/components/Platform/VTCredentialsContent";
 
 export const metadata: Metadata = {
   title: `VisionTrack API - ${process.env.PLATFORM_NAME}`,

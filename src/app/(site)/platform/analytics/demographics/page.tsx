@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 import { redirect } from "next/navigation";
-import RetailDemographics from "@/components/User/Analytics/Retail/RetailDemographics";
-import DemographicsContent from "@/components/User/Analytics/DemographicsContent";
+import RetailDemographics from "@/components/Platform/Analytics/Retail/RetailDemographics";
+import DemographicsContent from "@/components/Platform/Analytics/DemographicsContent";
 import { prisma } from "@/libs/prismaDb";
 export const metadata: Metadata = {
   title: "Demographics Analytics - VisionTrack",

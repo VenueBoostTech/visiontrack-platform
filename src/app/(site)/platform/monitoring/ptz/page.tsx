@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import PTZControlContent from "@/components/User/LiveMonitoring/PTZControlContent";
+import PTZControlContent from "@/components/Platform/LiveMonitoring/PTZControlContent";
 
 export const metadata: Metadata = {
 	title: `Monitoring PTZ - ${process.env.PLATFORM_NAME}`,

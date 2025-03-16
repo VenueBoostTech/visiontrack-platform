@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import DepartmentContent from "@/components/User/Department/DepartmentContent";
+import DepartmentContent from "@/components/Platform/Department/DepartmentContent";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
 import { redirect } from "next/navigation";

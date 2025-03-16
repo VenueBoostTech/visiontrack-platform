@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import VideoWallContent from "@/components/User/LiveMonitoring/VideoWallContent";
+import VideoWallContent from "@/components/Platform/LiveMonitoring/VideoWallContent";
 
 export const metadata: Metadata = {
 	title: `Monitoring Wall - ${process.env.PLATFORM_NAME}`,

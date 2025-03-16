@@ -1,7 +1,7 @@
 // app/user/buildings/[id]/page.tsx
 import { Metadata } from "next";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
-import BuildingDetails from "@/components/User/Buildings/BuildingDetails";
+import BuildingDetails from "@/components/Platform/Buildings/BuildingDetails";
 import { prisma } from "@/libs/prismaDb";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
