@@ -1,0 +1,1 @@
+// Type for business form
