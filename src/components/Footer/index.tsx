@@ -14,7 +14,8 @@ const Footer = () => {
                             <Image
                                 src={"/images/logo/logo-light.svg"}
                                 alt='VisionTrack'
-                                width={214}
+                                width={194}
+                                style={{marginLeft: "-20px"}}
                                 height={40}
                             />
                         </Link>
