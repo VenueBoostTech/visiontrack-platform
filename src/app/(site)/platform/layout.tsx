@@ -1,44 +1,70 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Sidebar from "@/components/Common/Dashboard/Sidebar";
 import Header from "@/components/Common/Dashboard/Header";
-import { getUserSidebarData, userSidebarData } from "@/staticData/sidebarData";
+import { getUserSidebarData } from "@/staticData/sidebarData";
 import { useSession } from "next-auth/react";
 
-
 const PlatformLayout = ({ children }: { children: React.ReactNode }) => {
-	const [openSidebar, setOpenSidebar] = useState(false);
-	const { data: session } = useSession();
+  const [openSidebar, setOpenSidebar] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const { data: session } = useSession();
 
-	// Get business type from session
-	const businessType = session?.user?.business?.vt_use_scenario || 'RETAIL';
-	// Generate sidebar data using business type from session
-	const sidebarData = getUserSidebarData(businessType);
+  // Get business type from session
+  const businessType = session?.user?.business?.vt_use_scenario || 'RETAIL';
   
+  // Generate sidebar data using business type from session
+  const sidebarData = getUserSidebarData(businessType);
+  
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node) &&
+        window.innerWidth < 1024
+      ) {
+        setOpenSidebar(false);
+      }
+    };
 
-	return (
-		<>
-			<main className='min-h-screen bg-gray-2 dark:bg-[#151F34]'>
-				<aside
-					className={`fixed left-0 top-0 z-[999] h-screen w-[290px] overflow-y-auto bg-white duration-300 dark:bg-gray-dark ${
-						openSidebar ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-					}`}
-				>
-					<Sidebar sidebarData={sidebarData} />
-				</aside> 
-				<div
-					onClick={() => setOpenSidebar(false)}
-					className={`fixed inset-0 z-[99] h-screen w-full bg-dark/80 lg:hidden ${
-						openSidebar ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-					}`}
-				></div>
-				<section className='lg:ml-[290px]'>
-					<Header openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
-					<div className='p-5 pt-12 md:p-10'>{children}</div>
-				</section>
-			</main>
-		</>
-	);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-[290px] bg-white transition-transform duration-300 ease-in-out dark:bg-gray-dark lg:static lg:translate-x-0 ${
+          openSidebar ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <Sidebar 
+          sidebarData={sidebarData} 
+          sidebarRef={sidebarRef}
+        />
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex flex-1 flex-col overflow-hidden">
+        <Header openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
+        <div className="flex-1 overflow-auto bg-gray-2 p-5 pt-12 md:p-10 dark:bg-[#151F34]">
+          {children}
+        </div>
+      </main>
+
+      {/* Overlay */}
+      {openSidebar && (
+        <div
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+          onClick={() => setOpenSidebar(false)}
+        ></div>
+      )}
+    </div>
+  );
 };
 
 export default PlatformLayout;
