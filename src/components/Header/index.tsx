@@ -52,7 +52,8 @@ const Header = () => {
 						<Image
 							src={theme === 'dark' ? logoLight : logo}
 							alt="VisionTrack"
-							className="w-full"
+							width={160}
+							height={36}
 						/>
 					</Link>
 
