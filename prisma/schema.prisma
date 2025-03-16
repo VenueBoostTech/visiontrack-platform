@@ -8,13 +8,13 @@ generator client {
 }
 
 enum UserRole {
-  ADMIN           // Can manage everything on the platform (VisionTrack admins)
-  BUSINESS_OWNER  // Owner of a business, can manage their business entirely 
-  STAFF          // Staff of a business with limited permissions
+  ADMIN // Can manage everything on the platform (VisionTrack admins)
+  BUSINESS_OWNER // Owner of a business, can manage their business entirely 
+  STAFF // Staff of a business with limited permissions
 }
 
 model Account {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String
   type              String
   provider          String
@@ -35,7 +35,7 @@ model Account {
 model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String   @unique
-  userId       String   
+  userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -50,303 +50,304 @@ model ApiKey {
 }
 
 model User {
-  id                    String       @id @default(auto()) @map("_id") @db.ObjectId
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
   name                  String?
-  email                 String?      @unique
-  emailVerified        DateTime?
+  email                 String?   @unique
+  emailVerified         DateTime?
   image                 String?
   password              String?
   passwordResetToken    String?
   passwordResetTokenExp DateTime?
-  role                  UserRole     @default(STAFF)
-  customerId            String?      @map(name: "customer_id")
-  subscriptionId        String?      @map(name: "subscription_id")
-  priceId               String?      @map(name: "price_id")
-  currentPeriodEnd     DateTime?    @map(name: "current_period_end")
-  createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
+  role                  UserRole  @default(STAFF)
+  customerId            String?   @map(name: "customer_id")
+  subscriptionId        String?   @map(name: "subscription_id")
+  priceId               String?   @map(name: "price_id")
+  currentPeriodEnd      DateTime? @map(name: "current_period_end")
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-  accounts             Account[]
-  sessions             Session[]
-  apiKeys              ApiKey[]
-  ownedBusiness        Business?    @relation("BusinessOwner")
-  workingAt            BusinessStaff?
+  accounts      Account[]
+  sessions      Session[]
+  apiKeys       ApiKey[]
+  ownedBusiness Business?      @relation("BusinessOwner")
+  workingAt     BusinessStaff?
   // Relations with unique names
-  saleAssociate         Store[]      @relation("saleAssociate")
-  brandManager          Store[]      @relation("brandManager")
-  businessOwner         Store[]      @relation("businessOwner")
-  notes       Note[]
-  alertRules            AlertRule[]  @relation("UserAlertRules")
+  saleAssociate Store[]        @relation("saleAssociate")
+  brandManager  Store[]        @relation("brandManager")
+  businessOwner Store[]        @relation("businessOwner")
+  notes         Note[]
+  alertRules    AlertRule[]    @relation("UserAlertRules")
 }
 
 model VerificationToken {
- id         String   @id @default(auto()) @map("_id") @db.ObjectId
- identifier String
- token      String   @unique
- expires    DateTime
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
- @@unique([identifier, token])
+  @@unique([identifier, token])
 }
 
 model NotificationChannel {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  type        String    // "email" | "sms" | "notification" | "logs"
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  type        String // "email" | "sms" | "notification" | "logs"
   name        String
   description String
-  enabled     Boolean   @default(true)
-  config      Json      // For storing emails, phone numbers, etc.
-  businessId  String    @db.ObjectId
-  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  updatedBy   String?   @db.ObjectId // Reference to user who last updated
-  createdBy   String    @db.ObjectId // Reference to user who created
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  enabled     Boolean  @default(true)
+  config      Json // For storing emails, phone numbers, etc.
+  businessId  String   @db.ObjectId
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  updatedBy   String?  @db.ObjectId // Reference to user who last updated
+  createdBy   String   @db.ObjectId // Reference to user who created
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model BusinessPreferences {
-  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
-  businessId            String    @db.ObjectId @unique
-  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  desktopNotifications  Boolean   @default(true)
-  soundAlerts           Boolean   @default(false)
-  minimumPriority      String    @default("all") // "all" | "low" | "medium" | "high"
-  businessHours        Json      // { start: string, end: string }
-  retentionDays        Int       @default(30)
-  updatedBy            String?   @db.ObjectId // Reference to user who last updated
-  createdBy            String    @db.ObjectId // Reference to user who created
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  businessId           String   @unique @db.ObjectId
+  business             Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  desktopNotifications Boolean  @default(true)
+  soundAlerts          Boolean  @default(false)
+  minimumPriority      String   @default("all") // "all" | "low" | "medium" | "high"
+  businessHours        Json // { start: string, end: string }
+  retentionDays        Int      @default(30)
+  updatedBy            String?  @db.ObjectId // Reference to user who last updated
+  createdBy            String   @db.ObjectId // Reference to user who created
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
 
 model VTApiCredential {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  platform_id     String    @unique  // ID from VisionTrack platform
-  name            String
-  api_key         String    // API key for VisionTrack
-  businessId      String    @db.ObjectId @unique  // Each business can only have one VT credential
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  platform_id String    @unique // ID from VisionTrack platform
+  name        String
+  api_key     String // API key for VisionTrack
+  businessId  String    @unique @db.ObjectId // Each business can only have one VT credential
   business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  lastUsed        DateTime? 
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastUsed    DateTime?
 }
 
 model Business {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
   name            String
   email           String?
   phone           String?
   address         String?
-  vt_use_scenario BusinessType @default(RETAIL)  // Added this field
-  vt_connected    Boolean   @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  vt_use_scenario BusinessType @default(RETAIL) // Added this field
+  vt_connected    Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
   // Relations
-  ownerId         String    @db.ObjectId @unique
-  owner           User      @relation("BusinessOwner", fields: [ownerId], references: [id])
-  staff           BusinessStaff[]
-  properties      Property[]
-  departments     Department[]
-  alertRules      AlertRule[]
+  ownerId     String          @unique @db.ObjectId
+  owner       User            @relation("BusinessOwner", fields: [ownerId], references: [id])
+  staff       BusinessStaff[]
+  active      Boolean         @default(true)
+  properties  Property[]
+  departments Department[]
+  alertRules  AlertRule[]
   notes       Note[]
 
-  notificationChannels  NotificationChannel[]
-  preferences           BusinessPreferences?
-  vtCredentials         VTApiCredential?
+  notificationChannels NotificationChannel[]
+  preferences          BusinessPreferences?
+  vtCredentials        VTApiCredential?
 }
 
 model BusinessStaff {
- id          String    @id @default(auto()) @map("_id") @db.ObjectId
- businessId  String    @db.ObjectId
- userId      String    @unique @db.ObjectId  // Each user can only be staff at one business
- business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
- user        User      @relation(fields: [userId], references: [id])
- createdAt   DateTime  @default(now())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  businessId String   @db.ObjectId
+  userId     String   @unique @db.ObjectId // Each user can only be staff at one business
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
 
   // Relations
-  departmentId  String?       @db.ObjectId
-  department    Department?   @relation(fields: [departmentId], references: [id])
+  departmentId String?     @db.ObjectId
+  department   Department? @relation(fields: [departmentId], references: [id])
 }
 
 model Department {
- id          String    @id @default(auto()) @map("_id") @db.ObjectId
- name        String
- createdAt   DateTime  @default(now())
- updatedAt   DateTime  @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
- // Relations
- businessId  String    @db.ObjectId
- business    Business  @relation(fields: [businessId], references: [id])
- staff       BusinessStaff[]
+  // Relations
+  businessId String          @db.ObjectId
+  business   Business        @relation(fields: [businessId], references: [id])
+  staff      BusinessStaff[]
 }
 
 model Property {
- id          String    @id @default(auto()) @map("_id") @db.ObjectId
- name        String
- type        PropertyType
- address     String
- createdAt   DateTime  @default(now())
- updatedAt   DateTime  @updatedAt
- vtId        String?
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  type      PropertyType
+  address   String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  vtId      String?
 
- // Relations
- businessId  String    @db.ObjectId
- business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
- buildings   Building[]
- zones       Zone[]
+  // Relations
+  businessId String     @db.ObjectId
+  business   Business   @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  buildings  Building[]
+  zones      Zone[]
 }
 
 enum PropertyType {
- RESIDENTIAL
- COMMERCIAL
- MIXED
- RETAIL
+  RESIDENTIAL
+  COMMERCIAL
+  MIXED
+  RETAIL
 }
 
 model Building {
- id          String    @id @default(auto()) @map("_id") @db.ObjectId
- name        String
- floorCount  Int
- belowGroundFloors Int      @default(0)
- createdAt   DateTime  @default(now())
- updatedAt   DateTime  @updatedAt
- vtId        String?
- // Relations
- propertyId  String    @db.ObjectId
- property    Property  @relation(fields: [propertyId], references: [id])
- zones       Zone[]
- businessId  String    @db.ObjectId
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  floorCount        Int
+  belowGroundFloors Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  vtId              String?
+  // Relations
+  propertyId        String   @db.ObjectId
+  property          Property @relation(fields: [propertyId], references: [id])
+  zones             Zone[]
+  businessId        String   @db.ObjectId
 }
 
 model Zone {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   type        ZoneType
-  floor       Int?      @db.Int   // This will allow any integer including 0 and negative numbers
-  coordinates Json?     
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  floor       Int?     @db.Int // This will allow any integer including 0 and negative numbers
+  coordinates Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   vtId        String?
-  
+
   // Relations
-  propertyId  String    @db.ObjectId
-  property    Property  @relation(fields: [propertyId], references: [id])
-  buildingId  String?   @db.ObjectId
-  building    Building? @relation(fields: [buildingId], references: [id])
-  storeId     String?   @db.ObjectId
-  store       Store?    @relation(fields: [storeId], references: [id])
-  cameras     Camera[]
-  notes       Note[]
-  businessId  String    @db.ObjectId
+  propertyId String    @db.ObjectId
+  property   Property  @relation(fields: [propertyId], references: [id])
+  buildingId String?   @db.ObjectId
+  building   Building? @relation(fields: [buildingId], references: [id])
+  storeId    String?   @db.ObjectId
+  store      Store?    @relation(fields: [storeId], references: [id])
+  cameras    Camera[]
+  notes      Note[]
+  businessId String    @db.ObjectId
 }
 
 model Store {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  businessOwnerId   String    @db.ObjectId
-  businessOwner     User      @relation(name: "businessOwner", fields: [businessOwnerId], references: [id])
-  saleAssociateId   String    @db.ObjectId
-  saleAssociate     User      @relation(name: "saleAssociate", fields: [saleAssociateId], references: [id])
-  brandManagerId    String    @db.ObjectId
-  brandManager      User      @relation(name: "brandManager", fields: [brandManagerId], references: [id])
-  cameras Camera[]
-  zones    Zone[]
+  businessOwnerId String   @db.ObjectId
+  businessOwner   User     @relation(name: "businessOwner", fields: [businessOwnerId], references: [id])
+  saleAssociateId String   @db.ObjectId
+  saleAssociate   User     @relation(name: "saleAssociate", fields: [saleAssociateId], references: [id])
+  brandManagerId  String   @db.ObjectId
+  brandManager    User     @relation(name: "brandManager", fields: [brandManagerId], references: [id])
+  cameras         Camera[]
+  zones           Zone[]
 }
 
 model Camera {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  location      String?
-  rtspUrl       String
-  status        CameraStatus @default(ACTIVE)
-  type          CameraType
-  direction     String?
-  coverageArea  Json?
-  capabilities  Json?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  location     String?
+  rtspUrl      String
+  status       CameraStatus @default(ACTIVE)
+  type         CameraType
+  direction    String?
+  coverageArea Json?
+  capabilities Json?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 
   // Relations
-  zoneId        String      @db.ObjectId
-  zone          Zone        @relation(fields: [zoneId], references: [id])
-  storeId       String?      @db.ObjectId
-  store         Store?       @relation(fields: [storeId], references: [id])
-  notes         Note[]
-  businessId    String?    @db.ObjectId
-  vtId          String?
+  zoneId     String  @db.ObjectId
+  zone       Zone    @relation(fields: [zoneId], references: [id])
+  storeId    String? @db.ObjectId
+  store      Store?  @relation(fields: [storeId], references: [id])
+  notes      Note[]
+  businessId String? @db.ObjectId
+  vtId       String?
 }
 
 model AlertRule {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   severity    String
   enabled     Boolean
-  conditions  Json      // Changed from String[] to Json to store condition details
+  conditions  Json // Changed from String[] to Json to store condition details
   actions     String[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relations
-  userId      String    @db.ObjectId
-  user        User      @relation("UserAlertRules", fields: [userId], references: [id])
-  businessId  String    @db.ObjectId
-  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  userId     String   @db.ObjectId
+  user       User     @relation("UserAlertRules", fields: [userId], references: [id])
+  businessId String   @db.ObjectId
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 }
 
 model CronSetup {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  type            String
-  data            Json
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  type String
+  data Json
 }
 
 model AgeGenderDistribution {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  refId           String    @unique
-  total           Int       @default(0)
-  age             Json
-  gender          Json
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  refId     String   @unique
+  total     Int      @default(0)
+  age       Json
+  gender    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VtBusinessConnections {
-  id                        String    @id @default(auto()) @map("_id") @db.ObjectId
-  vt_business_id            String
-  connected_at              DateTime  @default(now())
-  disconnected_at           DateTime? 
-  createdAt                 DateTime  @default(now())
-  updatedAt                 DateTime  @updatedAt
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  vt_business_id  String
+  connected_at    DateTime  @default(now())
+  disconnected_at DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   // Relations
-  businessId  String    @db.ObjectId
+  businessId String @db.ObjectId
 }
 
 model Note {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  content     String
-  type        NoteType  @default(GENERAL)
-  priority    Priority  @default(LOW)
-  status      String    @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String
+  type      NoteType @default(GENERAL)
+  priority  Priority @default(LOW)
+  status    String   @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  userId      String    @db.ObjectId
-  user        User      @relation(fields: [userId], references: [id])
-  businessId  String    @db.ObjectId
-  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  
+  userId     String   @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  businessId String   @db.ObjectId
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
   // Optional relations
-  cameraId    String?   @db.ObjectId
-  camera      Camera?   @relation(fields: [cameraId], references: [id])
-  zoneId      String?   @db.ObjectId
-  zone        Zone?     @relation(fields: [zoneId], references: [id])
+  cameraId String? @db.ObjectId
+  camera   Camera? @relation(fields: [cameraId], references: [id])
+  zoneId   String? @db.ObjectId
+  zone     Zone?   @relation(fields: [zoneId], references: [id])
 }
 
 enum NoteType {

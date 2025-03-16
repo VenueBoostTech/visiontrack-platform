@@ -198,17 +198,10 @@ export default async function BusinessListContainer({
   const vtConnectedBusinesses = await prisma.business.count({ where: { vt_connected: true } });
   
   // Get total staff count
-  const staffCounts = await prisma.business.aggregate({
-    _sum: {
-      _count: {
-        select: {
-          staff: true
-        }
-      }
-    }
-  });
+  const staffCounts = await prisma.businessStaff.count();
+
   
-  const totalStaff = staffCounts._sum?._count?.staff || 0;
+  const totalStaff = staffCounts || 0;
   
   return (
     <Suspense fallback={<BusinessLoading />}>
