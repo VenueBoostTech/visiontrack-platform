@@ -1,4 +1,4 @@
-// app/(site)/user/security/alerts/page.tsx
+// app/(site)/platform/security/alerts/page.tsx
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import Alerts from "@/components/Platform/Security/Alerts";
 import { Metadata } from "next";

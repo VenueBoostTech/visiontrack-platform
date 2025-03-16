@@ -1,4 +1,4 @@
-// app/user/dashboard/page.tsx
+// app/platform/dashboard/page.tsx
 import { Metadata } from "next";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import RetailDashboardContent from "@/components/Platform/RetailDashboard/RetailDashboardContent";

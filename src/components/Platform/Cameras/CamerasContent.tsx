@@ -203,7 +203,7 @@ export default function CamerasContent() {
   };
 
   const handleView = (cameraId: string) => {
-    router.push(`/user/properties/cameras/${cameraId}`);
+    router.push(`/platform/properties/cameras/${cameraId}`);
   };
 
   const handleCloseModal = useCallback(() => {

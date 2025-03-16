@@ -1,4 +1,4 @@
-// app/user/analytics/heatmaps/page.tsx
+// app/platform/analytics/heatmaps/page.tsx
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";

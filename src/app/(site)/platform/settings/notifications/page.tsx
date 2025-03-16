@@ -1,4 +1,4 @@
-// app/user/notifications/page.tsx
+// app/platform/notifications/page.tsx
 import { Metadata } from "next";
 import NotificationsContent from "@/components/Platform/NotificationsContent";
 

@@ -100,7 +100,7 @@ export default function BuildingDetails({ buildingId }: { buildingId: string }) 
       <Breadcrumb 
         pageTitle={building.name}
         pagePath={[
-          { title: "Buildings", url: "/user/buildings" },
+          { title: "Buildings", url: "/platform/buildings" },
           { title: building.name }
         ]} 
       />

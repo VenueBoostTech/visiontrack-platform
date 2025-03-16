@@ -17,7 +17,7 @@ Test properties functionality
   await page.waitForLoadState('networkidle');
   
   // Go to properties page
-  await page.goto('http://localhost:3000/user/properties');
+  await page.goto('http://localhost:3000/platform/properties');
   
   // Wait for the page content
   await page.waitForSelector('h2:has-text("Your Properties")', { timeout: 30000 });

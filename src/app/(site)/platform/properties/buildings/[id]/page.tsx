@@ -1,4 +1,4 @@
-// app/user/buildings/[id]/page.tsx
+// app/platform/buildings/[id]/page.tsx
 import { Metadata } from "next";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import BuildingDetails from "@/components/Platform/Buildings/BuildingDetails";

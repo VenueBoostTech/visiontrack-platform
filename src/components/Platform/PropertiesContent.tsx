@@ -31,7 +31,7 @@ export default function PropertiesContent({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleView = (propertyId: string) => {
-    router.push(`/user/properties/${propertyId}`);
+    router.push(`/platform/properties/${propertyId}`);
   };
 
   const handleEdit = (property: Property) => {

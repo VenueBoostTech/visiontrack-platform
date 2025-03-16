@@ -1,4 +1,4 @@
-// app/user/security/notes/page.tsx 
+// app/platform/security/notes/page.tsx 
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";

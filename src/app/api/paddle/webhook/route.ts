@@ -160,7 +160,7 @@ export async function POST(req: NextRequest) {
 			}
 		}
 
-		// revalidatePath("/user/billing");
+		// revalidatePath("/platform/billing");
 
 		return NextResponse.json(
 			{ message: "Webhook processed successfully" },

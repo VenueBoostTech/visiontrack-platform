@@ -62,7 +62,7 @@ export default function BuildingsContent({
   };
 
   const handleView = (buildingId: string) => {
-    router.push(`/user/properties/buildings/${buildingId}`);
+    router.push(`/platform/properties/buildings/${buildingId}`);
   };
 
   const handleUpdate = async (data: { name: string; floorCount: number; propertyId: string }) => {

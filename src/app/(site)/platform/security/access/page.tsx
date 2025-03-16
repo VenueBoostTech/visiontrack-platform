@@ -1,4 +1,4 @@
-// app/user/security/access/page.tsx
+// app/platform/security/access/page.tsx
 import { Metadata } from "next";
 import Breadcrumb from "@/components/Common/Dashboard/Breadcrumb";
 import Access from "@/components/Platform/Security/Access";

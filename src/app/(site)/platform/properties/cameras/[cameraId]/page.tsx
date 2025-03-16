@@ -1,4 +1,4 @@
-// app/user/properties/cameras/[cameraId]/page.tsx
+// app/platform/properties/cameras/[cameraId]/page.tsx
 import { Metadata } from "next";
 import CameraDetailsContent from "@/components/Platform/Security/CameraDetails/CameraDetailsContent";
 

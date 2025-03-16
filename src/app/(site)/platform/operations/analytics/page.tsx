@@ -1,4 +1,4 @@
-// app/user/operations/analytics/page.tsx
+// app/platform/operations/analytics/page.tsx
 import { Metadata } from "next";
 import StoreAnalytics from "@/components/Platform/Operations/StoreAnalytics";
 

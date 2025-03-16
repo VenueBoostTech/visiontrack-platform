@@ -380,7 +380,7 @@ export default function StaffMonitoring() {
     View Feed
   </button>
   <Link 
-    href={`/user/properties/cameras/${camera.id}`}
+    href={`/platform/properties/cameras/${camera.id}`}
     className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-center"
   >
     Settings

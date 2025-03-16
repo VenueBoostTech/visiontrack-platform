@@ -1,4 +1,4 @@
-// app/user/analytics/traffic/page.tsx
+// app/platform/analytics/traffic/page.tsx
 import { Metadata } from "next";
 import RetailConversionAnalytics from "@/components/Platform/Analytics/Retail/RetailConversionAnalytics";
 

@@ -42,7 +42,7 @@
 // }
 import { Metadata } from "next";
 
-// app/(site)/user/page.tsx
+// app/(site)/platform/page.tsx
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {

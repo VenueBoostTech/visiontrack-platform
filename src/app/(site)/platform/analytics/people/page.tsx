@@ -1,4 +1,4 @@
-// app/user/analytics/people/page.tsx
+// app/platform/analytics/people/page.tsx
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/auth";
