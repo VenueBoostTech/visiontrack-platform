@@ -7,7 +7,7 @@ export const HeaderWrapper = () => {
 
 	return (
 		<>
-			{!pathname.startsWith("/admin") && !pathname.startsWith("/user") && (
+			{!pathname.startsWith("/admin") && !pathname.startsWith("/platform") && (
 				<Header />
 			)}
 		</>

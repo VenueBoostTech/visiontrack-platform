@@ -48,7 +48,7 @@ const DemoSignin = () => {
 
 			if (callback?.ok && !callback?.error) {
 				toast.success("Logged in successfully");
-				router.push("/user");
+				router.push("/platform");
 
 				setLoading({ ...loading, [role]: true });
 			}

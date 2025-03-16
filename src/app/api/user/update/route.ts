@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 			},
 		});
 
-		revalidatePath("/user");
+		revalidatePath("/platform");
 
 		return NextResponse.json(
 			{

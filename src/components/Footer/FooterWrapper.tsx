@@ -7,7 +7,7 @@ const FooterWrapper = () => {
 
 	return (
 		<>
-			{!pathname.startsWith("/admin") && !pathname.startsWith("/user") && (
+			{!pathname.startsWith("/admin") && !pathname.startsWith("/platform") && (
 				<Footer />
 			)}
 		</>

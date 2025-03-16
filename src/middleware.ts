@@ -15,15 +15,15 @@ export default withAuth(
             }
         }
 
-        // Handle /user routes
-        if (pathname.startsWith("/user")) {
-            // Redirect admins away from /user routes
+        // Handle /platform routes
+        if (pathname.startsWith("/platform")) {
+            // Redirect admins away from /platform routes
             if (role === "ADMIN") {
                 return NextResponse.redirect(new URL("/admin/dashboard", req.url));
             }
             
-            // Redirect /user to /user/dashboard
-            if (pathname === "/user") {
+            // Redirect /platform to /platform/dashboard
+            if (pathname === "/platform") {
                 return NextResponse.redirect(new URL("/platform/dashboard", req.url));
             }
         }
