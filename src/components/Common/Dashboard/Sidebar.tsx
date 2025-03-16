@@ -86,6 +86,103 @@ export default function Sidebar({
     }));
   };
 
+  // Determine if on admin page
+  const isAdmin = pathname.includes('/admin');
+
+  // Different groupings for admin vs user
+  let groupedItems;
+  
+  if (isAdmin) {
+    // Admin grouping
+    groupedItems = [
+      {
+        title: "Overview",
+        items: sidebarData.filter(item => 
+          ["Dashboard"].includes(item.title)
+        )
+      },
+      {
+        title: "Management",
+        items: sidebarData.filter(item => 
+          ["Client Management", "User Management"].includes(item.title)
+        )
+      },
+      {
+        title: "AI & Infrastructure",
+        items: sidebarData.filter(item => 
+          ["AI Model Management", "Infrastructure", "Data Synchronization"].includes(item.title)
+        )
+      },
+      {
+        title: "Integrations",
+        items: sidebarData.filter(item => 
+          ["Integration & APIs"].includes(item.title)
+        )
+      },
+      {
+        title: "Analytics & Reports",
+        items: sidebarData.filter(item => 
+          ["Analytics & Reports"].includes(item.title)
+        )
+      },
+      {
+        title: "System",
+        items: sidebarData.filter(item => 
+          ["System Settings"].includes(item.title)
+        )
+      }
+    ];
+  } else {
+    // User grouping
+    groupedItems = [
+      {
+        title: "Main Menu",
+        items: sidebarData.filter(item => 
+          ["Dashboard"].includes(item.title)
+        )
+      },
+      {
+        title: "Infrastructure",
+        items: sidebarData.filter(item => 
+          ["Properties"].includes(item.title)
+        )
+      },
+      {
+        title: "Monitoring & Security",
+        items: sidebarData.filter(item => 
+          ["Live Monitoring", "Security"].includes(item.title)
+        )
+      },
+      {
+        title: "Analytics",
+        items: sidebarData.filter(item => 
+          ["Analytics"].includes(item.title)
+        )
+      },
+      {
+        title: "Operations",
+        items: sidebarData.filter(item => 
+          ["Operations"].includes(item.title)
+        )
+      },
+      {
+        title: "Management",
+        items: sidebarData.filter(item => 
+          ["Staff"].includes(item.title)
+        )
+      },
+      {
+        title: "Settings",
+        items: sidebarData.filter(item => 
+          ["Settings"].includes(item.title)
+        )
+      }
+    ];
+  }
+
+  // Filter out empty groups
+  const nonEmptyGroups = groupedItems.filter(group => group.items.length > 0);
+
   return (
     <div ref={sidebarRef} className="flex flex-col h-full">
       {/* Logo Section */}
@@ -114,27 +211,29 @@ export default function Sidebar({
 
       {/* Scrollable Menu Section */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
-        <div className="px-4 py-6 space-y-6">
-          {/* Main Menu Items */}
-          <div>
-            <h3 className="px-2 mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Main Menu
-            </h3>
-            <nav className="space-y-1">
-              {sidebarData && sidebarData.map((item: any) => (
-                <MenuItem
-                  key={item.id}
-                  item={item}
-                  pathname={pathname}
-                  openMenus={openMenus}
-                  toggleMenu={toggleMenu}
-                />
-              ))}
-            </nav>
-          </div>
+        <div className="px-4 py-8 space-y-8">
+          {/* Display each non-empty group */}
+          {nonEmptyGroups.map((group, index) => (
+            <div key={index}>
+              <h3 className="px-2 mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                {group.title}
+              </h3>
+              <nav className="space-y-1">
+                {group.items.map((item) => (
+                  <MenuItem
+                    key={item.id}
+                    item={item}
+                    pathname={pathname}
+                    openMenus={openMenus}
+                    toggleMenu={toggleMenu}
+                  />
+                ))}
+              </nav>
+            </div>
+          ))}
 
           {/* Others Section */}
-          {sidebarOthersData && (
+          {sidebarOthersData && sidebarOthersData.length > 0 && (
             <div>
               <h3 className="px-2 mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Others
