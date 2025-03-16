@@ -7,19 +7,17 @@ import { useDebouncedCallback } from "use-debounce";
 import BusinessModalAction from "@/components/Common/Modals/BusinessModalAction";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useState } from "react";
+import InputSelect from "@/components/Common/InputSelect";
+
 
 export default function BusinessTopbar() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const [filterType, setFilterType] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState<string | null>(
+    searchParams.get("type") || null
+  );
   
   const refresh = () => window.location.reload();
   
@@ -33,8 +31,10 @@ export default function BusinessTopbar() {
     replace(`${pathname}?${params.toString()}`);
   }, 300);
 
-  const handleFilter = (type: string | null) => {
+  const handleFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const type = e.target.value === "Select Option" ? null : e.target.value;
     const params = new URLSearchParams(searchParams);
+    
     if (type) {
       params.set("type", type);
       setFilterType(type);
@@ -42,12 +42,22 @@ export default function BusinessTopbar() {
       params.delete("type");
       setFilterType(null);
     }
+    
     replace(`${pathname}?${params.toString()}`);
   };
 
   // Get current filter type from URL
-  const currentType = searchParams.get("type");
+  const currentType = searchParams.get("type") || "Select Option";
   const currentSearch = searchParams.get("search");
+
+  // Define options for the InputSelect
+  const filterOptions = [
+    { value: "Select Option", label: "All Types" },
+    { value: "Retail", label: "Retail" },
+    { value: "Commercial", label: "Commercial Real Estate" },
+    { value: "Manufacturing", label: "Manufacturing" },
+    { value: "Residential", label: "Residential" },
+  ];
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-5 mb-6">
@@ -73,46 +83,16 @@ export default function BusinessTopbar() {
             />
           </div>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                <span>{filterType ? `${filterType}` : "Filter Type"}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem 
-                className="cursor-pointer" 
-                onClick={() => handleFilter(null)}
-              >
-                All Types
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className="cursor-pointer" 
-                onClick={() => handleFilter("Retail")}
-              >
-                Retail
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className="cursor-pointer" 
-                onClick={() => handleFilter("Commercial")}
-              >
-                Commercial Real Estate
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className="cursor-pointer" 
-                onClick={() => handleFilter("Manufacturing")}
-              >
-                Manufacturing
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className="cursor-pointer" 
-                onClick={() => handleFilter("Residential")}
-              >
-                Residential
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Replace DropdownMenu with InputSelect */}
+          <div className="w-[180px]">
+            <InputSelect
+              name="businessType"
+              label=""
+              options={filterOptions}
+              onChange={handleFilter}
+              value={currentType}
+            />
+          </div>
           
           <Button variant="outline" className="flex items-center gap-2">
             <Download className="h-4 w-4" />
