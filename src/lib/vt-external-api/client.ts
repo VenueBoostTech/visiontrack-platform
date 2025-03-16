@@ -1,7 +1,7 @@
 // lib/vt-external-api/client.ts
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-const VT_API_BASE_URL = 'https://coreapi.visiontrack.xyz';
+const VT_API_BASE_URL = process.env.VISION_TRACK_API;
 
 interface VTCredentials {
   platform_id: string;
