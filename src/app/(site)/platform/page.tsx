@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default function UserPage() {
-    redirect('/user/dashboard');
+    redirect('/platform/dashboard');
 
     // This won't be rendered due to redirect
     return null;

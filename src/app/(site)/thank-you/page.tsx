@@ -89,7 +89,7 @@ const ThankYouPage = () => {
 
 			<div className='mt-10'>
 				<Link
-					href='/user/billing'
+					href='/platform/billing'
 					className='rounded-md bg-primary px-10 py-3 text-white'
 				>
 					Account

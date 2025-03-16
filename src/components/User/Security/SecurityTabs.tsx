@@ -43,19 +43,19 @@ export default function SecurityTabs() {
   const quickActions = [
     {
       label: "View All Cameras",
-      onClick: () => router.push('/user/properties/cameras')
+      onClick: () => router.push('/platform/properties/cameras')
     },
     {
       label: "Security Report",
-      onClick: () => router.push('/user/security/reports')
+      onClick: () => router.push('/platform/security/reports')
     },
     {
       label: "Manage Access",
-      onClick: () => router.push('/user/security/access')
+      onClick: () => router.push('/platform/security/access')
     },
     {
       label: "Alert Settings",
-      onClick: () => router.push('/user/security/alerts')
+      onClick: () => router.push('/platform/security/alerts')
     }
   ];
 

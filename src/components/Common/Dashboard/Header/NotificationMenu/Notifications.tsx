@@ -12,7 +12,7 @@ export default function Notifications({ role }: { role: string }) {
   const divRef = useRef<HTMLDivElement | null>(null);
   
   const notifications = role === 'admin' ? adminNotifications : businessOwnerNotifications;
-  const link = role === 'admin' ? '/admin/notifications' : '/user/settings/notifications';
+  const link = role === 'admin' ? '/admin/notifications' : '/platform/settings/notifications';
 
   const handleShowNotification = () => {
     setShowNotification(!showNotification);

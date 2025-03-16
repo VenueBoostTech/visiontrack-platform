@@ -28,9 +28,9 @@ Sign in to VisionTrack:
 })
 .after(async ({ page }) => {    
   // Wait for navigation to complete
-  await page.waitForURL('**/user/dashboard', { timeout: 10000 });
+  await page.waitForURL('**/platform/dashboard', { timeout: 10000 });
   
   // Simple URL check is sufficient since the redirect only happens on successful login
   const currentUrl = page.url();
-  expect(currentUrl).toContain('/user/dashboard');
+  expect(currentUrl).toContain('/platform/dashboard');
 });
