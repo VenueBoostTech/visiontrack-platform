@@ -124,7 +124,7 @@ export default function LossPreventionOverview() {
                   }`}>
                     {alert.risk}
                   </span>
-                  <p className="text-sm text-gray-500 mt-1">{alert.time}</p>
+                  <p className="text-gray-700 mt-1">{alert.time}</p>
                 </div>
               </div>
             ))}

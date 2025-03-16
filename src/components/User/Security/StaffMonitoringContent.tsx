@@ -90,8 +90,8 @@ export default function StaffMonitoring() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-bold">Staff Monitoring</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h2 className="text-2xl text-gray-700 font-bold">Staff Monitoring</h2>
+          <p className="text-gray-700 mt-1">
             Monitor staff activity and motion detection
           </p>
         </div>

@@ -92,7 +92,7 @@ export default function EmergencySystem() {
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="font-medium">Fire Emergency Protocol</h3>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-gray-700 mt-1">
                     Automated response to fire detection
                   </p>
                 </div>

@@ -184,7 +184,7 @@ export default function StaffMonitoringOverview() {
                    <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">
                      {alert.status}
                    </span>
-                   <p className="text-sm text-gray-500 mt-1">{alert.timestamp}</p>
+                   <p className="text-gray-700 mt-1">{alert.timestamp}</p>
                  </div>
                </div>
              ))}

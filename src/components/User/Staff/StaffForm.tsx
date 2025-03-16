@@ -110,7 +110,7 @@ export default function StaffForm({
             required
             minLength={6}
           />
-          <p className="text-sm text-gray-500 mt-1">Minimum 6 characters</p>
+          <p className="text-gray-700 mt-1">Minimum 6 characters</p>
         </div>
       )}
 

@@ -66,8 +66,8 @@ export default function RetailCustomerCounter() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-bold">Customer Counter</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h2 className="text-2xl text-gray-700 font-bold">Customer Counter</h2>
+          <p className="text-gray-700 mt-1">
             Monitor customer flow and queue management
           </p>
         </div>

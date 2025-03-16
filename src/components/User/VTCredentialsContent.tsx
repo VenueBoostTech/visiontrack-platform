@@ -96,7 +96,7 @@ export default function VTCredentialsContent({ initialCredential, businessId }: 
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-xl font-bold">VisionTrack API Credentials</h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-gray-700 mt-1">
               Manage your VisionTrack API access
             </p>
           </div>

@@ -43,7 +43,7 @@ export default function NotificationsContent() {
     <>
      <div className="mb-6">
         <h2 className="text-xl font-bold">Notifications</h2>
-        <p className="text-sm text-gray-500 mt-1">Stay updated with all activities across your properties</p>
+        <p className="text-gray-700 mt-1">Stay updated with all activities across your properties</p>
       </div>
       {/* Filter Buttons */}
       <div className="flex gap-3 mb-6">

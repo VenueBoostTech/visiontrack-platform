@@ -100,8 +100,8 @@ export default function RetailTrafficAnalytics({ zones, user }: { zones: any, us
       {/* Header with Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Traffic Analytics</h2>
-          <p className="text-sm text-gray-500 mt-1">Monitor and analyze customer traffic patterns</p>
+          <h2 className="text-2xl text-gray-700 font-bold">Traffic Analytics</h2>
+          <p className="text-gray-700 mt-1">Monitor and analyze customer traffic patterns</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <select

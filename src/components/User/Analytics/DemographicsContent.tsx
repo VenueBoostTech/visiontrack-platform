@@ -67,7 +67,7 @@ export default function DemographicsContent({ zones, user }: { zones: any, user:
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-xl font-bold">Demographics Analytics</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-gray-700 mt-1">
             Analyze visitor demographics and patterns
           </p>
         </div>

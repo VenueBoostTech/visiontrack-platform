@@ -147,8 +147,8 @@ export default function LiveViewContent({ cameras, user }: any) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Live Camera View</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h2 className="text-2xl text-gray-700 font-bold">Live Camera View</h2>
+          <p className="text-gray-700 mt-1">
             Monitor real-time camera feeds
           </p>
         </div>

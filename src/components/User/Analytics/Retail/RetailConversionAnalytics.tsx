@@ -67,8 +67,8 @@ export default function RetailConversionAnalytics() {
      {/* Conversion Analytics Header */}
     <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
       <div>
-        <h2 className="text-2xl font-bold">Conversion Analytics</h2>
-        <p className="text-sm text-gray-500 mt-1">Track and analyze customer conversion metrics</p>
+        <h2 className="text-2xl text-gray-700 font-bold">Conversion Analytics</h2>
+        <p className="text-gray-700 mt-1">Track and analyze customer conversion metrics</p>
       </div>
       <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
         <select 

@@ -122,7 +122,7 @@ export default function AlertSystem() {
                 <div className="flex justify-between items-start">
                   <div>
                     <h4 className="font-medium">After Hours Motion Detection</h4>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-gray-700 mt-1">
                       Alert when motion is detected outside business hours
                     </p>
                   </div>

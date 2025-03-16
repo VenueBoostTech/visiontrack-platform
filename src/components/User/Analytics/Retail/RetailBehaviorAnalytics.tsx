@@ -65,8 +65,8 @@ export default function RetailBehaviorAnalytics() {
       {/* Header with Controls */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-bold">Behavior Analysis</h2>
-          <p className="text-sm text-gray-500 mt-1">Analyze customer behavior patterns and engagement</p>
+          <h2 className="text-2xl text-gray-700 font-bold">Behavior Analysis</h2>
+          <p className="text-gray-700 mt-1">Analyze customer behavior patterns and engagement</p>
         </div>
         <div className="flex gap-3">
           <select 

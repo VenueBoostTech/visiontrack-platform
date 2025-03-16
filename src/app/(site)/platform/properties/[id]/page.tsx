@@ -40,7 +40,7 @@ export default async function PropertyPage({
     <div className="px-0">
       <div className="mb-6">
         <h1 className="text-xl font-bold">{property.name}</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage details and buildings for this property</p>
+        <p className="text-gray-700 mt-1">Manage details and buildings for this property</p>
       </div>
       <PropertyDetails property={property} />
     </div>

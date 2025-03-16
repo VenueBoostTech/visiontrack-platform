@@ -137,7 +137,7 @@ export default function BuildingsContent({
      <div className="mb-6 flex justify-between items-start">
       <div>
         <h2 className="text-xl font-bold">Buildings</h2>
-        <p className="text-sm text-gray-500 mt-1">Manage and monitor all buildings across your properties</p>
+        <p className="text-gray-700 mt-1">Manage and monitor all buildings across your properties</p>
       </div>
       <button
         onClick={() => setShowCreateModal(true)}

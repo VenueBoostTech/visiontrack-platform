@@ -26,8 +26,8 @@ export default function LossPreventionContent() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-bold">Loss Prevention</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h2 className="text-2xl text-gray-700 font-bold">Loss Prevention</h2>
+          <p className="text-gray-700 mt-1">
             Monitor and prevent retail shrinkage
           </p>
         </div>

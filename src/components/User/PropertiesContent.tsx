@@ -140,7 +140,7 @@ export default function PropertiesContent({
       <div className="mb-6 flex justify-between items-start">
         <div>
           <h2 className="text-xl font-bold">Your Properties</h2>
-          <p className="text-sm text-gray-500 mt-1">Manage and monitor all your real estate properties</p>
+          <p className="text-gray-700 mt-1">Manage and monitor all your real estate properties</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}

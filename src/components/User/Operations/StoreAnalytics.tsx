@@ -71,8 +71,8 @@ export default function StoreAnalytics() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-bold">Store Analytics</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h2 className="text-2xl text-gray-700 font-bold">Store Analytics</h2>
+          <p className="text-gray-700 mt-1">
             Store performance and operational metrics
           </p>
         </div>

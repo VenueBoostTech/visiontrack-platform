@@ -517,7 +517,7 @@ const Alerts = ({ initialAlerts }: AlertRuleProps) => {
                         </div>
                         <div>
                           <h3 className="font-medium">{channel.name}</h3>
-                          <p className="text-sm text-gray-500 mt-1">
+                          <p className="text-gray-700 mt-1">
                             {channel.description}
                           </p>
                           {channel.enabled && (

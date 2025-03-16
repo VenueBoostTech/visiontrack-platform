@@ -149,7 +149,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
       <div className="mb-6 flex justify-between items-start">
         <div>
           <h2 className="text-xl font-bold">Zones</h2>
-          <p className="text-sm text-gray-500 mt-1">Manage your building zones and access areas</p>
+          <p className="text-gray-700 mt-1">Manage your building zones and access areas</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}

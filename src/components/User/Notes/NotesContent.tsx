@@ -98,7 +98,7 @@ export default function NotesContent({ initialNotes }: { initialNotes: Note[] })
       <div className="mb-6 flex justify-between items-start">
         <div>
           <h2 className="text-xl font-bold">Notes & Issues</h2>
-          <p className="text-sm text-gray-500 mt-1">Manage security notes and track issues</p>
+          <p className="text-gray-700 mt-1">Manage security notes and track issues</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}

@@ -125,8 +125,8 @@ interface CameraData {
         {/* Header */}
         <div className="flex justify-between items-start">
             <div>
-                <h2 className="text-2xl font-bold">{camera.name}</h2>
-                <p className="text-sm text-gray-500 mt-1">Camera ID: {camera.id}</p>
+                <h2 className="text-2xl text-gray-700 font-bold">{camera.name}</h2>
+                <p className="text-gray-700 mt-1">Camera ID: {camera.id}</p>
             </div>
             <div className="flex gap-2">
                 <button 

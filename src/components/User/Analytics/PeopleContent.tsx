@@ -43,7 +43,7 @@ export default function PeopleContent() {
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-xl font-bold">People Analytics</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-gray-700 mt-1">
             Monitor occupancy and crowd patterns
           </p>
         </div>

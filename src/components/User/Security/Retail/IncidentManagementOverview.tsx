@@ -143,7 +143,7 @@ export default function IncidentManagementOverview() {
                  }`}>
                    {incident.status}
                  </span>
-                 <p className="text-sm text-gray-500 mt-1">
+                 <p className="text-gray-700 mt-1">
                    {new Date(incident.timestamp).toLocaleTimeString('en-US', {
                      hour: '2-digit',
                      minute: '2-digit',

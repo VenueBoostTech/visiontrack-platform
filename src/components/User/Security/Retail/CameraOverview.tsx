@@ -151,7 +151,7 @@ export default function CameraOverview() {
                  <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
                    {detection.confidence}% confidence
                  </span>
-                 <p className="text-sm text-gray-500 mt-1">{detection.time}</p>
+                 <p className="text-gray-700 mt-1">{detection.time}</p>
                </div>
              </div>
            ))}
