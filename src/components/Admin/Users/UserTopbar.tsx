@@ -1,110 +1,73 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { debounce } from "lodash";
-import { UserRole } from "@prisma/client";
+import { Button } from "@/components/ui/button";
 import { 
   UsersIcon, 
   UserCogIcon, 
   ShieldIcon, 
   ShieldAlertIcon,
-  PlusIcon,
-  Search
+  PlusIcon
 } from "lucide-react";
 import InviteUserModal from "@/components/Common/Modals/InviteUserModal";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 
-type FilterOption = {
-  id: number;
-  title: string;
-  value: string;
-  icon: React.ReactNode;
-  count?: number;
-};
-
-interface UserTopbarProps {
-  userCounts?: {
-    all: number;
-    BUSINESS_OWNER: number;
-    STAFF: number;
-    ADMIN: number;
-  };
+interface UserCountsProps {
+  all: number;
+  BUSINESS_OWNER: number;
+  STAFF: number;
+  ADMIN: number;
 }
 
-export default function UserTopbar({ userCounts }: UserTopbarProps) {
+interface UserTopbarProps {
+  userCounts?: UserCountsProps;
+}
+
+export default function UserTopbar({ userCounts = { all: 0, BUSINESS_OWNER: 0, STAFF: 0, ADMIN: 0 } }: UserTopbarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
   const currentFilter = searchParams.get('filter') || 'all';
-  const currentSearch = searchParams.get('search') || '';
   
   const [filterValue, setFilterValue] = useState<string>(currentFilter);
-  const [searchValue, setSearchValue] = useState<string>(currentSearch);
   const [showInviteUserModal, setShowInviteUserModal] = useState<boolean>(false);
   
   // Update filter state when URL params change
   useEffect(() => {
     setFilterValue(currentFilter);
-    setSearchValue(currentSearch);
-  }, [currentFilter, currentSearch]);
+  }, [currentFilter]);
 
-  const filterData: FilterOption[] = [
+  const filterData = [
     {
       id: 1,
       title: "All Users",
       value: "all",
       icon: <UsersIcon size={18} />,
-      count: userCounts?.all
+      count: userCounts.all
     },
     {
       id: 2,
       title: "Business Owners",
       value: "BUSINESS_OWNER",
       icon: <UserCogIcon size={18} />,
-      count: userCounts?.BUSINESS_OWNER
+      count: userCounts.BUSINESS_OWNER
     },
     {
       id: 3,
       title: "Staff Members",
       value: "STAFF",
       icon: <ShieldIcon size={18} />,
-      count: userCounts?.STAFF
+      count: userCounts.STAFF
     },
     {
       id: 4,
       title: "VT Admins",
       value: "ADMIN",
       icon: <ShieldAlertIcon size={18} />,
-      count: userCounts?.ADMIN
+      count: userCounts.ADMIN
     },
   ];
-
-  // Debounced search function
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      
-      if (value) {
-        params.set('search', value);
-      } else {
-        params.delete('search');
-      }
-      
-      router.push(`/admin/users?${params.toString()}`);
-    }, 500),
-    [router, searchParams]
-  );
-
-  // Handle search input change
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchValue(value);
-    debouncedSearch(value);
-  };
 
   // Handle filter change
   const handleFilterChange = (value: string) => {
@@ -118,10 +81,6 @@ export default function UserTopbar({ userCounts }: UserTopbarProps) {
       params.delete('filter');
     }
     
-    if (searchValue) {
-      params.set('search', searchValue);
-    }
-    
     router.push(`/admin/users?${params.toString()}`);
   };
 
@@ -130,56 +89,43 @@ export default function UserTopbar({ userCounts }: UserTopbarProps) {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-xl bg-white p-4 shadow-sm dark:bg-gray-dark">
         <div className="flex flex-wrap items-center gap-2">
           {filterData.map((item) => (
-            <Button
+            <button
               key={item.id}
-              variant={filterValue === item.value ? "default" : "outline"}
-              className={`h-10 gap-2 py-2 px-3 ${
-                filterValue === item.value 
-                  ? "bg-primary text-white hover:bg-primary/90" 
-                  : "bg-gray-50 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-              }`}
               onClick={() => handleFilterChange(item.value)}
+              className={`inline-flex h-10 items-center justify-center gap-2 rounded-lg border pl-3 pr-4 font-medium text-sm capitalize ${
+                filterValue === item.value
+                  ? "border-transparent bg-primary text-white shadow-sm"
+                  : "border-stroke bg-gray-1 text-body hover:bg-gray-200 dark:border-stroke-dark dark:bg-white/5 dark:text-gray-5"
+              }`}
             >
               {item.icon}
-              <span className="font-medium capitalize">{item.title}</span>
-              {item.count !== undefined && (
-                <Badge 
-                  variant={filterValue === item.value ? "outline" : "secondary"}
-                  className={`ml-1 ${
-                    filterValue === item.value 
-                      ? "bg-primary/20 text-white border-white" 
-                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-                  }`}
-                >
+              <span>{item.title}</span>
+              {item.count > 0 && (
+                <span className={`ml-1 rounded-full px-2 py-0.5 text-xs ${
+                  filterValue === item.value 
+                    ? "bg-white/20 text-white" 
+                    : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                }`}>
                   {item.count}
-                </Badge>
+                </span>
               )}
-            </Button>
+            </button>
           ))}
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant="default"
-            className="gap-2 bg-primary hover:bg-primary/90"
+          <button
             onClick={() => setShowInviteUserModal(true)}
+            className="flex h-10 items-center justify-center gap-2 rounded-lg bg-primary p-3 text-white hover:bg-primary/90"
           >
-            <PlusIcon size={18} />
-            <span>Add New User</span>
-          </Button>
-
-          <div className="relative w-full md:w-auto">
-            <Search 
-              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 dark:text-gray-400" 
+            <Image
+              src="/images/icon/plus.svg"
+              alt="plus"
+              width={20}
+              height={20}
             />
-            <Input
-              type="search"
-              placeholder="Search users..."
-              value={searchValue}
-              onChange={handleSearchChange}
-              className="h-10 min-w-[250px] pl-10 pr-4 rounded-lg border border-gray-200 bg-white focus-visible:ring-primary dark:border-gray-700 dark:bg-gray-800 dark:focus-visible:ring-primary"
-            />
-          </div>
+            Add new user
+          </button>
         </div>
       </div>
 

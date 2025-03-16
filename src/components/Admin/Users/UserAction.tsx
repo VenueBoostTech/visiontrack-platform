@@ -7,21 +7,8 @@ import { useSession } from "next-auth/react";
 import { deleteUser, updateUser } from "@/actions/user";
 import { signIn } from "next-auth/react";
 import { User, UserRole } from "@prisma/client";
-import { 
-  Trash2Icon, 
-  LogInIcon, 
-  MoreVerticalIcon,
-  UserCogIcon,
-  ShieldIcon
-} from "lucide-react";
 import DeleteModal from "@/components/Common/Modals/DeleteModal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import InputSelect from "@/components/Common/InputSelect";
 
 interface UserActionProps {
   user: User;
@@ -32,9 +19,6 @@ export default function UserAction({ user }: UserActionProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
-
-  // Only allow role changes to/from BUSINESS_OWNER and STAFF
-  const availableRoles = ['BUSINESS_OWNER', 'STAFF'];
 
   const handleDelete = async () => {
     setLoading(true);
@@ -91,70 +75,63 @@ export default function UserAction({ user }: UserActionProps) {
   // Only non-ADMIN users can be deleted
   const canDelete = user.role !== 'ADMIN';
 
+  // No actions available
   if (!canChangeRole && !canImpersonate && !canDelete) {
-    return null;
+    return <span className="text-sm text-gray-400">No actions</span>;
+  }
+
+  const handleAction = (action: string) => {
+    switch (action) {
+      case "login":
+        handleImpersonateLogin();
+        break;
+      case "delete":
+        setShowDeleteModal(true);
+        break;
+      case "BUSINESS_OWNER":
+      case "STAFF":
+        handleUpdateRole(action as UserRole);
+        break;
+      default:
+        break;
+    }
+  };
+
+  // Create options array based on available actions
+  const actionOptions = [
+    { value: "", label: "Actions" },
+  ];
+  
+  if (canImpersonate) {
+    actionOptions.push({ value: "login", label: "Login as User" });
+  }
+  
+  if (canChangeRole) {
+    if (user.role !== "BUSINESS_OWNER") {
+      actionOptions.push({ value: "BUSINESS_OWNER", label: "Make Business Owner" });
+    }
+    if (user.role !== "STAFF") {
+      actionOptions.push({ value: "STAFF", label: "Make Staff Member" });
+    }
+  }
+  
+  if (canDelete) {
+    actionOptions.push({ value: "delete", label: "Delete User" });
   }
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger className="focus:outline-none">
-          <div className="inline-flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700">
-            <MoreVerticalIcon className="w-4 h-4" />
-          </div>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-          {canImpersonate && (
-            <DropdownMenuItem onClick={handleImpersonateLogin} className="cursor-pointer flex items-center gap-2">
-              <LogInIcon className="w-4 h-4 text-primary" />
-              <span>Login as {user.name || 'User'}</span>
-            </DropdownMenuItem>
-          )}
-
-          {canChangeRole && (
-            <>
-              {canImpersonate && <DropdownMenuSeparator />}
-              
-              <div className="px-2 py-1.5 text-sm text-gray-500 dark:text-gray-400">
-                Change Role
-              </div>
-              
-              {availableRoles.map((role) => (
-                <DropdownMenuItem 
-                  key={role}
-                  onClick={() => handleUpdateRole(role as UserRole)}
-                  disabled={user.role === role}
-                  className={`cursor-pointer flex items-center gap-2 ${user.role === role ? 'bg-gray-100 dark:bg-gray-800' : ''}`}
-                >
-                  {role === 'BUSINESS_OWNER' ? (
-                    <UserCogIcon className="w-4 h-4 text-blue-600" />
-                  ) : (
-                    <ShieldIcon className="w-4 h-4 text-green-600" />
-                  )}
-                  <span>{role === 'BUSINESS_OWNER' ? 'Business Owner' : 'Staff Member'}</span>
-                  {user.role === role && (
-                    <span className="ml-auto text-primary">●</span>
-                  )}
-                </DropdownMenuItem>
-              ))}
-            </>
-          )}
-
-          {canDelete && (
-            <>
-              {(canImpersonate || canChangeRole) && <DropdownMenuSeparator />}
-              
-              <DropdownMenuItem 
-                onClick={() => setShowDeleteModal(true)} 
-                className="cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 dark:hover:text-red-400 flex items-center gap-2"
-              >
-                <Trash2Icon className="w-4 h-4" />
-                <span>Delete User</span>
-              </DropdownMenuItem>
-            </>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="flex justify-end">
+        <div className="w-32">
+          <InputSelect
+            name="userAction"
+            label=""
+            options={actionOptions}
+            onChange={(e) => handleAction(e.target.value)}
+            value=""
+          />
+        </div>
+      </div>
 
       <DeleteModal
         showDeleteModal={showDeleteModal}
