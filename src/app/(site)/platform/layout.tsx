@@ -6,7 +6,7 @@ import { getUserSidebarData, userSidebarData } from "@/staticData/sidebarData";
 import { useSession } from "next-auth/react";
 
 
-const UserLayout = ({ children }: { children: React.ReactNode }) => {
+const PlatformLayout = ({ children }: { children: React.ReactNode }) => {
 	const [openSidebar, setOpenSidebar] = useState(false);
 	const { data: session } = useSession();
 
@@ -41,4 +41,4 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
 	);
 };
 
-export default UserLayout;
+export default PlatformLayout;
