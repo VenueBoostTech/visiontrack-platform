@@ -49,7 +49,7 @@ import {
 {
 	id: 1,
 	title: "Dashboard",
-	path: "/user/dashboard",
+	path: "/platform/dashboard",
 	icon: <LayoutDashboard className="w-6 h-6" />
 },
 
@@ -57,38 +57,38 @@ import {
 {
 	id: 2,
 	title: "Properties",
-	path: "/user/properties",
+	path: "/platform/properties",
 	icon: <Building2 className="w-6 h-6" />,
 	// @ts-ignore
 	children: [
 	{
 		id: "2-1",
 		title: "Properties",
-		path: "/user/properties",
+		path: "/platform/properties",
 		icon: <Building className="w-4 h-4" />
 	},
 	{
 		id: "2-2",
 		title: "Buildings",
-		path: "/user/properties/buildings",
+		path: "/platform/properties/buildings",
 		icon: <BuildingIcon className="w-4 h-4" />
 	},
 	{
 		id: "2-3",
 		title: "Zones",
-		path: "/user/properties/zones",
+		path: "/platform/properties/zones",
 		icon: <Boxes className="w-4 h-4" />
 	},
 	{
 		id: "2-4",
 		title: "Stores",
-		path: "/user/properties/stores",
+		path: "/platform/properties/stores",
 		icon: <Store className="w-4 h-4" />
 	},
 	{
 		id: "2-5",
 		title: "Cameras",
-		path: "/user/properties/cameras",
+		path: "/platform/properties/cameras",
 		icon: <Camera className="w-4 h-4" />
 	}
 	]
@@ -98,32 +98,32 @@ import {
 {
 	id: 3,
 	title: "Live Monitoring",
-	path: "/user/monitoring",
+	path: "/platform/monitoring",
 	icon: <MonitorPlay className="w-6 h-6" />,
 // @ts-ignore
 	children: [
 	{
 		id: "3-1",
 		title: "Live View",
-		path: "/user/monitoring/live",
+		path: "/platform/monitoring/live",
 		icon: <MonitorDot className="w-4 h-4" />
 	},
 	{
 		id: "3-2",
 		title: "Recordings",
-		path: "/user/monitoring/recordings",
+		path: "/platform/monitoring/recordings",
 		icon: <Video className="w-4 h-4" />
 	},
 	{
 		id: "3-3",
 		title: "Video Wall",
-		path: "/user/monitoring/wall",
+		path: "/platform/monitoring/wall",
 		icon: <LayoutPanelTop className="w-4 h-4" />
 	},
 	{
 		id: "3-4",
 		title: "PTZ Control",
-		path: "/user/monitoring/ptz",
+		path: "/platform/monitoring/ptz",
 		icon: <CameraControl className="w-4 h-4" />
 	}
 	]
@@ -133,7 +133,7 @@ import {
 {
 	id: 4,
 	title: "Analytics",
-	path: "/user/analytics",
+	path: "/platform/analytics",
 	icon: <BarChart3 className="w-6 h-6" />,
 	// @ts-ignore
 	children: getAnalyticsMenuItems(businessType)
@@ -143,7 +143,7 @@ import {
 {
 	id: 5,
 	title: "Security",
-	path: "/user/security",
+	path: "/platform/security",
 	icon: <Shield className="w-6 h-6" />,
 	// @ts-ignore
 	children: getSecurityMenuItems(businessType)
@@ -153,7 +153,7 @@ import {
 {
 	id: 8,
 	title: "Operations",
-	path: "/user/operations",
+	path: "/platform/operations",
 	icon: <Store className="w-6 h-6" />,
 	// @ts-ignore
 	children: businessType === 'RETAIL' ? getOperationsMenuItems(businessType) : []
@@ -163,26 +163,26 @@ import {
 {
 	id: 6,
 	title: "Staff",
-	path: "/user/staff",
+	path: "/platform/staff",
 	icon: <Users className="w-6 h-6" />,
 	// @ts-ignore
 	children: [
 	{
 		id: "6-1",
 		title: "Staff Members",
-		path: "/user/staff",
+		path: "/platform/staff",
 		icon: <UserCog className="w-4 h-4" />
 	},
 	{
 		id: "6-2",
 		title: "Department",
-		path: "/user/staff/department",
+		path: "/platform/staff/department",
 		icon: <Users className="w-4 h-4" />
 	},
 	{
 		id: "6-3",
 		title: "Permissions",
-		path: "/user/staff/permissions",
+		path: "/platform/staff/permissions",
 		icon: <Key className="w-4 h-4" />
 	}
 	]
@@ -192,32 +192,32 @@ import {
 {
 	id: 7,
 	title: "Settings",
-	path: "/user/settings",
+	path: "/platform/settings",
 	icon: <Settings className="w-6 h-6" />,
 	// @ts-ignore
 	children: [
 	{
 		id: "7-1",
 		title: "VT Credentials",
-		path: "/user/settings/vt-credentials",
+		path: "/platform/settings/vt-credentials",
 		icon: <KeyRound className="w-4 h-4" />
 	},
 	{
 		id: "7-2",
 		title: "Notifications",
-		path: "/user/settings/notifications",
+		path: "/platform/settings/notifications",
 		icon: <BellIcon className="w-4 h-4" />
 	},
 	{
 		id: "7-3",
 		title: "Reports",
-		path: "/user/settings/reports",
+		path: "/platform/settings/reports",
 		icon: <ScrollText className="w-4 h-4" />
 	},
 	{
 		id: "7-4",
 		title: "Billing",
-		path: "/user/settings/billing",
+		path: "/platform/settings/billing",
 		icon: <CreditCard className="w-4 h-4" />
 	}
 	]
@@ -232,7 +232,7 @@ export const userMenuData: Sidebar[] = [
 	{
 		id: 1,
 		title: "Account Settings",
-		path: "/user/account",
+		path: "/platform/account",
 		icon: (
 			<svg
 				width='18'
@@ -259,7 +259,7 @@ export const userMenuData: Sidebar[] = [
 	{
 		id: 2,
 		title: "Billing",
-		path: "/user/settings/billing",
+		path: "/platform/settings/billing",
 		icon: (
 		  <svg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>    
 			<path d='M3 5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5Z' stroke='currentColor' strokeWidth='2'/>
@@ -272,7 +272,7 @@ export const userMenuData: Sidebar[] = [
 	  {
 		id: 3,
 		title: "Notifications",  
-		path: "/user/settings/notifications",
+		path: "/platform/settings/notifications",
 		icon: (
 		  <svg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
 			<path d='M12 22C10.8954 22 10 21.1046 10 20H14C14 21.1046 13.1046 22 12 22ZM20 19H4V17L6 16V10.5C6 7.038 7.421 4.793 10 4.18V2H14V4.18C16.579 4.793 18 7.038 18 10.5V16L20 17V19Z' fill='currentColor'/>
