@@ -7,12 +7,15 @@ import NextTopLoader from "nextjs-toploader";
 import Loader from "@/components/Common/PreLoader";
 import FooterWrapper from "@/components/Footer/FooterWrapper";
 import { HeaderWrapper } from "@/components/Header/HeaderWrapper";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 export default function RootLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
+	const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
+
 	return (
 		<>
 			<Loader />
@@ -27,6 +30,7 @@ export default function RootLayout({
 					/>
 					<HeaderWrapper />
 					{children}
+					<GoogleAnalytics measurementId={measurementId} />
 					<FooterWrapper />
 				</Providers>
 			</>
