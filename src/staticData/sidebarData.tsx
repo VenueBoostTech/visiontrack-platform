@@ -337,135 +337,249 @@ export const adminMenuData: Sidebar[] = [
 	},
 ];
 
-export const adminSidebarData = [
+export const adminSidebarData: Sidebar[] = [
 	{
 	  id: 1,
 	  title: "Dashboard",
-	  path: "/admin",
-	  icon: (
-		<svg
-		  width='24'
-		  height='24'
-		  viewBox='0 0 24 24'
-		  fill='none'
-		  xmlns='http://www.w3.org/2000/svg'
-		>
-		  <path
-			fillRule='evenodd'
-			clipRule='evenodd'
-			d='M6.5 1.75C3.87665 1.75 1.75 3.87665 1.75 6.5C1.75 9.12335 3.87665 11.25 6.5 11.25C9.12335 11.25 11.25 9.12335 11.25 6.5C11.25 3.87665 9.12335 1.75 6.5 1.75ZM3.25 6.5C3.25 4.70507 4.70507 3.25 6.5 3.25C8.29493 3.25 9.75 4.70507 9.75 6.5C9.75 8.29493 8.29493 9.75 6.5 9.75C4.70507 9.75 3.25 8.29493 3.25 6.5Z'
-			fill='currentColor'
-		  />
-		  <path
-			fillRule='evenodd'
-			clipRule='evenodd'
-			d='M17.5 12.75C14.8766 12.75 12.75 14.8766 12.75 17.5C12.75 20.1234 14.8766 22.25 17.5 22.25C20.1234 22.25 22.25 20.1234 22.25 17.5C22.25 14.8766 20.1234 12.75 17.5 12.75ZM14.25 17.5C14.25 15.7051 15.7051 14.25 17.5 14.25C19.2949 14.25 20.75 15.7051 20.75 17.5C20.75 19.2949 19.2949 20.75 17.5 20.75C15.7051 20.75 14.25 19.2949 14.25 17.5Z'
-			fill='currentColor'
-		  />
-		</svg>
-	  ),
+	  path: "/admin/dashboard",
+	  icon: <LayoutDashboard className="w-6 h-6" />
 	},
 	{
 	  id: 2,
-	  title: "Users",
-	  path: "/admin/manage-users",
-	  icon: <Users className="w-6 h-6" />,
+	  title: "Client Management",
+	  path: "/admin/clients",
+	  icon: <Building2 className="w-6 h-6" />,
+	  // @ts-ignore
 	  children: [
 		{
-		  id: '2-1',
-		  title: 'All Users',
-		  path: '/admin/manage-users',
-		  icon: (
-			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-			  <path d="M6 7.5C7.65685 7.5 9 6.15685 9 4.5C9 2.84315 7.65685 1.5 6 1.5C4.34315 1.5 3 2.84315 3 4.5C3 6.15685 4.34315 7.5 6 7.5Z" fill="currentColor"/>
-			  <path d="M2.5 9C1.67157 9 1 9.67157 1 10.5V12C1 12.5523 1.44772 13 2 13H10C10.5523 13 11 12.5523 11 12V10.5C11 9.67157 10.3284 9 9.5 9H2.5Z" fill="currentColor"/>
-			</svg>
-		  )
+		  id: "2-1",
+		  title: "Businesses",
+		  path: "/admin/clients/businesses",
+		  icon: <Building className="w-4 h-4" />
 		},
+		{
+		  id: "2-2",
+		  title: "Properties",
+		  path: "/admin/clients/properties",
+		  icon: <Store className="w-4 h-4" />
+		},
+		{
+		  id: "2-3",
+		  title: "Subscriptions",
+		  path: "/admin/clients/subscriptions",
+		  icon: <CreditCard className="w-4 h-4" />
+		}
 	  ]
 	},
 	{
 	  id: 3,
-	  title: "Businesses",
-	  path: "/admin/businesses",
-	  icon: (
-		<svg
-		  width='24'
-		  height='24'
-		  viewBox='0 0 24 24'
-		  fill='none'
-		  xmlns='http://www.w3.org/2000/svg'
-		>
-		  <path
-			fillRule='evenodd'
-			clipRule='evenodd'
-			d='M12 6.75C12.4142 6.75 12.75 7.08579 12.75 7.5V9.5C12.75 9.91421 12.4142 10.25 12 10.25C11.5858 10.25 11.25 9.91421 11.25 9.5V7.5C11.25 7.08579 11.5858 6.75 12 6.75Z'
-			fill='currentColor'
-		  />
-		  <path
-			fillRule='evenodd'
-			clipRule='evenodd'
-			d='M7.25 3C7.25 2.58579 7.58579 2.25 8 2.25H16C16.4142 2.25 16.75 2.58579 16.75 3V21C16.75 21.4142 16.4142 21.75 16 21.75H8C7.58579 21.75 7.25 21.4142 7.25 21V3ZM8.75 3.75V20.25H15.25V3.75H8.75Z'
-			fill='currentColor'
-		  />
-		</svg>
-	  ),
+	  title: "User Management",
+	  path: "/admin/users",
+	  icon: <Users className="w-6 h-6" />,
+	  // @ts-ignore
+	  children: [
+		{
+		  id: "3-1",
+		  title: "All Users",
+		  path: "/admin/users/all",
+		  icon: <Users className="w-4 h-4" />
+		},
+		{
+		  id: "3-2",
+		  title: "User Roles",
+		  path: "/admin/users/roles",
+		  icon: <Shield className="w-4 h-4" />
+		},
+		{
+		  id: "3-3",
+		  title: "Permission Groups",
+		  path: "/admin/users/permissions",
+		  icon: <Lock className="w-4 h-4" />
+		}
+	  ]
 	},
 	{
 	  id: 4,
-	  title: "API Settings",
-	  path: "/admin/api",
-	  icon: (
-		<svg
-		  width='24'
-		  height='24'
-		  viewBox='0 0 24 24'
-		  fill='none'
-		  xmlns='http://www.w3.org/2000/svg'
-		>
-		  <path
-			fillRule='evenodd'
-			clipRule='evenodd'
-			d='M14 2.75C13.5858 2.75 13.25 3.08579 13.25 3.5C13.25 3.91421 13.5858 4.25 14 4.25H21C21.4142 4.25 21.75 3.91421 21.75 3.5C21.75 3.08579 21.4142 2.75 21 2.75H14Z'
-			fill='currentColor'
-		  />
-		  <path
-			fillRule='evenodd'
-			clipRule='evenodd'
-			d='M3 11.25C2.58579 11.25 2.25 11.5858 2.25 12C2.25 12.4142 2.58579 12.75 3 12.75H10C10.4142 12.75 10.75 12.4142 10.75 12C10.75 11.5858 10.4142 11.25 10 11.25H3Z'
-			fill='currentColor'
-		  />
-		</svg>
-	  ),
+	  title: "AI Model Management",
+	  path: "/admin/models",
+	  icon: <BrainCircuit className="w-6 h-6" />,
+	  // @ts-ignore
+	  children: [
+		{
+		  id: "4-1",
+		  title: "Detection Models",
+		  path: "/admin/models/detection",
+		  icon: <Cpu className="w-4 h-4" />
+		},
+		{
+		  id: "4-2",
+		  title: "Model Versions",
+		  path: "/admin/models/versions",
+		  icon: <Layers className="w-4 h-4" />
+		},
+		{
+		  id: "4-3",
+		  title: "Model Training",
+		  path: "/admin/models/training",
+		  icon: <LineChart className="w-4 h-4" />
+		},
+		{
+		  id: "4-4",
+		  title: "Model Performance",
+		  path: "/admin/models/performance",
+		  icon: <BarChart3 className="w-4 h-4" />
+		}
+	  ]
 	},
 	{
 	  id: 5,
-	  title: "Settings",
-	  path: "/admin/settings",
-	  icon: (
-		<svg
-		  width='24'
-		  height='24'
-		  viewBox='0 0 24 24'
-		  fill='none'
-		  xmlns='http://www.w3.org/2000/svg'
-		>
-		  <path
-			fillRule='evenodd'
-			clipRule='evenodd'
-			d='M12 8.25C9.92894 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92894 15.75 12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25ZM9.75 12C9.75 10.7574 10.7574 9.75 12 9.75C13.2426 9.75 14.25 10.7574 14.25 12C14.25 13.2426 13.2426 14.25 12 14.25C10.7574 14.25 9.75 13.2426 9.75 12Z'
-			fill='currentColor'
-		  />
-		</svg>
-	  ),
+	  title: "Infrastructure",
+	  path: "/admin/infrastructure",
+	  icon: <Server className="w-6 h-6" />,
+	  // @ts-ignore
+	  children: [
+		{
+		  id: "5-1",
+		  title: "Camera Deployments",
+		  path: "/admin/infrastructure/cameras",
+		  icon: <Camera className="w-4 h-4" />
+		},
+		{
+		  id: "5-2",
+		  title: "Edge Devices",
+		  path: "/admin/infrastructure/edge-devices",
+		  icon: <Boxes className="w-4 h-4" />
+		},
+		{
+		  id: "5-3",
+		  title: "Network Status",
+		  path: "/admin/infrastructure/network",
+		  icon: <Network className="w-4 h-4" />
+		},
+		{
+		  id: "5-4",
+		  title: "System Health",
+		  path: "/admin/infrastructure/health",
+		  icon: <HeartPulse className="w-4 h-4" />
+		}
+	  ]
 	},
 	{
-		id: 5,
-		title:"Sync",
-		path:"/admin/sync",
-		icon: <FolderSyncIcon className="w-6 h-6" />
+	  id: 6,
+	  title: "Integration & APIs",
+	  path: "/admin/integrations",
+	  icon: <Code className="w-6 h-6" />,
+	  // @ts-ignore
+	  children: [
+		{
+		  id: "6-1",
+		  title: "API Management",
+		  path: "/admin/integrations/api",
+		  icon: <Globe className="w-4 h-4" />
+		},
+		{
+		  id: "6-2",
+		  title: "Third-party Services",
+		  path: "/admin/integrations/services",
+		  icon: <Layers className="w-4 h-4" />
+		},
+		{
+		  id: "6-3",
+		  title: "Webhooks",
+		  path: "/admin/integrations/webhooks",
+		  icon: <Network className="w-4 h-4" />
+		}
+	  ]
+	},
+	{
+	  id: 7,
+	  title: "Data Synchronization",
+	  path: "/admin/sync",
+	  icon: <FolderSync className="w-6 h-6" />,
+	  // @ts-ignore
+	  children: [
+		{
+		  id: "7-1",
+		  title: "Sync Status",
+		  path: "/admin/sync/status",
+		  icon: <LineChart className="w-4 h-4" />
+		},
+		{
+		  id: "7-2",
+		  title: "Sync History",
+		  path: "/admin/sync/history",
+		  icon: <ClipboardList className="w-4 h-4" />
+		},
+		{
+		  id: "7-3",
+		  title: "Manual Sync",
+		  path: "/admin/sync/manual",
+		  icon: <FolderSync className="w-4 h-4" />
+		}
+	  ]
+	},
+	{
+	  id: 8,
+	  title: "Analytics & Reports",
+	  path: "/admin/analytics",
+	  icon: <BarChart3 className="w-6 h-6" />,
+	  // @ts-ignore
+	  children: [
+		{
+		  id: "8-1",
+		  title: "System Analytics",
+		  path: "/admin/analytics/system",
+		  icon: <LineChart className="w-4 h-4" />
+		},
+		{
+		  id: "8-2",
+		  title: "Usage Metrics",
+		  path: "/admin/analytics/usage",
+		  icon: <BarChart3 className="w-4 h-4" />
+		},
+		{
+		  id: "8-3",
+		  title: "Detection Reports",
+		  path: "/admin/analytics/detection",
+		  icon: <FileText className="w-4 h-4" />
+		}
+	  ]
+	},
+	{
+	  id: 9,
+	  title: "System Settings",
+	  path: "/admin/settings",
+	  icon: <Settings className="w-6 h-6" />,
+	  // @ts-ignore
+	  children: [
+		{
+		  id: "9-1",
+		  title: "Global Configuration",
+		  path: "/admin/settings/global",
+		  icon: <Settings className="w-4 h-4" />
+		},
+		{
+		  id: "9-2",
+		  title: "Notification Rules",
+		  path: "/admin/settings/notifications",
+		  icon: <BellRing className="w-4 h-4" />
+		},
+		{
+		  id: "9-3",
+		  title: "Security Settings",
+		  path: "/admin/settings/security",
+		  icon: <Shield className="w-4 h-4" />
+		},
+		{
+		  id: "9-4",
+		  title: "Billing Configuration",
+		  path: "/admin/settings/billing",
+		  icon: <CreditCard className="w-4 h-4" />
+		}
+	  ]
 	}
   ];
+  
 
 export const adminSidebarOtherData: Sidebar[] = [
 	{
