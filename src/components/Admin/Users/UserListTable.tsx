@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { User } from "@prisma/client";
-import Image from "next/image";
 import { RefreshCcw } from "lucide-react";
 import InputSelect from "@/components/Common/InputSelect";
 import { format } from "date-fns";
@@ -14,6 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import UserAction from "./UserAction";
 
 interface UserListTableProps {
@@ -51,28 +50,41 @@ export default function UserListTable({
     }
   };
 
+  // Get user initials for avatar fallback
+  const getUserInitials = (user: User): string => {
+    if (user.name) {
+      const nameParts = user.name.split(' ');
+      if (nameParts.length >= 2) {
+        return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+      } else {
+        return user.name[0].toUpperCase();
+      }
+    }
+    return user.email ? user.email[0].toUpperCase() : 'U';
+  };
+
   return (
     <div className="w-full border rounded-xl border-stroke bg-white p-0 dark:border-strokedark dark:bg-boxdark">
       <div className="max-w-full overflow-x-auto">
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-2 text-left dark:bg-meta-4">
-              <th className="px-4 py-4 font-medium text-black dark:text-white">
+              <th className="px-4 py-3 font-medium text-black dark:text-white">
                 Name
               </th>
-              <th className="px-4 py-4 font-medium text-black dark:text-white">
+              <th className="px-4 py-3 font-medium text-black dark:text-white">
                 Email
               </th>
-              <th className="px-4 py-4 font-medium text-black dark:text-white">
+              <th className="px-4 py-3 font-medium text-black dark:text-white">
                 Role
               </th>
-              <th className="px-4 py-4 font-medium text-black dark:text-white">
+              <th className="px-4 py-3 font-medium text-black dark:text-white">
                 Joined
               </th>
-              <th className="px-4 py-4 font-medium text-black dark:text-white">
+              <th className="px-4 py-3 font-medium text-black dark:text-white">
                 Last Login
               </th>
-              <th className="px-4 py-4 font-medium text-black dark:text-white text-right">
+              <th className="px-4 py-3 font-medium text-black dark:text-white text-right">
                 Actions
               </th>
             </tr>
@@ -90,13 +102,9 @@ export default function UserListTable({
               <tr>
                 <td colSpan={6} className="text-center py-8">
                   <div className="flex flex-col items-center justify-center">
-                    <Image
-                      src="/images/icon/user-icon.svg"
-                      alt="No users"
-                      width={48}
-                      height={48}
-                      className="opacity-30 mb-3"
-                    />
+                    <div className="opacity-30 mb-3 h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-500 text-xl">?</span>
+                    </div>
                     <h3 className="text-lg font-medium mb-1">No users found</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Try adjusting your search or filters
@@ -109,21 +117,15 @@ export default function UserListTable({
                 <tr key={user.id}>
                   <td className="border-b border-[#eee] px-4 py-3 dark:border-strokedark">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                      <Avatar>
                         {user.image ? (
-                          <Image
-                            src={user.image}
-                            alt={user.name || "User"}
-                            width={40}
-                            height={40}
-                            className="object-cover"
-                          />
+                          <AvatarImage src={user.image} alt={user.name || "User"} />
                         ) : (
-                          <span className="text-lg font-medium uppercase text-gray-600">
-                            {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
-                          </span>
+                          <AvatarFallback>
+                            {getUserInitials(user)}
+                          </AvatarFallback>
                         )}
-                      </div>
+                      </Avatar>
                       <h5 className="font-medium text-black dark:text-white">
                         {user.name || "-"}
                       </h5>

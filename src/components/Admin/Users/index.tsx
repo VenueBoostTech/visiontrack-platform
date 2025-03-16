@@ -125,7 +125,14 @@ export default function UsersListContainer({ filter, search }: UsersListContaine
 
   if (!users || users.length === 0) {
     return (
-      <div className="space-y-5">
+      <div className="space-y-6">
+		 {/* Header */}
+		<div>
+			<h2 className="text-2xl text-gray-700 font-bold">User Management</h2>
+			<p className="text-gray-700 mt-1">
+				Manage user accounts, permissions, and access across your organization
+			</p>
+		</div>
         <UserTopbar userCounts={userCounts} />
         <UserEmptyState />
       </div>
@@ -133,7 +140,14 @@ export default function UsersListContainer({ filter, search }: UsersListContaine
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
+		{/* Header */}
+		<div>
+			<h2 className="text-2xl text-gray-700 font-bold">User Management</h2>
+			<p className="text-gray-700 mt-1">
+				Manage user accounts, permissions, and access across your organization
+			</p>
+		</div>
       <UserTopbar userCounts={userCounts} />
       <UserListTable 
         users={filteredUsers || []}
