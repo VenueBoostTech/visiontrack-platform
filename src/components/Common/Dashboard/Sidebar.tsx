@@ -22,11 +22,11 @@ const MenuItem = ({ item, pathname, openMenus, toggleMenu }: any) => {
         }
         className={`group flex w-full items-center rounded-lg p-2 text-sm font-medium transition-colors ${
           isActive
-            ? "bg-[#2A8E9E]/10 text-[#2A8E9E] dark:bg-[#2A8E9E]/20 dark:text-white"
-            : "text-gray-600 hover:bg-[#2A8E9E]/5 hover:text-[#2A8E9E] dark:text-gray-300 dark:hover:bg-[#2A8E9E]/10 dark:hover:text-white"
+            ? "bg-[#5577ff]/10 text-[#5577ff] dark:bg-[#5577ff]/20 dark:text-white"
+            : "text-gray-600 hover:bg-[#5577ff]/5 hover:text-[#5577ff] dark:text-gray-300 dark:hover:bg-[#5577ff]/10 dark:hover:text-white"
         }`}
       >
-        <span className={`mr-3 ${isActive ? "text-[#2A8E9E]" : ""}`}>{item.icon}</span>
+        <span className={`mr-3 ${isActive ? "text-[#5577ff]" : ""}`}>{item.icon}</span>
         <span className="flex-1">{item.title}</span>
         {item.children && (
           <span className="ml-auto">
@@ -47,11 +47,11 @@ const MenuItem = ({ item, pathname, openMenus, toggleMenu }: any) => {
               href={child.path}
               className={`group flex items-center rounded-lg p-2 text-sm font-medium transition-colors ${
                 pathname === child.path
-                  ? "bg-[#2A8E9E]/10 text-[#2A8E9E] dark:bg-[#2A8E9E]/20 dark:text-white"
-                  : "text-gray-600 hover:bg-[#2A8E9E]/5 hover:text-[#2A8E9E] dark:text-gray-300 dark:hover:bg-[#2A8E9E]/10 dark:hover:text-white"
+                  ? "bg-[#5577ff]/10 text-[#5577ff] dark:bg-[#5577ff]/20 dark:text-white"
+                  : "text-gray-600 hover:bg-[#5577ff]/5 hover:text-[#5577ff] dark:text-gray-300 dark:hover:bg-[#5577ff]/10 dark:hover:text-white"
               }`}
             >
-              <span className={`mr-3 ${pathname === child.path ? "text-[#2A8E9E]" : ""}`}>
+              <span className={`mr-3 ${pathname === child.path ? "text-[#5577ff]" : ""}`}>
                 {child.icon}
               </span>
               <span className="flex-1">{child.title}</span>

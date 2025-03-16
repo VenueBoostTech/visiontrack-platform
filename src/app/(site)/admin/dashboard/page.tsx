@@ -12,7 +12,6 @@ export default function AdminDashboardPage() {
 
   return (
 	  <>
-		<Breadcrumb pageTitle="Dashboards" />
 		<AdminDashboardContent />
 	  </>
 	);
