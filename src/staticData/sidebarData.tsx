@@ -348,7 +348,7 @@ export const adminSidebarData: Sidebar[] = [
 		{
 		  id: "2-1",
 		  title: "Businesses",
-		  path: "/admin/clients/businesses",
+		  path: "/admin/businesses",
 		  icon: <Building className="w-4 h-4" />
 		},
 		{
