@@ -19,7 +19,7 @@ function VTBusinessStats({ counts }: { counts: {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Total Businesses</p>
@@ -33,7 +33,7 @@ function VTBusinessStats({ counts }: { counts: {
       </Card>
       
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Active Businesses</p>
@@ -47,7 +47,7 @@ function VTBusinessStats({ counts }: { counts: {
       </Card>
       
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Inactive</p>
@@ -61,7 +61,7 @@ function VTBusinessStats({ counts }: { counts: {
       </Card>
       
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Local Test</p>
@@ -75,7 +75,7 @@ function VTBusinessStats({ counts }: { counts: {
       </Card>
       
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Production Test</p>
@@ -111,7 +111,7 @@ function BusinessListLoading() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         {[...Array(5)].map((_, i) => (
           <Card key={i}>
-            <CardContent className="p-4">
+            <CardContent className="p-2">
               <div className="flex justify-between items-center">
                 <div className="space-y-2">
                   <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>

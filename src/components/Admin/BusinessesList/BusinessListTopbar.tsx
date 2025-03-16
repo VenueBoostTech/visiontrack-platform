@@ -107,7 +107,7 @@ export default function BusinessListTopbar() {
           
           {/* Buttons in the second row */}
           <div className="flex flex-wrap gap-3 justify-end">
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" className="px-4 h-9 flex items-center gap-2">
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">Export</span>
             </Button>
