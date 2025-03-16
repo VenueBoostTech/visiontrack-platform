@@ -23,7 +23,6 @@ export default function UsersPage({
   
 	return (
 	  <>
-		<Breadcrumb pageTitle="Manage Users" />
 		<UsersListContainer filter={validFilter} search={search} />
 	  </>
 	);

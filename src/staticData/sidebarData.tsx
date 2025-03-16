@@ -375,7 +375,7 @@ export const adminSidebarData: Sidebar[] = [
 		{
 		  id: "3-1",
 		  title: "All Users",
-		  path: "/admin/users/all",
+		  path: "/admin/users",
 		  icon: <Users className="w-4 h-4" />
 		},
 		{
