@@ -8,19 +8,19 @@ export const getAnalyticsMenuItems = (businessType: string = 'RETAIL') => {
       {
         id: "4-1",
         title: "People Counter",
-        path: "/user/analytics/people",
+        path: "/platform/analytics/people",
         icon: <Users2 className="w-4 h-4" />
       },
       {
         id: "4-2",
         title: "Heatmaps",
-        path: "/user/analytics/heatmaps",
+        path: "/platform/analytics/heatmaps",
         icon: <Activity className="w-4 h-4" />
       },
       {
         id: "4-3",
         title: "Demographics",
-        path: "/user/analytics/demographics",
+        path: "/platform/analytics/demographics",
         icon: <Users className="w-4 h-4" />
       },
     ];
@@ -31,37 +31,37 @@ export const getAnalyticsMenuItems = (businessType: string = 'RETAIL') => {
         {
           id: "4-1",
           title: "Customer Traffic",
-          path: "/user/analytics/traffic",
+          path: "/platform/analytics/traffic",
           icon: <TrendingUp className="w-4 h-4" />
         },
         {
           id: "4-2",
           title: "Demographics",
-          path: "/user/analytics/demographics",
+          path: "/platform/analytics/demographics",
           icon: <Users className="w-4 h-4" />
         },
         {
           id: "4-3",
           title: "Behavior Analysis",
-          path: "/user/analytics/behavior",
+          path: "/platform/analytics/behavior",
           icon: <Brain className="w-4 h-4" />
         },
         {
           id: "4-4",
           title: "Heat Mapping",
-          path: "/user/analytics/heatmaps",
+          path: "/platform/analytics/heatmaps",
           icon: <Activity className="w-4 h-4" />
         },
         {
           id: "4-5",
           title: "Conversion Tracking",
-          path: "/user/analytics/conversion",
+          path: "/platform/analytics/conversion",
           icon: <Target className="w-4 h-4" />
         },
         {
             id: "4-6",
             title: "Customer Counter",
-            path: "/user/analytics/people",
+            path: "/platform/analytics/people",
             icon: <Users2 className="w-4 h-4" />
           },
       ];
@@ -73,13 +73,13 @@ export const getAnalyticsMenuItems = (businessType: string = 'RETAIL') => {
       {
         id: "4-4",
         title: "Parking",
-        path: "/user/analytics/parking",
+        path: "/platform/analytics/parking",
         icon: <MapPin className="w-4 h-4" />
       },
       {
         id: "4-5",
         title: "License Plates",
-        path: "/user/analytics/plates",
+        path: "/platform/analytics/plates",
         icon: <Car className="w-4 h-4" />
       }
     ];

@@ -24,7 +24,7 @@ const PriceItem = ({ plan, isBilling }: Props) => {
 
 		let redirectPath = "/thank-you";
 		if (user) {
-			redirectPath = "/user/billing";
+			redirectPath = "/platform/billing";
 		}
 
 		window.Paddle?.Checkout?.open({

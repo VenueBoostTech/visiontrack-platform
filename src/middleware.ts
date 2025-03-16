@@ -11,20 +11,20 @@ export default withAuth(
             if (role === "ADMIN") {
                 return NextResponse.redirect(new URL("/admin/dashboard", req.url));
             } else {
-                return NextResponse.redirect(new URL("/user/dashboard", req.url));
+                return NextResponse.redirect(new URL("/platform/dashboard", req.url));
             }
         }
 
-        // Handle /user routes
-        if (pathname.startsWith("/user")) {
-            // Redirect admins away from /user routes
+        // Handle /platform routes
+        if (pathname.startsWith("/platform")) {
+            // Redirect admins away from /platform routes
             if (role === "ADMIN") {
                 return NextResponse.redirect(new URL("/admin/dashboard", req.url));
             }
             
-            // Redirect /user to /user/dashboard
-            if (pathname === "/user") {
-                return NextResponse.redirect(new URL("/user/dashboard", req.url));
+            // Redirect /platform to /platform/dashboard
+            if (pathname === "/platform") {
+                return NextResponse.redirect(new URL("/platform/dashboard", req.url));
             }
         }
 
@@ -32,7 +32,7 @@ export default withAuth(
         if (pathname.startsWith("/admin")) {
             // Redirect non-admins away from /admin routes
             if (role !== "ADMIN") {
-                return NextResponse.redirect(new URL("/user/dashboard", req.url));
+                return NextResponse.redirect(new URL("/platform/dashboard", req.url));
             }
             
             // Redirect /admin to /admin/dashboard
@@ -75,8 +75,8 @@ export const config = {
     matcher: [
         "/",
         "/auth/:path*",
-        "/user",
-        "/user/:path*",
+        "/platform",
+        "/platform/:path*",
         "/admin",
         "/admin/:path*"
     ]

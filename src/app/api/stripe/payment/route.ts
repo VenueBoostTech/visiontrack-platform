@@ -16,8 +16,8 @@ export async function POST(request: Request) {
 
 	const user = await isAuthorized();
 	if (user) {
-		successUrl = absoluteUrl('/user/billing');
-		billingUrl = absoluteUrl('/user/billing');
+		successUrl = absoluteUrl('/platform/billing');
+		billingUrl = absoluteUrl('/platform/billing');
 	} else {
 		successUrl = absoluteUrl('/thank-you');
 		billingUrl = absoluteUrl('/');

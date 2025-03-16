@@ -114,7 +114,7 @@ export async function POST(request: Request) {
 		});
 	}
 
-	revalidatePath("/user/billing");
+	revalidatePath("/platform/billing");
 
 	return new Response(null, { status: 200 });
 }
