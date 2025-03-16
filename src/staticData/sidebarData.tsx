@@ -413,27 +413,6 @@ export const adminSidebarData = [
 	},
 	{
 	  id: 4,
-	  title: "AI Integration",
-	  path: "/admin/ai-integration",
-	  icon: (
-		<svg
-		  width='24'
-		  height='24'
-		  viewBox='0 0 24 24'
-		  fill='none'
-		  xmlns='http://www.w3.org/2000/svg'
-		>
-		  <path
-			fillRule='evenodd'
-			clipRule='evenodd'
-			d='M7.33569 3.38268C7.93132 1.87244 10.0687 1.87244 10.6643 3.38268L11.7363 6.10082C11.7657 6.17532 11.8247 6.23429 11.8992 6.26367L14.6173 7.33569C16.1276 7.93132 16.1276 10.0687 14.6173 10.6643L11.8992 11.7363C11.8247 11.7657 11.7657 11.8247 11.7363 11.8992L10.6643 14.6173C10.0687 16.1276 7.93132 16.1276 7.33569 14.6173L6.26367 11.8992C6.23429 11.8247 6.17532 11.7657 6.10082 11.7363L3.38268 10.6643C1.87244 10.0687 1.87244 7.93132 3.38268 7.33569L6.10082 6.26367C6.17532 6.23429 6.23429 6.17532 6.26367 6.10082L7.33569 3.38268Z'
-			fill='currentColor'
-		  />
-		</svg>
-	  ),
-	},
-	{
-	  id: 5,
 	  title: "API Settings",
 	  path: "/admin/api",
 	  icon: (
@@ -460,7 +439,7 @@ export const adminSidebarData = [
 	  ),
 	},
 	{
-	  id: 6,
+	  id: 5,
 	  title: "Settings",
 	  path: "/admin/settings",
 	  icon: (
@@ -481,7 +460,7 @@ export const adminSidebarData = [
 	  ),
 	},
 	{
-		id: 7,
+		id: 5,
 		title:"Sync",
 		path:"/admin/sync",
 		icon: <FolderSyncIcon className="w-6 h-6" />
