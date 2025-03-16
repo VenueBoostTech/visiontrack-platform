@@ -59,7 +59,7 @@ export default function BusinessModalAction({ onSuccess }: BusinessModalActionPr
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="bg-primary hover:bg-primary/90 text-white"
+        className="inline-flex items-center gap-2 px-4 h-9 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
       >
         <Plus className="w-4 h-4 mr-2" />
         <span className="hidden sm:inline">Add Business</span>
