@@ -122,7 +122,7 @@ export default function DepartmentContent({
       {/* Header */}
       <div className="mb-6 flex justify-between items-start">
         <div>
-          <h2 className="text-xl font-bold">Department</h2>
+          <h2 className="text-2xl text-gray-700 font-bold">Department</h2>
           <p className="text-gray-700 mt-1">
             View and manage all departments
           </p>

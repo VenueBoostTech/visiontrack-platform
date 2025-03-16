@@ -42,7 +42,7 @@ export default function NotificationsContent() {
   return (
     <>
      <div className="mb-6">
-        <h2 className="text-xl font-bold">Notifications</h2>
+        <h2 className="text-2xl text-gray-700 font-bold">Notifications</h2>
         <p className="text-gray-700 mt-1">Stay updated with all activities across your properties</p>
       </div>
       {/* Filter Buttons */}

@@ -104,7 +104,7 @@ export default function StaffContent({
       {/* Header */}
       <div className="mb-6 flex justify-between items-start">
         <div>
-          <h2 className="text-xl font-bold">Staff Management</h2>
+          <h2 className="text-2xl text-gray-700 font-bold">Staff Management</h2>
           <p className="text-gray-700 mt-1">Manage your business owner and staff members</p>
         </div>
         {isOwner && (

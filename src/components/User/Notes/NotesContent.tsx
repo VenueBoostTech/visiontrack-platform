@@ -97,7 +97,7 @@ export default function NotesContent({ initialNotes }: { initialNotes: Note[] })
     <div>
       <div className="mb-6 flex justify-between items-start">
         <div>
-          <h2 className="text-xl font-bold">Notes & Issues</h2>
+          <h2 className="text-2xl text-gray-700 font-bold">Notes & Issues</h2>
           <p className="text-gray-700 mt-1">Manage security notes and track issues</p>
         </div>
         <button

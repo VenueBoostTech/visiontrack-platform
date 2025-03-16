@@ -57,7 +57,7 @@ export default function HeatmapContent({ zones, user }: { zones: any, user: any 
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-xl font-bold">Heatmap Analytics</h2>
+          <h2 className="text-2xl text-gray-700 font-bold">Heatmap Analytics</h2>
           <p className="text-gray-700 mt-1">
             Analyze movement patterns and high-traffic areas
           </p>

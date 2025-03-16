@@ -37,7 +37,7 @@ export default function ParkingContent() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-xl font-bold">Parking Analytics</h2>
+          <h2 className="text-2xl text-gray-700 font-bold">Parking Analytics</h2>
           <p className="text-gray-700 mt-1">
             Monitor parking occupancy and vehicle flow
           </p>

@@ -148,7 +148,7 @@ export default function ZonesContent({ initialZones }: { initialZones: Zone[] })
       {/* Header */}
       <div className="mb-6 flex justify-between items-start">
         <div>
-          <h2 className="text-xl font-bold">Zones</h2>
+          <h2 className="text-2xl text-gray-700 font-bold">Zones</h2>
           <p className="text-gray-700 mt-1">Manage your building zones and access areas</p>
         </div>
         <button

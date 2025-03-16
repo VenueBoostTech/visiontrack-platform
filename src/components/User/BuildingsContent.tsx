@@ -136,7 +136,7 @@ export default function BuildingsContent({
     <div>
      <div className="mb-6 flex justify-between items-start">
       <div>
-        <h2 className="text-xl font-bold">Buildings</h2>
+        <h2 className="text-2xl text-gray-700 font-bold">Buildings</h2>
         <p className="text-gray-700 mt-1">Manage and monitor all buildings across your properties</p>
       </div>
       <button

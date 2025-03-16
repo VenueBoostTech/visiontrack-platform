@@ -285,7 +285,7 @@ export default function CamerasContent() {
         <div className="p-6 border-b dark:border-gray-700">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-xl font-bold">Cameras</h2>
+              <h2 className="text-2xl text-gray-700 font-bold">Cameras</h2>
               <p className="text-gray-700 mt-1">
                 Manage and monitor all your cameras
               </p>

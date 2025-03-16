@@ -42,7 +42,7 @@ export default function VehicleContent() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-xl font-bold">Vehicle Analytics</h2>
+          <h2 className="text-2xl text-gray-700 font-bold">Vehicle Analytics</h2>
           <p className="text-gray-700 mt-1">
             Track and analyze vehicle patterns
           </p>
