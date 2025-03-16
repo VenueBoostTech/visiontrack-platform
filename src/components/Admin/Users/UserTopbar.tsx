@@ -114,7 +114,7 @@ export default function UserTopbar() {
 							key={item?.id}
 							onClick={() => {
 								router.push(
-									`/admin/manage-users?filter=${
+									`/admin/users?filter=${
 										item?.value !== "all" ? item?.value : undefined
 									}`
 								);
@@ -150,7 +150,7 @@ export default function UserTopbar() {
 					<form
 						onSubmit={(e) => {
 							e.preventDefault();
-							router.push(`/admin/manage-users?search=${search}`);
+							router.push(`/admin/users?search=${search}`);
 						}}
 					>
 						<div className='relative'>
