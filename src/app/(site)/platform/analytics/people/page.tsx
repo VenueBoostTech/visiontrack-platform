@@ -15,7 +15,7 @@ export default async function AnalyticsPeopleCounterPage() {
   const businessType = session?.user?.business?.vt_use_scenario || 'RETAIL';
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       {businessType === 'RETAIL' ? (
         <RetailCustomerCounter />
       ) : (

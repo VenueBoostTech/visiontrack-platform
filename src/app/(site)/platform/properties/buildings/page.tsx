@@ -55,7 +55,7 @@ export default async function PropertiesBuildingsPage() {
   const buildings = await getBuildings();
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       <BuildingsContent initialBuildings={buildings} />
     </div>
   );

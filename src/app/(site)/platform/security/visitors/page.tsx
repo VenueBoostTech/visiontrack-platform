@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const SecurityVisitorsPage = () => {
     return (
-        <div className="px-5">
+        <div className="px-0">
             <Breadcrumb pageTitle="Visitor Management" />
             <Visitors />
         </div>

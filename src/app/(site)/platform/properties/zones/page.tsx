@@ -59,7 +59,7 @@ export default async function PropertiesZonesPage() {
     const zones = await getZones();
 
   return (
-    <div className="px-5">
+    <div className="px-0">
        {/* @ts-ignore */}
       <ZonesContent initialZones={zones} />
     </div>

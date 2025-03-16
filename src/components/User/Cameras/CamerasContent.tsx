@@ -228,7 +228,7 @@ export default function CamerasContent() {
   ).length;
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">

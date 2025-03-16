@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function StoreAnalyticsPage() {
   return (
-    <div className="px-5">
+    <div className="px-0">
       <StoreAnalytics />
     </div>
   );

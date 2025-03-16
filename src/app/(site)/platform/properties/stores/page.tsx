@@ -91,7 +91,7 @@ export default async function PropertiesStoresPage() {
   const stores = await getStores();
   const businessStaffs = await getBusinessStaffs();
   return (
-    <div className="px-5">
+    <div className="px-0">
       <StoreContent initialStores={stores} businessStaffs={businessStaffs} />
     </div>
   );

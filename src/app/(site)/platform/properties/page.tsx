@@ -52,7 +52,7 @@ export default async function PropertiesPage() {
   const properties = await getProperties();
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       <PropertiesContent initialProperties={properties} />
     </div>
   );

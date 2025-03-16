@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function InventoryTrackingPage() {
   return (
-    <div className="px-5">
+    <div className="px-0">
       <InventoryTracking />
     </div>
   );

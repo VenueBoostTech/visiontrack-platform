@@ -62,7 +62,7 @@ export default async function TrafficPage() {
   const { zones, owner } = await getBusinessAndZones();
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       <RetailTrafficAnalytics zones={zones} user={owner} />
     </div>
   );

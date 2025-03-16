@@ -64,7 +64,7 @@ const SecurityAlertsPage = async () => {
   const alerts = await getAlertRules();
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       <Breadcrumb pageTitle="Security Settings" />
       {/* @ts-ignore */}
       <Alerts initialAlerts={alerts} />

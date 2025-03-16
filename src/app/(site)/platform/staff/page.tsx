@@ -87,7 +87,7 @@ const StaffPage = async () => {
   const departmentList = await getDepartment();
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       <StaffContent
         // @ts-ignore
         initialStaff={currentStaff}

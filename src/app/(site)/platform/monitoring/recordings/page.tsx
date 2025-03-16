@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const MonitoringRecordingsPage = () => {
 	return (
 		<>
-			<div className="px-5">
+			<div className="px-0">
 				<RecordingsContent />
 			</div>
 		</>

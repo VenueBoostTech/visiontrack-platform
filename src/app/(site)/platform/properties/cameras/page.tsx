@@ -66,7 +66,7 @@ export default async function PropertiesCamerasPage() {
   const cameras = await getCameras();
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       <CamerasContent initialCameras={cameras} />
     </div>
   );

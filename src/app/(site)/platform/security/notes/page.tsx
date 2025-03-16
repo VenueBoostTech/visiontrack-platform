@@ -40,7 +40,7 @@ async function getNotes() {
 export default async function SecurityNotesPage() {
   const notes = await getNotes();
   return (
-    <div className="px-5">
+    <div className="px-0">
       <NotesContent initialNotes={notes} />
     </div>
   );

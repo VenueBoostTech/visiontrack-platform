@@ -67,7 +67,7 @@ export default async function HeatmapsPage() {
   const { zones, owner } = await getBusinessAndZones();
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       {businessType === 'RETAIL' ? (
         <RetailHeatmaps zones={zones} user={owner} />
       ) : (

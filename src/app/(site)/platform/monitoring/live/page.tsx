@@ -71,7 +71,7 @@ const MonitoringLivePage = async () => {
 
   return (
     <>
-      <div className="px-5">
+      <div className="px-0">
         <LiveViewContent cameras={cameras} user={owner} />
       </div>
     </>

@@ -52,7 +52,7 @@ export default async function DepartmentPage() {
   const department = await getDepartment();
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       <DepartmentContent initialDepartment={department} />
     </div>
   );

@@ -47,7 +47,7 @@ export default async function VTCredentialsPage() {
 
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       <VTCredentialsContent 
         initialCredential={data?.credential} 
         businessId={data?.businessId} 

@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default function BuildingPage({ params }: { params: { id: string } }) {
   return (
-    <div className="px-5">
+    <div className="px-0">
       <BuildingDetails buildingId={params.id} />
     </div>
   );

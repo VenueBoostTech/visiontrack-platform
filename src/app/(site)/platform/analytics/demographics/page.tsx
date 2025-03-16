@@ -66,7 +66,7 @@ export default async function AnalyticsDemographicsPage() {
   const { zones, owner } = await getBusinessAndZones();
 
   return (
-    <div className="px-5">
+    <div className="px-0">
       {businessType === 'RETAIL' ? (
         <RetailDemographics zones={zones} user={owner} />
       ) : (

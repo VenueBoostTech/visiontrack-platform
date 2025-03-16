@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function SecurityAccessPage() {
     return (
-        <div className="px-5">
+        <div className="px-0">
             <Breadcrumb pageTitle="Access Management" />
             <Access />
         </div>
