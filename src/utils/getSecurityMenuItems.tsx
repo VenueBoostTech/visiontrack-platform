@@ -7,25 +7,25 @@ export const getSecurityMenuItems = (businessType: string = 'RETAIL') => {
     {
       id: "5-1",
       title: "Overview",
-      path: "/user/security",
+      path: "/platform/security",
       icon: <Shield className="w-4 h-4" />
     },
     {
       id: "5-3",
       title: "Alert Rules",
-      path: "/user/security/alerts",
+      path: "/platform/security/alerts",
       icon: <Bell className="w-4 h-4" />
     },
     {
       id: "5-4",
       title: "Reports",
-      path: "/user/security/reports",
+      path: "/platform/security/reports",
       icon: <FileText className="w-4 h-4" />
     },
     {
       id: "5-2",
       title: "Notes & Issues",  // New menu item
-      path: "/user/security/notes",
+      path: "/platform/security/notes",
       icon: <Notebook className="w-4 h-4" />
     },
   ];
@@ -37,31 +37,31 @@ export const getSecurityMenuItems = (businessType: string = 'RETAIL') => {
       {
         id: "5-5",
         title: "Loss Prevention",
-        path: "/user/security/loss-prevention",
+        path: "/platform/security/loss-prevention",
         icon: <ShieldAlert className="w-4 h-4" />
       },
       {
         id: "5-6",
         title: "Emergency Response",
-        path: "/user/security/emergency-response",
+        path: "/platform/security/emergency-response",
         icon: <Siren className="w-4 h-4" />
       },
       {
         id: "5-7",
         title: "POS Integration",
-        path: "/user/security/pos-integration",
+        path: "/platform/security/pos-integration",
         icon: <Terminal className="w-4 h-4" />
       },
       {
         id: "5-8",
         title: "Incident Management",
-        path: "/user/security/incident-management",
+        path: "/platform/security/incident-management",
         icon: <AlertTriangle className="w-4 h-4" />
       },
       {
         id: "5-9",
         title: "Staff Monitoring",
-        path: "/user/security/staff-monitoring",
+        path: "/platform/security/staff-monitoring",
         icon: <UserCog className="w-4 h-4" />
       }
     ];
@@ -74,7 +74,7 @@ export const getSecurityMenuItems = (businessType: string = 'RETAIL') => {
       {
         id: "5-2",
         title: "Visitor Management",
-        path: "/user/security/visitors",
+        path: "/platform/security/visitors",
         icon: <UserCheck className="w-4 h-4" />
       }
     ];
