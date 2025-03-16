@@ -1,115 +1,169 @@
 "use client";
-import DeleteModal from "@/components/Common/Modals/DeleteModal";
+
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { deleteUser, updateUser } from "@/actions/user";
 import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react";
-import { TrashIcon } from "lucide-react";
-import { User } from "@prisma/client";
-import { UserRole } from "@prisma/client";
+import { User, UserRole } from "@prisma/client";
+import { 
+  Trash2Icon, 
+  LogInIcon, 
+  MoreVerticalIcon,
+  UserCogIcon,
+  ShieldIcon
+} from "lucide-react";
+import DeleteModal from "@/components/Common/Modals/DeleteModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const arrowIcon = (
-	<svg
-		width='20'
-		height='20'
-		viewBox='0 0 16 16'
-		fill='none'
-		xmlns='http://www.w3.org/2000/svg'
-	>
-		<path
-			fillRule='evenodd'
-			clipRule='evenodd'
-			d='M2.95339 5.67461C3.1331 5.46495 3.44875 5.44067 3.65841 5.62038L7.99968 9.34147L12.341 5.62038C12.5506 5.44067 12.8663 5.46495 13.046 5.67461C13.2257 5.88428 13.2014 6.19993 12.9917 6.37964L8.32508 10.3796C8.13783 10.5401 7.86153 10.5401 7.67429 10.3796L3.00762 6.37964C2.79796 6.19993 2.77368 5.88428 2.95339 5.67461Z'
-			fill='white'
-		/>
-	</svg>
-);
+interface UserActionProps {
+  user: User;
+}
 
-export default function UserAction({ user }: { user: User }) {
-	const [showDeleteModal, setShowDeleteModal] = useState(false);
-	const [loading, setLoading] = useState(false);
-	const router = useRouter();
-	const { data: session } = useSession();
+export default function UserAction({ user }: UserActionProps) {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  // Only allow role changes to/from BUSINESS_OWNER and STAFF
+  const availableRoles = ['BUSINESS_OWNER', 'STAFF'];
+
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      await deleteUser(user);
+      toast.success(`${user.name || 'User'} deleted successfully!`);
+      router.refresh();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete user");
+    } finally {
+      setLoading(false);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const handleUpdateRole = async (newRole: UserRole) => {
+    try {
+      await updateUser({
+        email: user.email,
+        role: newRole,
+      });
+      toast.success(`${user.name}'s role updated successfully!`);
+      router.refresh();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update user role");
+    }
+  };
+
+  const handleImpersonateLogin = async () => {
+    try {
+      const result = await signIn("impersonate", {
+        adminEmail: session?.user?.email,
+        userEmail: user?.email,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(`Logged in as ${user.name || user.email}`);
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error("Failed to impersonate user");
+    }
+  };
+
+  // Don't show role change options for ADMIN users or if current user isn't an ADMIN
+  const canChangeRole = user.role !== 'ADMIN' && session?.user?.role === 'ADMIN';
   
-	// Only allow role changes to/from BUSINESS_OWNER and STAFF
-	const availableRoles = ['BUSINESS_OWNER', 'STAFF'];
+  // Only ADMIN users can impersonate
+  const canImpersonate = session?.user?.role === 'ADMIN';
   
-	const handleDelete = async () => {
-	  setLoading(true);
-	  try {
-		await deleteUser(user);
-		toast.success("User deleted successfully!");
-		router.refresh();
-	  } catch (error: any) {
-		toast.error(error.message);
-	  } finally {
-		setLoading(false);
-		setShowDeleteModal(false);
-	  }
-	};
-  
-	const handleUpdate = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-	  const newRole = e.target.value as UserRole;
-	  try {
-		await updateUser({
-		  email: user.email,
-		  role: newRole,
-		});
-		toast.success("User Role updated successfully!");
-		router.refresh();
-	  } catch (error: any) {
-		toast.error(error.message);
-	  }
-	};
-  
-	const handleImpersonateLogin = async () => {
-	  try {
-		const result = await signIn("impersonate", {
-		  adminEmail: session?.user?.email,
-		  userEmail: user?.email,
-		  redirect: false,
-		});
-  
-		if (result?.error) {
-		  toast.error(result.error);
-		} else {
-		  toast.success("Logged in successfully");
-		  router.refresh();
-		}
-	  } catch (error) {
-		toast.error("Failed to impersonate user");
-	  }
-	};
-  
-	return (
-		<div className="flex items-center justify-end gap-2">
-		  {session?.user?.role === 'ADMIN' && (
-			<button
-			  onClick={handleImpersonateLogin}
-			  className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90"
-			>
-			  Login As
-			</button>
-		  )}
-	
-		  {user.role !== 'ADMIN' && (
-			<button
-			  onClick={() => setShowDeleteModal(true)}
-			  className="inline-flex items-center justify-center w-8 h-8 text-red-600 bg-red-100 rounded-lg hover:bg-red-200"
-			>
-			  <TrashIcon className="w-4 h-4" />
-			</button>
-		  )}
-	
-		  <DeleteModal
-			showDeleteModal={showDeleteModal}
-			setShowDeleteModal={setShowDeleteModal}
-			deleteText={`Delete ${user.name || 'User'}`}
-			handleDelete={handleDelete}
-			loading={loading}
-		  />
-		</div>
-	  );
+  // Only non-ADMIN users can be deleted
+  const canDelete = user.role !== 'ADMIN';
+
+  if (!canChangeRole && !canImpersonate && !canDelete) {
+    return null;
   }
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="focus:outline-none">
+          <div className="inline-flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <MoreVerticalIcon className="w-4 h-4" />
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          {canImpersonate && (
+            <DropdownMenuItem onClick={handleImpersonateLogin} className="cursor-pointer flex items-center gap-2">
+              <LogInIcon className="w-4 h-4 text-primary" />
+              <span>Login as {user.name || 'User'}</span>
+            </DropdownMenuItem>
+          )}
+
+          {canChangeRole && (
+            <>
+              {canImpersonate && <DropdownMenuSeparator />}
+              
+              <div className="px-2 py-1.5 text-sm text-gray-500 dark:text-gray-400">
+                Change Role
+              </div>
+              
+              {availableRoles.map((role) => (
+                <DropdownMenuItem 
+                  key={role}
+                  onClick={() => handleUpdateRole(role as UserRole)}
+                  disabled={user.role === role}
+                  className={`cursor-pointer flex items-center gap-2 ${user.role === role ? 'bg-gray-100 dark:bg-gray-800' : ''}`}
+                >
+                  {role === 'BUSINESS_OWNER' ? (
+                    <UserCogIcon className="w-4 h-4 text-blue-600" />
+                  ) : (
+                    <ShieldIcon className="w-4 h-4 text-green-600" />
+                  )}
+                  <span>{role === 'BUSINESS_OWNER' ? 'Business Owner' : 'Staff Member'}</span>
+                  {user.role === role && (
+                    <span className="ml-auto text-primary">●</span>
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </>
+          )}
+
+          {canDelete && (
+            <>
+              {(canImpersonate || canChangeRole) && <DropdownMenuSeparator />}
+              
+              <DropdownMenuItem 
+                onClick={() => setShowDeleteModal(true)} 
+                className="cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 dark:hover:text-red-400 flex items-center gap-2"
+              >
+                <Trash2Icon className="w-4 h-4" />
+                <span>Delete User</span>
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <DeleteModal
+        showDeleteModal={showDeleteModal}
+        setShowDeleteModal={setShowDeleteModal}
+        deleteText={`Delete ${user.name || 'User'}`}
+        handleDelete={handleDelete}
+        loading={loading}
+        message={`Are you sure you want to delete ${user.name || user.email}? This action cannot be undone.`}
+      />
+    </>
+  );
+}
