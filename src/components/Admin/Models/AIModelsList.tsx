@@ -92,7 +92,7 @@ const AIModelsList = () => {
   const fetchModels = async () => {
     setLoadingModels(true);
     try {
-      const response = await fetch("/api/admin/models/ai/all");
+      const response = await fetch("/api/admin/models/ai");
       if (!response.ok) {
         throw new Error("Failed to fetch AI models");
       }
