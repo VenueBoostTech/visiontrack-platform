@@ -401,8 +401,8 @@ export const adminSidebarData: Sidebar[] = [
 	  children: [
 		{
 		  id: "4-1",
-		  title: "Detection Models",
-		  path: "/admin/models/detection",
+		  title: "AI Models",
+		  path: "/admin/models/ai",
 		  icon: <Cpu className="w-4 h-4" />
 		},
 		{
