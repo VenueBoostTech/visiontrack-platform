@@ -1,7 +1,17 @@
-import { PrismaClient, AIModelType } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
+// Using CommonJS require syntax
+const { PrismaClient } = require('@prisma/client');
+const { v4: uuidv4 } = require('uuid');
 
 const prisma = new PrismaClient();
+const AIModelType = {
+  CUSTOMER_TRAFFIC: 'CUSTOMER_TRAFFIC',
+  FOOTPATH_ANALYSIS: 'FOOTPATH_ANALYSIS',
+  DEMOGRAPHICS: 'DEMOGRAPHICS',
+  BEHAVIOR_ANALYSIS: 'BEHAVIOR_ANALYSIS',
+  HEATMAP: 'HEATMAP',
+  CONVERSION_TRACKING: 'CONVERSION_TRACKING',
+  CUSTOMER_COUNTER: 'CUSTOMER_COUNTER'
+};
 
 async function seedAIModels() {
   console.log('Seeding AI Models...');

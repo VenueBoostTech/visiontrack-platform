@@ -18,7 +18,7 @@ function BusinessStats({ counts }: { counts: {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Total Businesses</p>
@@ -32,7 +32,7 @@ function BusinessStats({ counts }: { counts: {
       </Card>
       
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Active Businesses</p>
@@ -46,7 +46,7 @@ function BusinessStats({ counts }: { counts: {
       </Card>
       
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">VT Connected</p>
@@ -60,7 +60,7 @@ function BusinessStats({ counts }: { counts: {
       </Card>
       
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Total Staff</p>
