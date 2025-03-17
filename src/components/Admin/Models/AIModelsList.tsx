@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { 
   Cpu, 
   RefreshCw, 
+  Edit,
+  Plus,
+  Trash,
   Check, 
   X, 
   MoreHorizontal, 
@@ -15,7 +18,8 @@ import {
   Thermometer, 
   Route, 
   Users, 
-  Calculator 
+  Calculator,
+  Buildings
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -31,7 +35,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "react-hot-toast";
 import Modal from "@/components/Common/Modal";
-import AIModelDetailsModal from "./AIModelDetailsModal";
+import AIModelDetailsModalAdmin from "./AIModelDetailsModalAdmin";
+import AIModelFormModal from "./AIModelFormModal";
+import DeleteModal from "@/components/Common/Modals/DeleteModal";
 
 // Define AI model types and their metadata
 const modelIcons = {
@@ -57,104 +63,59 @@ interface AIModel {
   updatedAt: string;
 }
 
-interface BusinessAIModel {
-  id: string;
+interface BusinessCount {
   modelId: string;
-  aiModel: AIModel;
-  enabled: boolean;
-  configuration: any;
-  cameras: any[];
+  count: number;
 }
 
 const AIModelsList = () => {
   const [models, setModels] = useState<AIModel[]>([]);
-  const [businessModels, setBusinessModels] = useState<BusinessAIModel[]>([]);
+  const [businessCounts, setBusinessCounts] = useState<BusinessCount[]>([]);
   const [loadingModels, setLoadingModels] = useState(true);
-  const [loadingBusinessModels, setLoadingBusinessModels] = useState(true);
-  const [activeTab, setActiveTab] = useState("available");
+  const [activeTab, setActiveTab] = useState("all");
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedModel, setSelectedModel] = useState<AIModel | null>(null);
-  const [toggleLoading, setToggleLoading] = useState<Record<string, boolean>>({});
+  const [isEditing, setIsEditing] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+
+  // Filter models
+  const activeModels = models.filter(model => model.active);
+  const inactiveModels = models.filter(model => !model.active);
 
   useEffect(() => {
-    // Fetch available AI models
-    const fetchModels = async () => {
-      setLoadingModels(true);
-      try {
-        const response = await fetch("/api/admin/models/ai");
-        if (!response.ok) {
-          throw new Error("Failed to fetch AI models");
-        }
-        const data = await response.json();
-        setModels(data.models);
-      } catch (error) {
-        console.error("Error fetching AI models:", error);
-        toast.error("Failed to load AI models");
-      } finally {
-        setLoadingModels(false);
-      }
-    };
-
-    // Fetch enabled AI models for the current business
-    const fetchBusinessModels = async () => {
-      setLoadingBusinessModels(true);
-      try {
-        const response = await fetch("/api/admin/models/ai/business");
-        if (!response.ok) {
-          throw new Error("Failed to fetch business AI models");
-        }
-        const data = await response.json();
-        setBusinessModels(data.businessModels);
-      } catch (error) {
-        console.error("Error fetching business AI models:", error);
-        toast.error("Failed to load business AI models");
-      } finally {
-        setLoadingBusinessModels(false);
-      }
-    };
-
     fetchModels();
-    fetchBusinessModels();
+    fetchBusinessCounts();
   }, []);
 
-  const handleToggleModel = async (modelId: string, currentEnabled: boolean) => {
-    setToggleLoading({ ...toggleLoading, [modelId]: true });
-    
+  const fetchModels = async () => {
+    setLoadingModels(true);
     try {
-      const response = await fetch(`/api/admin/models/ai/business/${modelId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          enabled: !currentEnabled,
-        }),
-      });
-
+      const response = await fetch("/api/admin/models/ai/all");
       if (!response.ok) {
-        throw new Error("Failed to update AI model status");
+        throw new Error("Failed to fetch AI models");
       }
-
       const data = await response.json();
-      
-      // If this is enabling a model for the first time
-      if (!currentEnabled && !businessModels.find(bm => bm.modelId === modelId)) {
-        setBusinessModels([...businessModels, data.businessModel]);
-        toast.success("AI model enabled successfully");
-      } else {
-        // Update existing business model
-        setBusinessModels(
-          businessModels.map(bm => 
-            bm.modelId === modelId ? { ...bm, enabled: !currentEnabled } : bm
-          )
-        );
-        toast.success(currentEnabled ? "AI model disabled successfully" : "AI model enabled successfully");
-      }
+      setModels(data.models);
     } catch (error) {
-      console.error("Error toggling AI model:", error);
-      toast.error("Failed to update AI model status");
+      console.error("Error fetching AI models:", error);
+      toast.error("Failed to load AI models");
     } finally {
-      setToggleLoading({ ...toggleLoading, [modelId]: false });
+      setLoadingModels(false);
+    }
+  };
+
+  const fetchBusinessCounts = async () => {
+    try {
+      const response = await fetch("/api/admin/models/ai/business-counts");
+      if (!response.ok) {
+        throw new Error("Failed to fetch business counts");
+      }
+      const data = await response.json();
+      setBusinessCounts(data.businessCounts);
+    } catch (error) {
+      console.error("Error fetching business counts:", error);
     }
   };
 
@@ -163,39 +124,154 @@ const AIModelsList = () => {
     setShowDetailsModal(true);
   };
 
-  const getModelStatus = (modelId: string) => {
-    const businessModel = businessModels.find(bm => bm.modelId === modelId);
-    return businessModel ? businessModel.enabled : false;
+  const handleEditModel = (model: AIModel) => {
+    setSelectedModel(model);
+    setIsEditing(true);
+    setShowFormModal(true);
   };
 
-  const isModelLoading = (modelId: string) => {
-    return toggleLoading[modelId] || false;
+  const handleAddNewModel = () => {
+    setSelectedModel(null);
+    setIsEditing(false);
+    setShowFormModal(true);
   };
 
-  // Group models by status (enabled/disabled)
-  const enabledModels = models.filter(model => getModelStatus(model.id));
-  const disabledModels = models.filter(model => !getModelStatus(model.id));
+  const handleDeleteModel = (model: AIModel) => {
+    setSelectedModel(model);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteModel = async () => {
+    if (!selectedModel) return;
+    
+    setActionLoading(true);
+    try {
+      const response = await fetch(`/api/admin/models/ai/${selectedModel.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to delete model");
+      }
+      
+      toast.success("AI model deleted successfully");
+      setModels(models.filter(m => m.id !== selectedModel.id));
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error("Error deleting model:", error);
+      toast.error("Failed to delete AI model");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleToggleActive = async (model: AIModel) => {
+    setActionLoading(true);
+    try {
+      const response = await fetch(`/api/admin/models/ai/${model.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          active: !model.active,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to update model status");
+      }
+      
+      const data = await response.json();
+      setModels(models.map(m => m.id === model.id ? data.model : m));
+      toast.success(`AI model ${model.active ? 'deactivated' : 'activated'} successfully`);
+    } catch (error) {
+      console.error("Error toggling model status:", error);
+      toast.error("Failed to update AI model status");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleSaveModel = async (formData: any) => {
+    setActionLoading(true);
+    try {
+      if (isEditing && selectedModel) {
+        // Update existing model
+        const response = await fetch(`/api/admin/models/ai/${selectedModel.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+        
+        if (!response.ok) {
+          throw new Error("Failed to update model");
+        }
+        
+        const data = await response.json();
+        setModels(models.map(m => m.id === selectedModel.id ? data.model : m));
+        toast.success("AI model updated successfully");
+      } else {
+        // Create new model
+        const response = await fetch('/api/admin/models/ai', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+        
+        if (!response.ok) {
+          throw new Error("Failed to create model");
+        }
+        
+        const data = await response.json();
+        setModels([...models, data.model]);
+        toast.success("AI model created successfully");
+      }
+      
+      setShowFormModal(false);
+    } catch (error) {
+      console.error("Error saving model:", error);
+      toast.error(`Failed to ${isEditing ? 'update' : 'create'} AI model`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const getBusinessCount = (modelId: string) => {
+    const count = businessCounts.find(bc => bc.modelId === modelId);
+    return count ? count.count : 0;
+  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">AI Models Management</h1>
-        <p className="text-muted-foreground">
-          Configure and manage AI models for computer vision analysis across your properties
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">AI Models Administration</h1>
+          <p className="text-muted-foreground">
+            Manage global AI models available to all businesses in the platform
+          </p>
+        </div>
+        <Button onClick={handleAddNewModel} className="bg-primary text-white">
+          <Plus className="h-4 w-4 mr-2" />
+          Add New Model
+        </Button>
       </div>
 
-      {/* AI Models Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Stats Dashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total AI Models</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Models</CardTitle>
             <Cpu className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{models.length}</div>
-            <p className="text-xs text-muted-foreground">Available models for configuration</p>
+            <p className="text-xs text-muted-foreground">Available in the platform</p>
           </CardContent>
         </Card>
         <Card>
@@ -204,8 +280,8 @@ const AIModelsList = () => {
             <Check className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{enabledModels.length}</div>
-            <p className="text-xs text-muted-foreground">Currently processing data</p>
+            <div className="text-2xl font-bold">{activeModels.length}</div>
+            <p className="text-xs text-muted-foreground">Available to businesses</p>
           </CardContent>
         </Card>
         <Card>
@@ -214,8 +290,20 @@ const AIModelsList = () => {
             <X className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{disabledModels.length}</div>
-            <p className="text-xs text-muted-foreground">Available but not in use</p>
+            <div className="text-2xl font-bold">{inactiveModels.length}</div>
+            <p className="text-xs text-muted-foreground">Hidden from businesses</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Model Usage</CardTitle>
+            <Buildings className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {businessCounts.reduce((sum, item) => sum + item.count, 0)}
+            </div>
+            <p className="text-xs text-muted-foreground">Business-model associations</p>
           </CardContent>
         </Card>
       </div>
@@ -226,35 +314,35 @@ const AIModelsList = () => {
           <CardTitle>AI Models</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <Tabs defaultValue="available" value={activeTab} onValueChange={setActiveTab}>
+          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="w-full justify-start px-6 pt-2 border-b">
-              <TabsTrigger value="available">
-                All Available Models
+              <TabsTrigger value="all">
+                All Models
                 <span className="ml-2 bg-gray-200 text-gray-800 text-xs px-1.5 py-0.5 rounded-full">
                   {models.length}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="enabled">
-                Enabled
+              <TabsTrigger value="active">
+                Active
                 <span className="ml-2 bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded-full">
-                  {enabledModels.length}
+                  {activeModels.length}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="disabled">
-                Disabled
+              <TabsTrigger value="inactive">
+                Inactive
                 <span className="ml-2 bg-gray-200 text-gray-800 text-xs px-1.5 py-0.5 rounded-full">
-                  {disabledModels.length}
+                  {inactiveModels.length}
                 </span>
               </TabsTrigger>
             </TabsList>
 
-            {/* All Models Content */}
-            <TabsContent value="available" className="p-0">
+            {/* All Models Tab */}
+            <TabsContent value="all" className="p-0">
               {loadingModels ? (
                 <div className="flex justify-center items-center h-64">
                   <RefreshCw className="h-8 w-8 animate-spin text-primary" />
                 </div>
-              ) : (
+              ) : models.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
@@ -263,11 +351,139 @@ const AIModelsList = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Businesses</th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                       {models.map((model) => (
+                        <tr key={model.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className={`p-2 rounded-lg ${model.active ? 'bg-primary/10' : 'bg-gray-100'} mr-3`}>
+                                {modelIcons[model.type as keyof typeof modelIcons] || <Cpu className="w-5 h-5" />}
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900 dark:text-white">
+                                  {model.name}
+                                </div>
+                                <div className="text-sm text-gray-500 line-clamp-1">
+                                  {model.description}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <Badge variant="outline" className="capitalize">
+                              {model.type.toLowerCase().replace(/_/g, ' ')}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            v{model.version}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {model.active ? (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <Check className="w-3.5 h-3.5 mr-1" />
+                                Active
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                <X className="w-3.5 h-3.5 mr-1" />
+                                Inactive
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <Badge variant={getBusinessCount(model.id) > 0 ? "default" : "secondary"}>
+                              {getBusinessCount(model.id)} {getBusinessCount(model.id) === 1 ? 'business' : 'businesses'}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleViewDetails(model)}>
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  <span>View Details</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleEditModel(model)}>
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  <span>Edit Model</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  onClick={() => handleToggleActive(model)}
+                                  disabled={actionLoading}
+                                >
+                                  {model.active ? (
+                                    <>
+                                      <X className="mr-2 h-4 w-4" />
+                                      <span>Deactivate</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Check className="mr-2 h-4 w-4" />
+                                      <span>Activate</span>
+                                    </>
+                                  )}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem 
+                                  className="text-red-600"
+                                  onClick={() => handleDeleteModel(model)}
+                                  disabled={getBusinessCount(model.id) > 0}
+                                >
+                                  <Trash className="mr-2 h-4 w-4" />
+                                  <span>Delete</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="py-12 text-center text-gray-500">
+                  <Cpu className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+                  <p className="text-lg font-medium">No AI models found</p>
+                  <p className="text-sm">Create your first AI model to get started</p>
+                  <Button 
+                    onClick={handleAddNewModel} 
+                    className="mt-4 bg-primary text-white"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add New Model
+                  </Button>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Active Models Tab */}
+            <TabsContent value="active" className="p-0">
+              {loadingModels ? (
+                <div className="flex justify-center items-center h-64">
+                  <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : activeModels.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Businesses</th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                      {activeModels.map((model) => (
                         <tr key={model.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
@@ -292,22 +508,10 @@ const AIModelsList = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             v{model.version}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <Switch
-                                checked={getModelStatus(model.id)}
-                                disabled={isModelLoading(model.id)}
-                                onCheckedChange={() => handleToggleModel(model.id, getModelStatus(model.id))}
-                                className="mr-2"
-                              />
-                              {isModelLoading(model.id) ? (
-                                <RefreshCw className="h-4 w-4 animate-spin text-primary" />
-                              ) : getModelStatus(model.id) ? (
-                                <span className="text-sm font-medium text-green-600">Active</span>
-                              ) : (
-                                <span className="text-sm font-medium text-gray-500">Inactive</span>
-                              )}
-                            </div>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <Badge variant={getBusinessCount(model.id) > 0 ? "default" : "secondary"}>
+                              {getBusinessCount(model.id)} {getBusinessCount(model.id) === 1 ? 'business' : 'businesses'}
+                            </Badge>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
                             <DropdownMenu>
@@ -321,15 +525,17 @@ const AIModelsList = () => {
                                   <Eye className="mr-2 h-4 w-4" />
                                   <span>View Details</span>
                                 </DropdownMenuItem>
-                                {getModelStatus(model.id) && (
-                                  <>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem>
-                                      <Settings className="mr-2 h-4 w-4" />
-                                      <span>Configure</span>
-                                    </DropdownMenuItem>
-                                  </>
-                                )}
+                                <DropdownMenuItem onClick={() => handleEditModel(model)}>
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  <span>Edit Model</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  onClick={() => handleToggleActive(model)}
+                                  disabled={actionLoading}
+                                >
+                                  <X className="mr-2 h-4 w-4" />
+                                  <span>Deactivate</span>
+                                </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </td>
@@ -338,107 +544,22 @@ const AIModelsList = () => {
                     </tbody>
                   </table>
                 </div>
-              )}
-            </TabsContent>
-
-            {/* Enabled Models Content */}
-            <TabsContent value="enabled" className="p-0">
-              {loadingModels || loadingBusinessModels ? (
-                <div className="flex justify-center items-center h-64">
-                  <RefreshCw className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              ) : enabledModels.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cameras</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {enabledModels.map((model) => {
-                        const businessModel = businessModels.find(bm => bm.modelId === model.id);
-                        return (
-                          <tr key={model.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                <div className="p-2 rounded-lg bg-primary/10 mr-3">
-                                  {modelIcons[model.type as keyof typeof modelIcons] || <Cpu className="w-5 h-5" />}
-                                </div>
-                                <div>
-                                  <div className="font-medium text-gray-900 dark:text-white">
-                                    {model.name}
-                                  </div>
-                                  <div className="text-sm text-gray-500 line-clamp-1">
-                                    {model.description}
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <Badge variant="outline" className="capitalize">
-                                {model.type.toLowerCase().replace(/_/g, ' ')}
-                              </Badge>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              v{model.version}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              {businessModel?.cameras?.length || 0} cameras
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem onClick={() => handleViewDetails(model)}>
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    <span>View Details</span>
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Settings className="mr-2 h-4 w-4" />
-                                    <span>Configure</span>
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem
-                                    className="text-red-600"
-                                    onClick={() => handleToggleModel(model.id, true)}
-                                  >
-                                    <X className="mr-2 h-4 w-4" />
-                                    <span>Disable</span>
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
               ) : (
                 <div className="py-12 text-center text-gray-500">
                   <Info className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                  <p className="text-lg font-medium">No enabled models</p>
-                  <p className="text-sm">Enable AI models to start analyzing your camera feeds</p>
+                  <p className="text-lg font-medium">No active models</p>
+                  <p className="text-sm">Activate models to make them available to businesses</p>
                 </div>
               )}
             </TabsContent>
 
-            {/* Disabled Models Content */}
-            <TabsContent value="disabled" className="p-0">
+            {/* Inactive Models Tab */}
+            <TabsContent value="inactive" className="p-0">
               {loadingModels ? (
                 <div className="flex justify-center items-center h-64">
                   <RefreshCw className="h-8 w-8 animate-spin text-primary" />
                 </div>
-              ) : disabledModels.length > 0 ? (
+              ) : inactiveModels.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
@@ -451,7 +572,7 @@ const AIModelsList = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {disabledModels.map((model) => (
+                      {inactiveModels.map((model) => (
                         <tr key={model.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
@@ -488,16 +609,16 @@ const AIModelsList = () => {
                               </Button>
                               <Button 
                                 size="sm" 
-                                onClick={() => handleToggleModel(model.id, false)}
-                                disabled={isModelLoading(model.id)}
+                                onClick={() => handleToggleActive(model)}
+                                disabled={actionLoading}
                                 className="bg-primary text-white hover:bg-primary/90"
                               >
-                                {isModelLoading(model.id) ? (
+                                {actionLoading ? (
                                   <RefreshCw className="h-4 w-4 animate-spin mr-1" />
                                 ) : (
                                   <Check className="h-4 w-4 mr-1" />
                                 )}
-                                Enable
+                                Activate
                               </Button>
                             </div>
                           </td>
@@ -509,8 +630,8 @@ const AIModelsList = () => {
               ) : (
                 <div className="py-12 text-center text-gray-500">
                   <Check className="h-12 w-12 mx-auto text-green-500 mb-3" />
-                  <p className="text-lg font-medium">All models are enabled</p>
-                  <p className="text-sm">You're utilizing all available AI models</p>
+                  <p className="text-lg font-medium">All models are active</p>
+                  <p className="text-sm">No inactive models found</p>
                 </div>
               )}
             </TabsContent>
@@ -520,17 +641,48 @@ const AIModelsList = () => {
 
       {/* Model Details Modal */}
       {selectedModel && (
-        <AIModelDetailsModal
+        <AIModelDetailsModalAdmin
           isOpen={showDetailsModal}
           onClose={() => setShowDetailsModal(false)}
           model={selectedModel}
-          isEnabled={getModelStatus(selectedModel.id)}
-          onToggleStatus={() => handleToggleModel(selectedModel.id, getModelStatus(selectedModel.id))}
-          isLoading={isModelLoading(selectedModel.id)}
+          businessCount={getBusinessCount(selectedModel.id)}
+          onEdit={() => {
+            setShowDetailsModal(false);
+            handleEditModel(selectedModel);
+          }}
+          onToggleActive={() => {
+            setShowDetailsModal(false);
+            handleToggleActive(selectedModel);
+          }}
+          onDelete={() => {
+            setShowDetailsModal(false);
+            handleDeleteModel(selectedModel);
+          }}
+          canDelete={getBusinessCount(selectedModel.id) === 0}
         />
       )}
+
+      {/* Add/Edit Model Form Modal */}
+      <AIModelFormModal
+        isOpen={showFormModal}
+        onClose={() => setShowFormModal(false)}
+        initialData={selectedModel}
+        isEditing={isEditing}
+        onSubmit={handleSaveModel}
+        isLoading={actionLoading}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteModal
+        showDeleteModal={showDeleteModal}
+        setShowDeleteModal={setShowDeleteModal}
+        deleteText={`Delete ${selectedModel?.name}`}
+        message={`Are you sure you want to delete the "${selectedModel?.name}" AI model? This action cannot be undone.`}
+        handleDelete={confirmDeleteModel}
+        loading={actionLoading}
+      />
     </div>
   );
 };
 
-export default AIModelsList;
+export default Admin
