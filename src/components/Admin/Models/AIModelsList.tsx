@@ -251,8 +251,8 @@ const AIModelsList = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">AI Models Administration</h1>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl text-gray-700 font-bold">AI Models Administration</h2>
+          <p className="text-gray-700 mt-1">
             Manage global AI models available to all businesses in the platform
           </p>
         </div>
