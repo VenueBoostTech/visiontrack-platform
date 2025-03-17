@@ -7,7 +7,7 @@
 	},
 	"scripts": {
 		"dev": "next dev",
-		"build": "prisma generate && prisma db push && next build",
+		"build": "prisma generate && prisma db push && npx prisma db seed && next build",
 		"start": "next start",
 		"stripe:listen": "stripe listen --forward-to http://localhost:3000/api/stripe/webhook",
 		"check-format": "prettier --check .",
@@ -20,6 +20,9 @@
 		"db:seed": "ts-node prisma/seeds/initial-setup.ts",
 		"test:jobs": "ts-node src/scripts/test-jobs.ts"
 	},
+	"prisma": {
+		"seed": "ts-node prisma/ai-model-seed.ts"
+	  },
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.515.0",
 		"@aws-sdk/s3-request-presigner": "^3.515.0",
