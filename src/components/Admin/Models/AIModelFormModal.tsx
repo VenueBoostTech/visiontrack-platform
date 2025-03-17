@@ -7,14 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import InputSelect from "@/components/Common/InputSelect";
 
 interface AIModel {
   id: string;
@@ -125,10 +119,10 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
     });
   };
 
-  const handleSelectChange = (value: string) => {
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData({
       ...formData,
-      type: value
+      type: e.target.value
     });
   };
 
@@ -237,23 +231,15 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="type">Model Type</Label>
-              <Select
+              {/* Replace Select with InputSelect */}
+              <InputSelect
                 name="type"
+                label="Model Type"
+                options={modelTypes}
                 value={formData.type}
-                onValueChange={handleSelectChange}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a model type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {modelTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                onChange={handleSelectChange}
+                required
+              />
             </div>
 
             <div>
