@@ -31,6 +31,7 @@ import Modal from "@/components/Common/Modal";
 import AIModelDetailsModalAdmin from "./AIModelDetailsModalAdmin";
 import AIModelFormModal from "./AIModelFormModal";
 import DeleteModal from "@/components/Common/Modals/DeleteModal";
+import AreYouSureModal from "@/components/Common/Modals/AreYouSureModal";
 import InputSelect from "@/components/Common/InputSelect";
 
 // Define AI model types and their metadata
@@ -70,6 +71,7 @@ const AIModelsList = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [selectedModel, setSelectedModel] = useState<AIModel | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
@@ -150,6 +152,12 @@ const AIModelsList = () => {
     setShowDeleteModal(true);
   };
 
+  // Handle deactivation confirmation
+  const handleDeactivateModel = (model: AIModel) => {
+    setSelectedModel(model);
+    setShowDeactivateModal(true);
+  };
+
   const confirmDeleteModel = async () => {
     if (!selectedModel) return;
     
@@ -175,6 +183,18 @@ const AIModelsList = () => {
   };
 
   const handleToggleActive = async (model: AIModel) => {
+    // If we're deactivating an active model, show the confirmation modal
+    if (model.active) {
+      handleDeactivateModel(model);
+      return;
+    }
+    
+    // Otherwise, proceed with activation directly (no confirmation needed)
+    await toggleModelActiveStatus(model);
+  };
+
+  // The actual function to toggle model status
+  const toggleModelActiveStatus = async (model: AIModel) => {
     setActionLoading(true);
     try {
       const response = await fetch(`/api/admin/models/ai/${model.id}`, {
@@ -194,6 +214,9 @@ const AIModelsList = () => {
       const data = await response.json();
       setModels(models.map(m => m.id === model.id ? data.model : m));
       toast.success(`AI model ${model.active ? 'deactivated' : 'activated'} successfully`);
+      
+      // Close the deactivate modal if it was open
+      setShowDeactivateModal(false);
     } catch (error) {
       console.error("Error toggling model status:", error);
       toast.error("Failed to update AI model status");
@@ -685,8 +708,21 @@ const AIModelsList = () => {
         handleDelete={confirmDeleteModel}
         loading={actionLoading}
       />
-    </div>
+
+     {/* Deactivate Confirmation Modal */}
+{selectedModel && (
+  <AreYouSureModal
+    showAreYouSureModal={showDeactivateModal}
+    setShowAreYouSureModal={setShowDeactivateModal}
+    areYouSureText={`Deactivate ${selectedModel.name}`}
+    message={`Are you sure you want to deactivate "${selectedModel.name}"? This model will no longer be available to businesses in the platform.`}
+    handleAreYouSure={() => toggleModelActiveStatus(selectedModel)}
+    loading={actionLoading}
+  />
+)}
+
+</div>
   );
 };
 
-export default AIModelsList
+export default AIModelsList;
