@@ -221,7 +221,7 @@ const AIModelDetailsModalAdmin: React.FC<AIModelDetailsModalAdminProps> = ({
               Edit
             </Button>
             
-            <Button onClick={onToggleActive}>
+            <Button className="text-white" onClick={onToggleActive}>
               {model.active ? (
                 <>
                   <X className="h-4 w-4 mr-2" />
