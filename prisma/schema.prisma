@@ -154,6 +154,8 @@ model Business {
   notificationChannels NotificationChannel[]
   preferences          BusinessPreferences?
   vtCredentials        VTApiCredential?
+
+  aiModels BusinessAIModel[]
 }
 
 model BusinessStaff {
@@ -258,52 +260,50 @@ model Store {
   zones           Zone[]
 }
 
-
 model AIModel {
-  id              String         @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  description     String
-  type            AIModelType
-  version         String
-  active          Boolean        @default(true)
-  capabilities    Json
-  configOptions   Json?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String
+  type          AIModelType
+  version       String
+  active        Boolean     @default(true)
+  capabilities  Json
+  configOptions Json?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
   // Relations
-  businessModels  BusinessAIModel[]
+  businessModels BusinessAIModel[]
 }
 
 model BusinessAIModel {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  businessId      String    @db.ObjectId
-  business        Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  modelId         String    @db.ObjectId
-  aiModel         AIModel   @relation(fields: [modelId], references: [id], onDelete: Cascade)
-  enabled         Boolean   @default(true)
-  configuration   Json?
-  cameras         BusinessAIModelCamera[]
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  
+  id            String                  @id @default(auto()) @map("_id") @db.ObjectId
+  businessId    String                  @db.ObjectId
+  business      Business                @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  modelId       String                  @db.ObjectId
+  aiModel       AIModel                 @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  enabled       Boolean                 @default(true)
+  configuration Json?
+  cameras       BusinessAIModelCamera[]
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
   @@unique([businessId, modelId])
 }
 
 model BusinessAIModelCamera {
-  id                String         @id @default(auto()) @map("_id") @db.ObjectId
-  businessAIModelId String         @db.ObjectId
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  businessAIModelId String          @db.ObjectId
   businessAIModel   BusinessAIModel @relation(fields: [businessAIModelId], references: [id], onDelete: Cascade)
-  cameraId          String         @db.ObjectId
-  camera            Camera         @relation(fields: [cameraId], references: [id], onDelete: Cascade)
-  enabled           Boolean        @default(true)
+  cameraId          String          @db.ObjectId
+  camera            Camera          @relation(fields: [cameraId], references: [id], onDelete: Cascade)
+  enabled           Boolean         @default(true)
   configuration     Json?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
   @@unique([businessAIModelId, cameraId])
 }
-
 
 model Camera {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
@@ -327,7 +327,7 @@ model Camera {
   businessId String? @db.ObjectId
   vtId       String?
 
-  aiModels   BusinessAIModelCamera[]
+  aiModels BusinessAIModelCamera[]
 }
 
 model AlertRule {
@@ -451,9 +451,8 @@ enum AIModelType {
   CUSTOMER_TRAFFIC
   FOOTPATH_ANALYSIS
   DEMOGRAPHICS
-  BEHAVIOR_ANALYSIS 
+  BEHAVIOR_ANALYSIS
   HEATMAP
   CONVERSION_TRACKING
   CUSTOMER_COUNTER
 }
-
