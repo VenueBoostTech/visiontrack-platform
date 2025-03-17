@@ -1,86 +1,213 @@
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, AIModelType } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+"use client";
 
-const prisma = new PrismaClient();
+import React from "react";
+import {
+  Cpu,
+  RefreshCw,
+  Check,
+  X,
+  Calendar,
+  Clock,
+  Code,
+  Settings,
+  Users,
+  Route,
+  BarChart2, 
+  Thermometer,
+  Calculator,
+  UserCheck
+} from "lucide-react";
+import Modal from "@/components/Common/Modal";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 
-export async function GET(req: NextRequest) {
-  try {
-    // Check auth
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+// Define AI model types and their metadata
+const modelIcons = {
+  CUSTOMER_TRAFFIC: <Users className="w-5 h-5" />,
+  FOOTPATH_ANALYSIS: <Route className="w-5 h-5" />,
+  DEMOGRAPHICS: <UserCheck className="w-5 h-5" />,
+  BEHAVIOR_ANALYSIS: <BarChart2 className="w-5 h-5" />,
+  HEATMAP: <Thermometer className="w-5 h-5" />,
+  CONVERSION_TRACKING: <Calculator className="w-5 h-5" />,
+  CUSTOMER_COUNTER: <Users className="w-5 h-5" />
+};
 
-    // Get all AI models
-    const models = await prisma.aIModel.findMany({
-      where: {
-        active: true
-      },
-      orderBy: {
-        name: 'asc'
-      }
-    });
-
-    return NextResponse.json({ models });
-  } catch (error) {
-    console.error("Error fetching AI models:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch AI models" },
-      { status: 500 }
-    );
-  }
+interface AIModel {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  version: string;
+  active: boolean;
+  capabilities: any;
+  configOptions: any;
+  createdAt: string;
+  updatedAt: string;
 }
 
-// Create a new AI model (Admin only)
-export async function POST(req: NextRequest) {
-  try {
-    // Check auth
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const data = await req.json();
-    
-    // Validate the request
-    const { name, description, type, version, capabilities, configOptions } = data;
-    
-    if (!name || !description || !type || !version) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
-
-    // Check if the type is valid
-    if (!Object.values(AIModelType).includes(type as AIModelType)) {
-      return NextResponse.json(
-        { error: "Invalid model type" },
-        { status: 400 }
-      );
-    }
-
-    // Create the AI model
-    const newModel = await prisma.aIModel.create({
-      data: {
-        name,
-        description,
-        type: type as AIModelType,
-        version,
-        active: true,
-        capabilities: capabilities || {},
-        configOptions: configOptions || {}
-      }
-    });
-
-    return NextResponse.json({ model: newModel }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating AI model:", error);
-    return NextResponse.json(
-      { error: "Failed to create AI model" },
-      { status: 500 }
-    );
-  }
+interface AIModelDetailsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  model: AIModel;
+  isEnabled: boolean;
+  onToggleStatus: () => void;
+  isLoading: boolean;
 }
+
+const AIModelDetailsModal: React.FC<AIModelDetailsModalProps> = ({
+  isOpen,
+  onClose,
+  model,
+  isEnabled,
+  onToggleStatus,
+  isLoading
+}) => {
+  // Format capabilities for display
+  const formatCapabilities = () => {
+    if (!model.capabilities?.features) return "No capabilities data available";
+    
+    return (
+      <div className="space-y-2">
+        {model.capabilities.features.map((feature: string, index: number) => (
+          <div key={index} className="flex items-start">
+            <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
+            <span>{feature}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Format metrics for display
+  const formatMetrics = () => {
+    if (!model.capabilities?.metrics) return "No metrics data available";
+    
+    return (
+      <div className="space-y-2">
+        {model.capabilities.metrics.map((metric: string, index: number) => (
+          <Badge key={index} variant="outline" className="mr-2 mb-2">
+            {metric}
+          </Badge>
+        ))}
+      </div>
+    );
+  };
+
+  // Format dates
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  };
+
+  return (
+    <Modal
+      title="AI Model Details"
+      description="View detailed information about this AI model and its capabilities"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <div className="space-y-6">
+        {/* Model header */}
+        <div className="flex items-start justify-between">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-primary/10 mr-4">
+              {modelIcons[model.type as keyof typeof modelIcons] || <Cpu className="w-6 h-6" />}
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold">{model.name}</h3>
+              <div className="flex items-center mt-1 space-x-2">
+                <Badge variant="outline">v{model.version}</Badge>
+                <Badge 
+                  variant={model.active ? "default" : "secondary"}
+                  className="capitalize"
+                >
+                  {model.type.toLowerCase().replace(/_/g, ' ')}
+                </Badge>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-500 mr-2">
+              {isEnabled ? "Enabled" : "Disabled"}
+            </span>
+            <Switch 
+              checked={isEnabled}
+              onCheckedChange={onToggleStatus}
+              disabled={isLoading}
+            />
+            {isLoading && <RefreshCw className="h-4 w-4 animate-spin ml-2" />}
+          </div>
+        </div>
+
+        {/* Model description */}
+        <div>
+          <h4 className="text-sm font-medium text-gray-500 mb-2">Description</h4>
+          <p className="text-sm">{model.description}</p>
+        </div>
+
+        {/* Model information */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h4 className="text-sm font-medium text-gray-500 mb-2">Capabilities</h4>
+            {formatCapabilities()}
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-gray-500 mb-2">Metrics Tracked</h4>
+            {formatMetrics()}
+          </div>
+        </div>
+
+        {/* Configuration options */}
+        {model.configOptions && (
+          <div>
+            <h4 className="text-sm font-medium text-gray-500 mb-2">Configuration Options</h4>
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-md p-4 overflow-auto">
+              <pre className="text-xs">{JSON.stringify(model.configOptions, null, 2)}</pre>
+            </div>
+          </div>
+        )}
+
+        {/* Metadata */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h4 className="text-sm font-medium text-gray-500 mb-2">Created</h4>
+            <div className="flex items-center text-sm">
+              <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+              {formatDate(model.createdAt)}
+            </div>
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-gray-500 mb-2">Last Updated</h4>
+            <div className="flex items-center text-sm">
+              <Clock className="h-4 w-4 mr-2 text-gray-500" />
+              {formatDate(model.updatedAt)}
+            </div>
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex justify-end space-x-3 pt-4 border-t">
+          {isEnabled && (
+            <Button variant="outline">
+              <Settings className="h-4 w-4 mr-2" />
+              Configure
+            </Button>
+          )}
+          <Button onClick={onToggleStatus} disabled={isLoading}>
+            {isLoading ? (
+              <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+            ) : isEnabled ? (
+              <X className="h-4 w-4 mr-2" />
+            ) : (
+              <Check className="h-4 w-4 mr-2" />
+            )}
+            {isEnabled ? "Disable" : "Enable"}
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+export default AIModelDetailsModal;
