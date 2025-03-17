@@ -40,7 +40,7 @@ export default function InputSelect(props: InputSelectProps) {
       {label && (
         <label
           htmlFor={name}
-          className="mb-2.5 block font-satoshi text-base font-medium text-dark dark:text-white"
+          className="mb-1 block font-satoshi text-base font-medium text-dark dark:text-white"
         >
           {label}
         </label>

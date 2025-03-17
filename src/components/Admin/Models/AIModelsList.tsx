@@ -22,13 +22,6 @@ import {
   Building2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -38,6 +31,8 @@ import Modal from "@/components/Common/Modal";
 import AIModelDetailsModalAdmin from "./AIModelDetailsModalAdmin";
 import AIModelFormModal from "./AIModelFormModal";
 import DeleteModal from "@/components/Common/Modals/DeleteModal";
+import AreYouSureModal from "@/components/Common/Modals/AreYouSureModal";
+import InputSelect from "@/components/Common/InputSelect";
 
 // Define AI model types and their metadata
 const modelIcons = {
@@ -76,9 +71,13 @@ const AIModelsList = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [selectedModel, setSelectedModel] = useState<AIModel | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  
+  // This will store the selected action values for each model
+  const [modelActions, setModelActions] = useState<{[key: string]: string}>({});
 
   // Filter models
   const activeModels = models.filter(model => model.active);
@@ -88,6 +87,18 @@ const AIModelsList = () => {
     fetchModels();
     fetchBusinessCounts();
   }, []);
+
+  // Initialize default actions for all models
+  useEffect(() => {
+    if (models.length > 0) {
+      const initialActions = models.reduce((acc, model) => {
+        acc[model.id] = "Select Action";
+        return acc;
+      }, {} as {[key: string]: string});
+      
+      setModelActions(initialActions);
+    }
+  }, [models]);
 
   const fetchModels = async () => {
     setLoadingModels(true);
@@ -141,6 +152,12 @@ const AIModelsList = () => {
     setShowDeleteModal(true);
   };
 
+  // Handle deactivation confirmation
+  const handleDeactivateModel = (model: AIModel) => {
+    setSelectedModel(model);
+    setShowDeactivateModal(true);
+  };
+
   const confirmDeleteModel = async () => {
     if (!selectedModel) return;
     
@@ -166,6 +183,18 @@ const AIModelsList = () => {
   };
 
   const handleToggleActive = async (model: AIModel) => {
+    // If we're deactivating an active model, show the confirmation modal
+    if (model.active) {
+      handleDeactivateModel(model);
+      return;
+    }
+    
+    // Otherwise, proceed with activation directly (no confirmation needed)
+    await toggleModelActiveStatus(model);
+  };
+
+  // The actual function to toggle model status
+  const toggleModelActiveStatus = async (model: AIModel) => {
     setActionLoading(true);
     try {
       const response = await fetch(`/api/admin/models/ai/${model.id}`, {
@@ -185,6 +214,9 @@ const AIModelsList = () => {
       const data = await response.json();
       setModels(models.map(m => m.id === model.id ? data.model : m));
       toast.success(`AI model ${model.active ? 'deactivated' : 'activated'} successfully`);
+      
+      // Close the deactivate modal if it was open
+      setShowDeactivateModal(false);
     } catch (error) {
       console.error("Error toggling model status:", error);
       toast.error("Failed to update AI model status");
@@ -246,13 +278,70 @@ const AIModelsList = () => {
     return count ? count.count : 0;
   };
 
+  // Handle action selection through InputSelect
+  const handleActionChange = (e: React.ChangeEvent<HTMLSelectElement>, model: AIModel) => {
+    const action = e.target.value;
+    
+    // Reset the select to default after processing
+    setModelActions({
+      ...modelActions,
+      [model.id]: "Select Action"
+    });
+    
+    // Process the selected action
+    switch(action) {
+      case "view":
+        handleViewDetails(model);
+        break;
+      case "edit":
+        handleEditModel(model);
+        break;
+      case "activate":
+        handleToggleActive(model);
+        break;
+      case "deactivate":
+        handleToggleActive(model);
+        break;
+      case "delete":
+        handleDeleteModel(model);
+        break;
+      default:
+        break;
+    }
+  };
+
+  // Generate action options for a model
+  const getActionOptions = (model: AIModel) => {
+    const canDelete = getBusinessCount(model.id) === 0;
+    
+    const baseOptions = [
+      { value: "Select Action", label: "Select Action" },
+      { value: "view", label: "View Details" },
+      { value: "edit", label: "Edit Model" },
+    ];
+    
+    // Add toggle active option based on current state
+    if (model.active) {
+      baseOptions.push({ value: "deactivate", label: "Deactivate" });
+    } else {
+      baseOptions.push({ value: "activate", label: "Activate" });
+    }
+    
+    // Add delete option if allowed
+    if (canDelete) {
+      baseOptions.push({ value: "delete", label: "Delete" });
+    }
+    
+    return baseOptions;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">AI Models Administration</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl text-gray-700 font-bold">AI Models Administration</h1>
+          <p className="text-gray-700 mt-1">
             Manage global AI models available to all businesses in the platform
           </p>
         </div>
@@ -400,48 +489,15 @@ const AIModelsList = () => {
                             </Badge>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleViewDetails(model)}>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  <span>View Details</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleEditModel(model)}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  <span>Edit Model</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  onClick={() => handleToggleActive(model)}
-                                  disabled={actionLoading}
-                                >
-                                  {model.active ? (
-                                    <>
-                                      <X className="mr-2 h-4 w-4" />
-                                      <span>Deactivate</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Check className="mr-2 h-4 w-4" />
-                                      <span>Activate</span>
-                                    </>
-                                  )}
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem 
-                                  className="text-red-600"
-                                  onClick={() => handleDeleteModel(model)}
-                                  disabled={getBusinessCount(model.id) > 0}
-                                >
-                                  <Trash className="mr-2 h-4 w-4" />
-                                  <span>Delete</span>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                            <div className="w-40 ml-auto">
+                              <InputSelect
+                                name={`action-${model.id}`}
+                                label=""
+                                options={getActionOptions(model)}
+                                value={modelActions[model.id] || "Select Action"}
+                                onChange={(e) => handleActionChange(e, model)}
+                              />
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -514,30 +570,15 @@ const AIModelsList = () => {
                             </Badge>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleViewDetails(model)}>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  <span>View Details</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleEditModel(model)}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  <span>Edit Model</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  onClick={() => handleToggleActive(model)}
-                                  disabled={actionLoading}
-                                >
-                                  <X className="mr-2 h-4 w-4" />
-                                  <span>Deactivate</span>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                            <div className="w-40 ml-auto">
+                              <InputSelect
+                                name={`action-${model.id}`}
+                                label=""
+                                options={getActionOptions(model)}
+                                value={modelActions[model.id] || "Select Action"}
+                                onChange={(e) => handleActionChange(e, model)}
+                              />
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -598,28 +639,14 @@ const AIModelsList = () => {
                             </p>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <div className="flex space-x-2 justify-end">
-                              <Button 
-                                size="sm" 
-                                onClick={() => handleViewDetails(model)}
-                                variant="outline"
-                              >
-                                <Eye className="h-4 w-4 mr-1" />
-                                Details
-                              </Button>
-                              <Button 
-                                size="sm" 
-                                onClick={() => handleToggleActive(model)}
-                                disabled={actionLoading}
-                                className="bg-primary text-white hover:bg-primary/90"
-                              >
-                                {actionLoading ? (
-                                  <RefreshCw className="h-4 w-4 animate-spin mr-1" />
-                                ) : (
-                                  <Check className="h-4 w-4 mr-1" />
-                                )}
-                                Activate
-                              </Button>
+                            <div className="w-40 ml-auto">
+                              <InputSelect
+                                name={`action-${model.id}`}
+                                label=""
+                                options={getActionOptions(model)}
+                                value={modelActions[model.id] || "Select Action"}
+                                onChange={(e) => handleActionChange(e, model)}
+                              />
                             </div>
                           </td>
                         </tr>
@@ -681,8 +708,21 @@ const AIModelsList = () => {
         handleDelete={confirmDeleteModel}
         loading={actionLoading}
       />
-    </div>
+
+     {/* Deactivate Confirmation Modal */}
+{selectedModel && (
+  <AreYouSureModal
+    showAreYouSureModal={showDeactivateModal}
+    setShowAreYouSureModal={setShowDeactivateModal}
+    areYouSureText={`Deactivate ${selectedModel.name}`}
+    message={`Are you sure you want to deactivate "${selectedModel.name}"? This model will no longer be available to businesses in the platform.`}
+    handleAreYouSure={() => toggleModelActiveStatus(selectedModel)}
+    loading={actionLoading}
+  />
+)}
+
+</div>
   );
 };
 
-export default AIModelsList
+export default AIModelsList;
