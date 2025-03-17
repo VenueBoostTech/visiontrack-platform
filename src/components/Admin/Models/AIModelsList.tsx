@@ -19,7 +19,7 @@ import {
   Route, 
   Users, 
   Calculator,
-  Buildings
+  Building2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -297,7 +297,7 @@ const AIModelsList = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Model Usage</CardTitle>
-            <Buildings className="h-4 w-4 text-primary" />
+            <Building2 className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -685,4 +685,4 @@ const AIModelsList = () => {
   );
 };
 
-export default Admin
+export default AIModelsList
