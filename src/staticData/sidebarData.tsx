@@ -1,228 +1,763 @@
 import { Sidebar } from "@/types/sidebar";
-import { getSecurityMenuItems } from '@/utils/getSecurityMenuItems';
-import { getAnalyticsMenuItems } from '@/utils/getAnalyticsMenuItems';
-import { getOperationsMenuItems } from '@/utils/getOperationsMenuItems';
 import { 
+  Users, 
+  ShoppingBag, 
+  TrendingUp, 
+  AlertTriangle, 
+  FileText, 
+  Briefcase,
+  Eye, 
+  CalendarClock,
+  CalendarCheck,
+  Gauge,
+  Car,
+  HardHat,
+  Forklift,
+  Truck,
+  Factory,
+  ClipboardList,
+  PackageCheck,
+  Package,
+  Scan,
+  Clipboard,
+  ClipboardCheck,
+  Home,
+  Building2,
+  DoorClosed,
+  Lock,
+  Fingerprint,
+  UserCheck,
+  BadgeAlert,
+  Mail,
+  BadgeCheck,
+  UserX,
+  Clock,
+  Bird,
+  CheckCircle,
+  CircleDashed,
+  CircleDot,
+  Warehouse,
+  AreaChart,
+  Tag,
+  ShieldAlert,
+  ShoppingBasket,
+  Cctv,
+  SlidersHorizontal,
+  WrenchIcon,
+  
+  // Original imports from your code
+  MonitorPlay,
+  Building,
+  MonitorDot,
+  Video,
+  LayoutPanelTop,
+  Camera as CameraControl,
+  UserCog,
+  Key,
+  Building as BuildingIcon,
+  Bell as BellIcon,
+  ScrollText,
+  CreditCard,
+  Store,
+  KeyRound,
+  LayoutDashboard,
+  Shield,
+  Camera,
+  Settings,
+  BarChart3,
+  Boxes,
+  FolderSync,
+  Server,
+  Cpu,
+  BellRing,
+  LineChart,
+  Lock as LockIcon,
+  Globe,
+  Layers,
+  HeartPulse,
+  BrainCircuit,
+  Code,
+  Network,
+  FolderSyncIcon
+} from "lucide-react";
 
-	MonitorPlay,
-	Building,
-	MonitorDot,
-	Video,
-	LayoutPanelTop,
-	Camera as CameraControl,
-	UserCog,
-	Key,
-	Building as BuildingIcon,
-	Bell as BellIcon,
-	ScrollText,
-	CreditCard,
-	Store,
-	KeyRound,
-	FolderSyncIcon,
-	LayoutDashboard,
-	Users,
-	Building2,
-	Shield,
-	Camera,
-	Settings,
-	BarChart3,
-	Boxes,
-	FolderSync,
-	Server,
-	Cpu,
-	BellRing,
-	LineChart,
-	FileText,
-	Lock,
-	Globe,
-	Layers,
-	HeartPulse,
-	BrainCircuit,
-	Code,
-	Network,
-	ClipboardList,
-   } from "lucide-react";
-   
-   export const getUserSidebarData = (businessType: string = 'RETAIL'): Sidebar[] => {
-	return [
-// Dashboard
-{
-	id: 1,
-	title: "Dashboard",
-	path: "/platform/dashboard",
-	icon: <LayoutDashboard className="w-6 h-6" />
-},
+/**
+ * Get menu items for Commercial Real Estate vertical
+ * @returns Array of sidebar menu items
+ */
+export const getCommercialRealEstateMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "analytics-1",
+      title: "Occupancy Analytics",
+      path: "/platform/analytics/occupancy",
+      icon: <Users className="w-4 h-4" />
+    },
+    {
+      id: "analytics-2",
+      title: "Space Utilization",
+      path: "/platform/analytics/space-utilization",
+      icon: <AreaChart className="w-4 h-4" />
+    },
+    {
+      id: "analytics-3",
+      title: "Tenant Traffic",
+      path: "/platform/analytics/tenant-traffic",
+      icon: <TrendingUp className="w-4 h-4" />
+    },
+    {
+      id: "analytics-4",
+      title: "Common Area Usage",
+      path: "/platform/analytics/common-areas",
+      icon: <Building2 className="w-4 h-4" />
+    },
+    {
+      id: "analytics-5",
+      title: "Parking Analytics",
+      path: "/platform/analytics/parking",
+      icon: <Car className="w-4 h-4" />
+    }
+  ];
+};
 
-// Property Infrastructure 
-{
-	id: 2,
-	title: "Properties",
-	path: "/platform/properties",
-	icon: <Building2 className="w-6 h-6" />,
-	// @ts-ignore
-	children: [
-	{
-		id: "2-1",
-		title: "Properties",
-		path: "/platform/properties",
-		icon: <Building className="w-4 h-4" />
-	},
-	{
-		id: "2-2",
-		title: "Buildings",
-		path: "/platform/properties/buildings",
-		icon: <BuildingIcon className="w-4 h-4" />
-	},
-	{
-		id: "2-3",
-		title: "Zones",
-		path: "/platform/properties/zones",
-		icon: <Boxes className="w-4 h-4" />
-	},
-	{
-		id: "2-4",
-		title: "Stores",
-		path: "/platform/properties/stores",
-		icon: <Store className="w-4 h-4" />
-	},
-	{
-		id: "2-5",
-		title: "Cameras",
-		path: "/platform/properties/cameras",
-		icon: <Camera className="w-4 h-4" />
-	}
-	]
-},
+/**
+ * Get security menu items for Commercial Real Estate vertical
+ * @returns Array of sidebar menu items
+ */
+export const getCommercialRealEstateSecurityMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "security-1",
+      title: "Access Control",
+      path: "/platform/security/access-control",
+      icon: <Lock className="w-4 h-4" />
+    },
+    {
+      id: "security-2",
+      title: "Visitor Management",
+      path: "/platform/security/visitor-management",
+      icon: <UserCheck className="w-4 h-4" />
+    },
+    {
+      id: "security-3",
+      title: "Perimeter Detection",
+      path: "/platform/security/perimeter",
+      icon: <ShieldAlert className="w-4 h-4" />
+    },
+    {
+      id: "security-4",
+      title: "Incident Reports",
+      path: "/platform/security/incidents",
+      icon: <AlertTriangle className="w-4 h-4" />
+    },
+    {
+      id: "security-5",
+      title: "Security Patrols",
+      path: "/platform/security/patrols",
+      icon: <Eye className="w-4 h-4" />
+    }
+  ];
+};
 
-// Live Monitoring
-{
-	id: 3,
-	title: "Live Monitoring",
-	path: "/platform/monitoring",
-	icon: <MonitorPlay className="w-6 h-6" />,
-// @ts-ignore
-	children: [
-	{
-		id: "3-1",
-		title: "Live View",
-		path: "/platform/monitoring/live",
-		icon: <MonitorDot className="w-4 h-4" />
-	},
-	{
-		id: "3-2",
-		title: "Recordings",
-		path: "/platform/monitoring/recordings",
-		icon: <Video className="w-4 h-4" />
-	},
-	{
-		id: "3-3",
-		title: "Video Wall",
-		path: "/platform/monitoring/wall",
-		icon: <LayoutPanelTop className="w-4 h-4" />
-	},
-	{
-		id: "3-4",
-		title: "PTZ Control",
-		path: "/platform/monitoring/ptz",
-		icon: <CameraControl className="w-4 h-4" />
-	}
-	]
-},
+/**
+ * Get operations menu items for Commercial Real Estate vertical
+ * @returns Array of sidebar menu items
+ */
+export const getCommercialRealEstateOperationsMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "operations-1",
+      title: "Maintenance Requests",
+      path: "/platform/operations/maintenance",
+      icon: <WrenchIcon className="w-4 h-4" />
+    },
+    {
+      id: "operations-2",
+      title: "Tenant Services",
+      path: "/platform/operations/tenant-services",
+      icon: <Briefcase className="w-4 h-4" />
+    },
+    {
+      id: "operations-3",
+      title: "Facility Scheduling",
+      path: "/platform/operations/facility-scheduling",
+      icon: <CalendarCheck className="w-4 h-4" />
+    },
+    {
+      id: "operations-4",
+      title: "Service Providers",
+      path: "/platform/operations/service-providers",
+      icon: <UserCheck className="w-4 h-4" />
+    }
+  ];
+};
 
-// Building Analytics
-{
-	id: 4,
-	title: "Analytics",
-	path: "/platform/analytics",
-	icon: <BarChart3 className="w-6 h-6" />,
-	// @ts-ignore
-	children: getAnalyticsMenuItems(businessType)
-},
+/**
+ * Get menu items for Multi-family Residential vertical
+ * @returns Array of sidebar menu items
+ */
+export const getMultiFamilyResidentialMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "analytics-1",
+      title: "Resident Analytics",
+      path: "/platform/analytics/resident",
+      icon: <Users className="w-4 h-4" />
+    },
+    {
+      id: "analytics-2",
+      title: "Amenity Usage",
+      path: "/platform/analytics/amenity-usage",
+      icon: <CircleDot className="w-4 h-4" />
+    },
+    {
+      id: "analytics-3",
+      title: "Package Analytics",
+      path: "/platform/analytics/packages",
+      icon: <Package className="w-4 h-4" />
+    },
+    {
+      id: "analytics-4",
+      title: "Visitor Patterns",
+      path: "/platform/analytics/visitors",
+      icon: <TrendingUp className="w-4 h-4" />
+    },
+    {
+      id: "analytics-5",
+      title: "Parking Utilization",
+      path: "/platform/analytics/parking",
+      icon: <Car className="w-4 h-4" />
+    }
+  ];
+};
 
-// Security Features
-{
-	id: 5,
-	title: "Security",
-	path: "/platform/security",
-	icon: <Shield className="w-6 h-6" />,
-	// @ts-ignore
-	children: getSecurityMenuItems(businessType)
+/**
+ * Get security menu items for Multi-family Residential vertical
+ * @returns Array of sidebar menu items
+ */
+export const getMultiFamilyResidentialSecurityMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "security-1",
+      title: "Access Control",
+      path: "/platform/security/access-control",
+      icon: <Lock className="w-4 h-4" />
+    },
+    {
+      id: "security-2",
+      title: "Visitor Verification",
+      path: "/platform/security/visitor-verification",
+      icon: <BadgeCheck className="w-4 h-4" />
+    },
+    {
+      id: "security-3",
+      title: "Package Security",
+      path: "/platform/security/package-security",
+      icon: <PackageCheck className="w-4 h-4" />
+    },
+    {
+      id: "security-4",
+      title: "Resident Alerts",
+      path: "/platform/security/resident-alerts",
+      icon: <BadgeAlert className="w-4 h-4" />
+    },
+    {
+      id: "security-5",
+      title: "Unauthorized Access",
+      path: "/platform/security/unauthorized",
+      icon: <UserX className="w-4 h-4" />
+    }
+  ];
+};
 
-},
+/**
+ * Get operations menu items for Multi-family Residential vertical
+ * @returns Array of sidebar menu items
+ */
+export const getMultiFamilyResidentialOperationsMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "operations-1",
+      title: "Package Management",
+      path: "/platform/operations/packages",
+      icon: <Package className="w-4 h-4" />
+    },
+    {
+      id: "operations-2",
+      title: "Maintenance Requests",
+      path: "/platform/operations/maintenance",
+      icon: <WrenchIcon className="w-4 h-4" />
+    },
+    {
+      id: "operations-3",
+      title: "Amenity Booking",
+      path: "/platform/operations/amenity-booking",
+      icon: <CalendarCheck className="w-4 h-4" />
+    },
+    {
+      id: "operations-4",
+      title: "Resident Communication",
+      path: "/platform/operations/communication",
+      icon: <Mail className="w-4 h-4" />
+    }
+  ];
+};
 
-{
-	id: 8,
-	title: "Operations",
-	path: "/platform/operations",
-	icon: <Store className="w-6 h-6" />,
-	// @ts-ignore
-	children: businessType === 'RETAIL' ? getOperationsMenuItems(businessType) : []
-  },
+/**
+ * Get menu items for Manufacturing vertical
+ * @returns Array of sidebar menu items
+ */
+export const getManufacturingMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "analytics-1",
+      title: "Production Analytics",
+      path: "/platform/analytics/production",
+      icon: <Factory className="w-4 h-4" />
+    },
+    {
+      id: "analytics-2",
+      title: "Worker Productivity",
+      path: "/platform/analytics/productivity",
+      icon: <Gauge className="w-4 h-4" />
+    },
+    {
+      id: "analytics-3",
+      title: "Equipment Usage",
+      path: "/platform/analytics/equipment",
+      icon: <Forklift className="w-4 h-4" />
+    },
+    {
+      id: "analytics-4",
+      title: "Workflow Analysis",
+      path: "/platform/analytics/workflow",
+      icon: <TrendingUp className="w-4 h-4" />
+    },
+    {
+      id: "analytics-5",
+      title: "Quality Control",
+      path: "/platform/analytics/quality",
+      icon: <CheckCircle className="w-4 h-4" />
+    }
+  ];
+};
 
-// Staff Management
-{
-	id: 6,
-	title: "Staff",
-	path: "/platform/staff",
-	icon: <Users className="w-6 h-6" />,
-	// @ts-ignore
-	children: [
-	{
-		id: "6-1",
-		title: "Staff Members",
-		path: "/platform/staff",
-		icon: <UserCog className="w-4 h-4" />
-	},
-	{
-		id: "6-2",
-		title: "Department",
-		path: "/platform/staff/department",
-		icon: <Users className="w-4 h-4" />
-	},
-	{
-		id: "6-3",
-		title: "Permissions",
-		path: "/platform/staff/permissions",
-		icon: <Key className="w-4 h-4" />
-	}
-	]
-},
+/**
+ * Get security menu items for Manufacturing vertical
+ * @returns Array of sidebar menu items
+ */
+export const getManufacturingSecurityMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "security-1",
+      title: "Worker Safety",
+      path: "/platform/security/worker-safety",
+      icon: <HardHat className="w-4 h-4" />
+    },
+    {
+      id: "security-2",
+      title: "Restricted Areas",
+      path: "/platform/security/restricted-areas",
+      icon: <ShieldAlert className="w-4 h-4" />
+    },
+    {
+      id: "security-3",
+      title: "Equipment Monitoring",
+      path: "/platform/security/equipment-monitoring",
+      icon: <Cctv className="w-4 h-4" />
+    },
+    {
+      id: "security-4",
+      title: "Safety Compliance",
+      path: "/platform/security/safety-compliance",
+      icon: <ClipboardCheck className="w-4 h-4" />
+    },
+    {
+      id: "security-5",
+      title: "Incident Reports",
+      path: "/platform/security/incidents",
+      icon: <AlertTriangle className="w-4 h-4" />
+    }
+  ];
+};
 
-// Settings
-{
-	id: 7,
-	title: "Settings",
-	path: "/platform/settings",
-	icon: <Settings className="w-6 h-6" />,
-	// @ts-ignore
-	children: [
-	{
-		id: "7-1",
-		title: "VT Credentials",
-		path: "/platform/settings/vt-credentials",
-		icon: <KeyRound className="w-4 h-4" />
-	},
-	{
-		id: "7-2",
-		title: "Notifications",
-		path: "/platform/settings/notifications",
-		icon: <BellIcon className="w-4 h-4" />
-	},
-	{
-		id: "7-3",
-		title: "Reports",
-		path: "/platform/settings/reports",
-		icon: <ScrollText className="w-4 h-4" />
-	},
-	{
-		id: "7-4",
-		title: "Billing",
-		path: "/platform/settings/billing",
-		icon: <CreditCard className="w-4 h-4" />
-	}
-	]
-}
-];
+/**
+ * Get operations menu items for Manufacturing vertical
+ * @returns Array of sidebar menu items
+ */
+export const getManufacturingOperationsMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "operations-1",
+      title: "Production Tracking",
+      path: "/platform/operations/production-tracking",
+      icon: <Scan className="w-4 h-4" />
+    },
+    {
+      id: "operations-2",
+      title: "Quality Assurance",
+      path: "/platform/operations/quality-assurance",
+      icon: <ClipboardCheck className="w-4 h-4" />
+    },
+    {
+      id: "operations-3",
+      title: "Inventory Management",
+      path: "/platform/operations/inventory",
+      icon: <Warehouse className="w-4 h-4" />
+    },
+    {
+      id: "operations-4",
+      title: "Maintenance Scheduling",
+      path: "/platform/operations/maintenance",
+      icon: <CalendarClock className="w-4 h-4" />
+    },
+    {
+      id: "operations-5",
+      title: "Shift Management",
+      path: "/platform/operations/shifts",
+      icon: <Clock className="w-4 h-4" />
+    }
+  ];
+};
+
+/**
+ * Get menu items for Retail Operations vertical
+ * This function already exists in your code, included here for reference only
+ */
+export const getRetailMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "analytics-1",
+      title: "Customer Analytics",
+      path: "/platform/analytics/customers",
+      icon: <Users className="w-4 h-4" />
+    },
+    {
+      id: "analytics-2",
+      title: "Sales Performance",
+      path: "/platform/analytics/sales",
+      icon: <ShoppingBag className="w-4 h-4" />
+    },
+    {
+      id: "analytics-3",
+      title: "Store Traffic",
+      path: "/platform/analytics/traffic",
+      icon: <TrendingUp className="w-4 h-4" />
+    },
+    {
+      id: "analytics-4",
+      title: "Merchandise Analysis",
+      path: "/platform/analytics/merchandise",
+      icon: <Tag className="w-4 h-4" />
+    },
+    {
+      id: "analytics-5",
+      title: "Conversion Rate",
+      path: "/platform/analytics/conversion",
+      icon: <ShoppingBasket className="w-4 h-4" />
+    }
+  ];
+};
+
+/**
+ * Main function to get analytics menu items based on business type
+ * @param businessType The type of business: 'RETAIL', 'COMMERCIAL_REAL_ESTATE', 'MULTI_FAMILY_RESIDENTIAL', or 'MANUFACTURING'
+ * @returns Array of sidebar menu items for analytics
+ */
+export const getAnalyticsMenuItems = (businessType: string): Sidebar[] => {
+  switch (businessType) {
+    case 'RETAIL':
+      return getRetailMenuItems();
+    case 'COMMERCIAL_REAL_ESTATE':
+      return getCommercialRealEstateMenuItems();
+    case 'MULTI_FAMILY_RESIDENTIAL':
+      return getMultiFamilyResidentialMenuItems();
+    case 'MANUFACTURING':
+      return getManufacturingMenuItems();
+    default:
+      return getRetailMenuItems(); // Default to retail
+  }
+};
+
+/**
+ * Main function to get security menu items based on business type
+ * @param businessType The type of business: 'RETAIL', 'COMMERCIAL_REAL_ESTATE', 'MULTI_FAMILY_RESIDENTIAL', or 'MANUFACTURING'
+ * @returns Array of sidebar menu items for security
+ */
+export const getSecurityMenuItems = (businessType: string): Sidebar[] => {
+  switch (businessType) {
+    case 'RETAIL':
+      // Use the existing security menu items for retail
+      return [
+        {
+          id: "security-1",
+          title: "Suspicious Activity",
+          path: "/platform/security/suspicious",
+          icon: <AlertTriangle className="w-4 h-4" />
+        },
+        {
+          id: "security-2",
+          title: "Theft Prevention",
+          path: "/platform/security/theft",
+          icon: <ShieldAlert className="w-4 h-4" />
+        },
+        {
+          id: "security-3",
+          title: "Access Control",
+          path: "/platform/security/access",
+          icon: <Lock className="w-4 h-4" />
+        },
+        {
+          id: "security-4",
+          title: "Reports",
+          path: "/platform/security/reports",
+          icon: <FileText className="w-4 h-4" />
+        }
+      ];
+    case 'COMMERCIAL_REAL_ESTATE':
+      return getCommercialRealEstateSecurityMenuItems();
+    case 'MULTI_FAMILY_RESIDENTIAL':
+      return getMultiFamilyResidentialSecurityMenuItems();
+    case 'MANUFACTURING':
+      return getManufacturingSecurityMenuItems();
+    default:
+      return []; // Default to empty array
+  }
+};
+
+/**
+ * Main function to get operations menu items based on business type
+ * @param businessType The type of business: 'RETAIL', 'COMMERCIAL_REAL_ESTATE', 'MULTI_FAMILY_RESIDENTIAL', or 'MANUFACTURING'
+ * @returns Array of sidebar menu items for operations
+ */
+export const getOperationsMenuItems = (businessType: string): Sidebar[] => {
+  switch (businessType) {
+    case 'RETAIL':
+      // Use the existing operations menu items for retail
+      return [
+        {
+          id: "operations-1",
+          title: "Inventory Management",
+          path: "/platform/operations/inventory",
+          icon: <Warehouse className="w-4 h-4" />
+        },
+        {
+          id: "operations-2",
+          title: "Staff Scheduling",
+          path: "/platform/operations/staff-scheduling",
+          icon: <CalendarCheck className="w-4 h-4" />
+        },
+        {
+          id: "operations-3",
+          title: "Queue Management",
+          path: "/platform/operations/queue",
+          icon: <Users className="w-4 h-4" />
+        },
+        {
+          id: "operations-4",
+          title: "Store Compliance",
+          path: "/platform/operations/compliance",
+          icon: <Clipboard className="w-4 h-4" />
+        }
+      ];
+    case 'COMMERCIAL_REAL_ESTATE':
+      return getCommercialRealEstateOperationsMenuItems();
+    case 'MULTI_FAMILY_RESIDENTIAL':
+      return getMultiFamilyResidentialOperationsMenuItems();
+    case 'MANUFACTURING':
+      return getManufacturingOperationsMenuItems();
+    default:
+      return []; // Default to empty array
+  }
+};
+
+/**
+ * Modified function to get user sidebar data based on business type
+ * @param businessType The type of business: 'RETAIL', 'COMMERCIAL_REAL_ESTATE', 'MULTI_FAMILY_RESIDENTIAL', or 'MANUFACTURING'
+ * @returns Full sidebar data array
+ */
+export const getUserSidebarData = (businessType: string = 'RETAIL'): Sidebar[] => {
+  return [
+    // Dashboard (common across all verticals)
+    {
+      id: 1,
+      title: "Dashboard",
+      path: "/platform/dashboard",
+      icon: <LayoutDashboard className="w-6 h-6" />
+    },
+    
+    // Property Infrastructure (common across all verticals with slight variations)
+    {
+      id: 2,
+      title: "Properties",
+      path: "/platform/properties",
+      icon: <Building2 className="w-6 h-6" />,
+      // @ts-ignore
+      children: [
+        {
+          id: "2-1",
+          title: "Properties",
+          path: "/platform/properties",
+          icon: <Building className="w-4 h-4" />
+        },
+        {
+          id: "2-2",
+          title: "Buildings",
+          path: "/platform/properties/buildings",
+          icon: <BuildingIcon className="w-4 h-4" />
+        },
+        {
+          id: "2-3",
+          title: "Zones",
+          path: "/platform/properties/zones",
+          icon: <Boxes className="w-4 h-4" />
+        },
+        {
+          id: "2-4",
+          title: businessType === 'RETAIL' ? "Stores" : 
+                 businessType === 'MANUFACTURING' ? "Production Areas" : 
+                 businessType === 'MULTI_FAMILY_RESIDENTIAL' ? "Units" : "Tenant Spaces",
+          path: "/platform/properties/stores",
+          icon: <Store className="w-4 h-4" />
+        },
+        {
+          id: "2-5",
+          title: "Cameras",
+          path: "/platform/properties/cameras",
+          icon: <Camera className="w-4 h-4" />
+        }
+      ]
+    },
+    
+    // Live Monitoring (common across all verticals)
+    {
+      id: 3,
+      title: "Live Monitoring",
+      path: "/platform/monitoring",
+      icon: <MonitorPlay className="w-6 h-6" />,
+      // @ts-ignore
+      children: [
+        {
+          id: "3-1",
+          title: "Live View",
+          path: "/platform/monitoring/live",
+          icon: <MonitorDot className="w-4 h-4" />
+        },
+        {
+          id: "3-2",
+          title: "Recordings",
+          path: "/platform/monitoring/recordings",
+          icon: <Video className="w-4 h-4" />
+        },
+        {
+          id: "3-3",
+          title: "Video Wall",
+          path: "/platform/monitoring/wall",
+          icon: <LayoutPanelTop className="w-4 h-4" />
+        },
+        {
+          id: "3-4",
+          title: "PTZ Control",
+          path: "/platform/monitoring/ptz",
+          icon: <CameraControl className="w-4 h-4" />
+        }
+      ]
+    },
+    
+    // Building Analytics (business type specific)
+    {
+      id: 4,
+      title: "Analytics",
+      path: "/platform/analytics",
+      icon: <BarChart3 className="w-6 h-6" />,
+      // @ts-ignore
+      children: getAnalyticsMenuItems(businessType)
+    },
+    
+    // Security Features (business type specific)
+    {
+      id: 5,
+      title: "Security",
+      path: "/platform/security",
+      icon: <Shield className="w-6 h-6" />,
+      // @ts-ignore
+      children: getSecurityMenuItems(businessType)
+    },
+    
+    // Operations (business type specific)
+    {
+      id: 8,
+      title: "Operations",
+      path: "/platform/operations",
+      icon: <Store className="w-6 h-6" />,
+      // @ts-ignore
+      children: getOperationsMenuItems(businessType)
+    },
+    
+    // Staff Management (common across all verticals)
+    {
+      id: 6,
+      title: "Staff",
+      path: "/platform/staff",
+      icon: <Users className="w-6 h-6" />,
+      // @ts-ignore
+      children: [
+        {
+          id: "6-1",
+          title: "Staff Members",
+          path: "/platform/staff",
+          icon: <UserCog className="w-4 h-4" />
+        },
+        {
+          id: "6-2",
+          title: "Department",
+          path: "/platform/staff/department",
+          icon: <Users className="w-4 h-4" />
+        },
+        {
+          id: "6-3",
+          title: "Permissions",
+          path: "/platform/staff/permissions",
+          icon: <Key className="w-4 h-4" />
+        }
+      ]
+    },
+    
+    // Settings (common across all verticals)
+    {
+      id: 7,
+      title: "Settings",
+      path: "/platform/settings",
+      icon: <Settings className="w-6 h-6" />,
+      // @ts-ignore
+      children: [
+        {
+          id: "7-1",
+          title: "VT Credentials",
+          path: "/platform/settings/vt-credentials",
+          icon: <KeyRound className="w-4 h-4" />
+        },
+        {
+          id: "7-2",
+          title: "Notifications",
+          path: "/platform/settings/notifications",
+          icon: <BellIcon className="w-4 h-4" />
+        },
+        {
+          id: "7-3",
+          title: "Reports",
+          path: "/platform/settings/reports",
+          icon: <ScrollText className="w-4 h-4" />
+        },
+        {
+          id: "7-4",
+          title: "Billing",
+          path: "/platform/settings/billing",
+          icon: <CreditCard className="w-4 h-4" />
+        }
+      ]
+    }
+  ];
 };
 
 // Instead of exporting the array directly, export the function
