@@ -261,16 +261,19 @@ model Store {
 }
 
 model AIModel {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  description   String
-  type          AIModelType
-  version       String
-  active        Boolean     @default(true)
-  capabilities  Json
-  configOptions Json?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id                   String      @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String
+  description          String
+  type                 AIModelType
+  version              String
+  active               Boolean     @default(true)
+  capabilities         Json // General capabilities across all verticals
+  verticalCapabilities Json? // Specific capabilities for each vertical
+  configOptions        Json?
+  compatibleWith       String[] // Array of business types this model is compatible with
+  source               String? // "ROBOFLOW", "CUSTOM", "THIRD_PARTY"
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
 
   // Relations
   businessModels BusinessAIModel[]
@@ -447,12 +450,16 @@ enum ZoneType {
   UNKNOWN
 }
 
+// Updated AIModelType enum
 enum AIModelType {
-  CUSTOMER_TRAFFIC
-  FOOTPATH_ANALYSIS
-  DEMOGRAPHICS
-  BEHAVIOR_ANALYSIS
-  HEATMAP
-  CONVERSION_TRACKING
-  CUSTOMER_COUNTER
+  FOOTPATH_TRACKING // Tracks movement patterns and paths
+  DEMOGRAPHICS // Analyzes age and gender distributions
+  FACE_DETECTION // Basic face detection capabilities
+  HEATMAP_GENERATION // Creates visual heatmaps of density
+  SHOPLIFTING_DETECTION // Detects potential shoplifting behavior
+  PEOPLE_COUNTER // Counts people entering and exiting
+  CHECKOUT_COUNTER // Analyzes checkout process and queues
+  GENERAL_OBJECT_DETECTION // General object detection
+  VEHICLE_DETECTION // Detects and tracks vehicles
+  PPE_DETECTION // Detects personal protective equipment
 }
