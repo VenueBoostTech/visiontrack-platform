@@ -395,7 +395,7 @@ const AIModelsList = () => {
         </div>
         <Button onClick={handleAddNewModel} className="bg-primary text-white">
           <Plus className="h-4 w-4 mr-2" />
-          Add New Model
+          New Model
         </Button>
       </div>
 
@@ -517,14 +517,15 @@ const AIModelsList = () => {
                               {model.type.toLowerCase().replace(/_/g, ' ')}
                             </Badge>
                           </td>
-                          <td className="px-6 py-4">
-                            {getCompatibilityDisplay(model)}
-                          </td>
+                         
                             <td className="px-6 py-4 whitespace-nowrap">
                             <Badge variant="secondary" className="flex items-center">
                               {model.source === 'ROBOFLOW' ? <Zap className="w-3 h-3 mr-1" /> : null}
                               {getModelSource(model)}
                             </Badge>
+                          </td>
+                          <td className="px-6 py-4">
+                            {getCompatibilityDisplay(model)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             v{model.version}
@@ -573,7 +574,7 @@ const AIModelsList = () => {
                     className="mt-4 bg-primary text-white"
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Add New Model
+                    New Model
                   </Button>
                 </div>
               )}
@@ -593,6 +594,7 @@ const AIModelsList = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compatibility</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Businesses</th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -626,6 +628,9 @@ const AIModelsList = () => {
                               {model.source === 'ROBOFLOW' ? <Zap className="w-3 h-3 mr-1" /> : null}
                               {getModelSource(model)}
                             </Badge>
+                          </td>
+                          <td className="px-6 py-4">
+                            {getCompatibilityDisplay(model)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             v{model.version}
@@ -674,6 +679,7 @@ const AIModelsList = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compatibility</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -702,6 +708,9 @@ const AIModelsList = () => {
                               {model.source === 'ROBOFLOW' ? <Zap className="w-3 h-3 mr-1" /> : null}
                               {getModelSource(model)}
                             </Badge>
+                          </td>
+                          <td className="px-6 py-4">
+                            {getCompatibilityDisplay(model)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             v{model.version}
