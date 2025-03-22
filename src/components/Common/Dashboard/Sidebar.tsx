@@ -154,6 +154,12 @@ export default function Sidebar({
         )
       },
       {
+        title: "AI Computer Vision",  // New group name for AI components
+        items: sidebarData.filter(item => 
+          ["Data", "Models"].includes(item.title)
+        )
+      },
+      {
         title: "Analytics",
         items: sidebarData.filter(item => 
           ["Analytics"].includes(item.title)

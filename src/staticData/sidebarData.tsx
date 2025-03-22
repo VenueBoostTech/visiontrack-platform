@@ -78,8 +78,56 @@ import {
   BrainCircuit,
   Code,
   Network,
-  FolderSyncIcon
+  FolderSyncIcon,
+  
+  // New imports for AI menu
+  Database,
+  FileInput,
+  Zap,
+  FolderClosed
 } from "lucide-react";
+
+/**
+ * Get menu items for AI Data section
+ * @returns Array of sidebar menu items for data management
+ */
+export const getAIDataMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "ai-data-1",
+      title: "Datasets",
+      path: "/platform/ai/data/datasets",
+      icon: <Database className="w-4 h-4" />
+    },
+    {
+      id: "ai-data-2",
+      title: "Raw Data",
+      path: "/platform/ai/data/raw-data",
+      icon: <FileInput className="w-4 h-4" />
+    }
+  ];
+};
+
+/**
+ * Get menu items for AI Models section
+ * @returns Array of sidebar menu items for model management
+ */
+export const getAIModelMenuItems = (): Sidebar[] => {
+  return [
+    {
+      id: "ai-models-1",
+      title: "ReadyGo Models",
+      path: "/platform/ai/models/ready-models",
+      icon: <Zap className="w-4 h-4" />
+    },
+    {
+      id: "ai-models-2",
+      title: "Custom Models",
+      path: "/platform/ai/models/custom-models",
+      icon: <BrainCircuit className="w-4 h-4" />
+    }
+  ];
+};
 
 /**
  * Get menu items for Commercial Real Estate vertical
@@ -662,6 +710,26 @@ export const getUserSidebarData = (businessType: string = 'RETAIL'): Sidebar[] =
           icon: <CameraControl className="w-4 h-4" />
         }
       ]
+    },
+    
+    // AI Data Management
+    {
+      id: 9,
+      title: "Data",
+      path: "/platform/ai/data",
+      icon: <FolderClosed className="w-6 h-6" />,
+      // @ts-ignore
+      children: getAIDataMenuItems()
+    },
+    
+    // AI Models Management
+    {
+      id: 10,
+      title: "Models",
+      path: "/platform/ai/models",
+      icon: <BrainCircuit className="w-6 h-6" />,
+      // @ts-ignore
+      children: getAIModelMenuItems()
     },
     
     // Building Analytics (business type specific)
