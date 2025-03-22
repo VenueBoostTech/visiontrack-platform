@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import Modal from "@/components/Common/Modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,9 +18,12 @@ interface AIModel {
   version: string;
   active: boolean;
   capabilities: any;
+  compatibleWith?: string[];
+  verticalCapabilities?: any;
   configOptions: any;
   createdAt: string;
   updatedAt: string;
+  source?: string;
 }
 
 interface AIModelFormModalProps {
@@ -33,14 +36,50 @@ interface AIModelFormModalProps {
 }
 
 const modelTypes = [
-  { value: "CUSTOMER_TRAFFIC", label: "Customer Traffic" },
-  { value: "FOOTPATH_ANALYSIS", label: "Footpath Analysis" },
+  { value: "FOOTPATH_TRACKING", label: "Footpath Tracking" },
   { value: "DEMOGRAPHICS", label: "Demographics" },
-  { value: "BEHAVIOR_ANALYSIS", label: "Behavior Analysis" },
-  { value: "HEATMAP", label: "Heatmap" },
-  { value: "CONVERSION_TRACKING", label: "Conversion Tracking" },
-  { value: "CUSTOMER_COUNTER", label: "Customer Counter" },
+  { value: "FACE_DETECTION", label: "Face Detection" },
+  { value: "HEATMAP_GENERATION", label: "Heatmap Generation" },
+  { value: "SHOPLIFTING_DETECTION", label: "Shoplifting Detection" },
+  { value: "PEOPLE_COUNTER", label: "People Counter" },
+  { value: "CHECKOUT_COUNTER", label: "Checkout Counter" },
+  { value: "GENERAL_OBJECT_DETECTION", label: "General Object Detection" },
+  { value: "VEHICLE_DETECTION", label: "Vehicle Detection" },
+  { value: "PPE_DETECTION", label: "PPE Detection" }
 ];
+
+interface CheckboxProps {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+const Checkbox = ({ label, checked, onChange }: CheckboxProps) => (
+  <label className="flex items-center space-x-3 cursor-pointer group">
+    <div className="relative">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="sr-only peer"
+      />
+      <div className={`
+        w-5 h-5 border-2 rounded
+        flex items-center justify-center
+        transition-colors duration-200
+        ${checked ? 'bg-blue-600 border-blue-600' : 'border-gray-300 bg-white'}
+        group-hover:${checked ? 'bg-blue-700 border-blue-700' : 'border-blue-500'}
+        dark:border-gray-600 dark:bg-gray-800
+      `}>
+        {checked && <Check size={14} className="text-white" />}
+      </div>
+    </div>
+    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+      {label}
+    </span>
+  </label>
+);
+
 
 const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
   isOpen,
@@ -56,11 +95,14 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
     type: "CUSTOMER_TRAFFIC",
     version: "1.0.0",
     active: true,
+    compatibleWith: [],
+    verticalCapabilities: null,
     capabilities: {
       features: [],
       metrics: []
     },
-    configOptions: {}
+    configOptions: {},
+    source: 'CUSTOM'
   });
 
   const [capabilitiesText, setCapabilitiesText] = useState("");
@@ -77,7 +119,10 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
         version: initialData.version,
         active: initialData.active,
         capabilities: initialData.capabilities || { features: [], metrics: [] },
-        configOptions: initialData.configOptions || {}
+        configOptions: initialData.configOptions || {},
+        compatibleWith: initialData.compatibleWith || [],
+        verticalCapabilities: initialData.verticalCapabilities || null,
+        source: initialData.verticalCapabilities || 'CUSTOM'
       });
 
       // Convert arrays to text for editing
@@ -104,7 +149,10 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
           features: [],
           metrics: []
         },
-        configOptions: {}
+        configOptions: {},
+        compatibleWith: [],
+        verticalCapabilities: null,
+        source: 'CUSTOM'
       });
       setCapabilitiesText("");
       setMetricsText("");
@@ -230,8 +278,23 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+<InputSelect
+  name="source"
+  label="Model Source"
+  value={formData.source || ""}
+  onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+  required
+  options={[
+    { value: "", label: "Select Source" },
+    { value: "CUSTOM", label: "VisionTrack Team" },
+    { value: "ROBOFLOW", label: "RoboFlow (Adjusted)" },
+    { value: "THIRD_PARTY", label: "Third Party" }
+  ]}
+/>
+            
             <div>
-              {/* Replace Select with InputSelect */}
+              
               <InputSelect
                 name="type"
                 label="Model Type"
@@ -307,6 +370,72 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
               Enter valid JSON that defines the configuration options for this model
             </p>
           </div>
+
+          <div className="space-y-4 mt-4">
+  <h3 className="text-md font-medium">Business Compatibility</h3>
+  <div className="grid grid-cols-2 gap-3">
+    <div className="flex items-center space-x-2">
+      <Checkbox 
+        id="retail" 
+        checked={formData.compatibleWith?.includes('RETAIL')} 
+        onCheckedChange={(checked) => {
+          const newCompatible = checked 
+            ? [...(formData.compatibleWith || []), 'RETAIL']
+            : (formData.compatibleWith || []).filter(v => v !== 'RETAIL');
+          setFormData({...formData, compatibleWith: newCompatible});
+        }}
+      />
+      <label htmlFor="retail" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        Retail
+      </label>
+    </div>
+    <div className="flex items-center space-x-2">
+      <Checkbox 
+        id="cre" 
+        checked={formData.compatibleWith?.includes('COMMERCIAL_REAL_ESTATE')} 
+        onCheckedChange={(checked) => {
+          const newCompatible = checked 
+            ? [...(formData.compatibleWith || []), 'COMMERCIAL_REAL_ESTATE']
+            : (formData.compatibleWith || []).filter(v => v !== 'COMMERCIAL_REAL_ESTATE');
+          setFormData({...formData, compatibleWith: newCompatible});
+        }}
+      />
+      <label htmlFor="cre" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        Commercial Real Estate
+      </label>
+    </div>
+    <div className="flex items-center space-x-2">
+      <Checkbox 
+        id="residential" 
+        checked={formData.compatibleWith?.includes('MULTI_FAMILY_RESIDENTIAL')} 
+        onCheckedChange={(checked) => {
+          const newCompatible = checked 
+            ? [...(formData.compatibleWith || []), 'MULTI_FAMILY_RESIDENTIAL']
+            : (formData.compatibleWith || []).filter(v => v !== 'MULTI_FAMILY_RESIDENTIAL');
+          setFormData({...formData, compatibleWith: newCompatible});
+        }}
+      />
+      <label htmlFor="residential" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        Multi-Family Residential
+      </label>
+    </div>
+    <div className="flex items-center space-x-2">
+      <Checkbox 
+        id="manufacturing" 
+        checked={formData.compatibleWith?.includes('MANUFACTURING_WAREHOUSING')} 
+        onCheckedChange={(checked) => {
+          const newCompatible = checked 
+            ? [...(formData.compatibleWith || []), 'MANUFACTURING_WAREHOUSING']
+            : (formData.compatibleWith || []).filter(v => v !== 'MANUFACTURING_WAREHOUSING');
+          setFormData({...formData, compatibleWith: newCompatible});
+        }}
+      />
+      <label htmlFor="manufacturing" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        Manufacturing & Warehousing
+      </label>
+    </div>
+  </div>
+</div>
         </div>
 
         <div className="flex justify-end space-x-2 pt-4 border-t">

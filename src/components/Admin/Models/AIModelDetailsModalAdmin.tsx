@@ -17,22 +17,31 @@ import {
   Thermometer,
   Calculator,
   UserCheck,
-  Building2
+  Building2,
+  Scan,
+  Car,
+  HardHat,
+  AlertTriangle,
+  Eye
 } from "lucide-react";
 import Modal from "@/components/Common/Modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Define AI model types and their metadata
 const modelIcons = {
-  CUSTOMER_TRAFFIC: <Users className="w-5 h-5" />,
-  FOOTPATH_ANALYSIS: <Route className="w-5 h-5" />,
+  FOOTPATH_TRACKING: <Route className="w-5 h-5" />,
   DEMOGRAPHICS: <UserCheck className="w-5 h-5" />,
-  BEHAVIOR_ANALYSIS: <BarChart2 className="w-5 h-5" />,
-  HEATMAP: <Thermometer className="w-5 h-5" />,
-  CONVERSION_TRACKING: <Calculator className="w-5 h-5" />,
-  CUSTOMER_COUNTER: <Users className="w-5 h-5" />
+  FACE_DETECTION: <Eye className="w-5 h-5" />,
+  HEATMAP_GENERATION: <Thermometer className="w-5 h-5" />,
+  SHOPLIFTING_DETECTION: <AlertTriangle className="w-5 h-5" />,
+  PEOPLE_COUNTER: <Users className="w-5 h-5" />,
+  CHECKOUT_COUNTER: <Calculator className="w-5 h-5" />,
+  GENERAL_OBJECT_DETECTION: <Scan className="w-5 h-5" />,
+  VEHICLE_DETECTION: <Car className="w-5 h-5" />,
+  PPE_DETECTION: <HardHat className="w-5 h-5" />
 };
 
 interface AIModel {
@@ -43,9 +52,12 @@ interface AIModel {
   version: string;
   active: boolean;
   capabilities: any;
+  compatibleWith?: string[];
+  verticalCapabilities?: any;
   configOptions: any;
   createdAt: string;
   updatedAt: string;
+  source?: string;
 }
 
 interface AIModelDetailsModalAdminProps {
@@ -84,6 +96,15 @@ const AIModelDetailsModalAdmin: React.FC<AIModelDetailsModalAdminProps> = ({
       </div>
     );
   };
+
+  // Business Type mapping for display
+  const businessTypeNames = {
+    RETAIL: "Retail",
+    COMMERCIAL_REAL_ESTATE: "Commercial Real Estate",
+    MULTI_FAMILY_RESIDENTIAL: "Multi-Family Residential",
+    MANUFACTURING_WAREHOUSING: "Manufacturing/Warehousing"
+  };
+
 
   // Format metrics for display
   const formatMetrics = () => {
@@ -174,6 +195,39 @@ const AIModelDetailsModalAdmin: React.FC<AIModelDetailsModalAdminProps> = ({
             {formatMetrics()}
           </div>
         </div>
+
+        <div className="mt-6">
+  <h3 className="text-lg font-medium">Vertical-Specific Capabilities</h3>
+  
+  {model.verticalCapabilities ? (
+    <div className="mt-4 grid gap-4">
+      {Object.entries(model.verticalCapabilities).map(([vertical, data]: [string, any]) => (
+        <Card key={vertical}>
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-md">
+                {businessTypeNames[vertical as keyof typeof businessTypeNames] || vertical}
+              </CardTitle>
+              <Badge>{data.name}</Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <h4 className="text-sm font-medium mb-2">Features</h4>
+            <ul className="pl-5 list-disc space-y-1">
+              {data.features.map((feature: string, index: number) => (
+                <li key={index} className="text-sm text-gray-600">{feature}</li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  ) : (
+    <p className="text-gray-500 mt-2">
+      No vertical-specific capabilities defined for this model.
+    </p>
+  )}
+</div>
 
         {/* Configuration options */}
         {model.configOptions && (

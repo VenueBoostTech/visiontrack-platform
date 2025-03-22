@@ -15,7 +15,12 @@ import {
   BarChart2, 
   Thermometer,
   Calculator,
-  UserCheck
+  UserCheck,
+  HardHat,
+  Eye,
+  AlertTriangle,
+  Scan,
+  Car
 } from "lucide-react";
 import Modal from "@/components/Common/Modal";
 import { Badge } from "@/components/ui/badge";
@@ -24,13 +29,16 @@ import { Switch } from "@/components/ui/switch";
 
 // Define AI model types and their metadata
 const modelIcons = {
-  CUSTOMER_TRAFFIC: <Users className="w-5 h-5" />,
-  FOOTPATH_ANALYSIS: <Route className="w-5 h-5" />,
+  FOOTPATH_TRACKING: <Route className="w-5 h-5" />,
   DEMOGRAPHICS: <UserCheck className="w-5 h-5" />,
-  BEHAVIOR_ANALYSIS: <BarChart2 className="w-5 h-5" />,
-  HEATMAP: <Thermometer className="w-5 h-5" />,
-  CONVERSION_TRACKING: <Calculator className="w-5 h-5" />,
-  CUSTOMER_COUNTER: <Users className="w-5 h-5" />
+  FACE_DETECTION: <Eye className="w-5 h-5" />,
+  HEATMAP_GENERATION: <Thermometer className="w-5 h-5" />,
+  SHOPLIFTING_DETECTION: <AlertTriangle className="w-5 h-5" />,
+  PEOPLE_COUNTER: <Users className="w-5 h-5" />,
+  CHECKOUT_COUNTER: <Calculator className="w-5 h-5" />,
+  GENERAL_OBJECT_DETECTION: <Scan className="w-5 h-5" />,
+  VEHICLE_DETECTION: <Car className="w-5 h-5" />,
+  PPE_DETECTION: <HardHat className="w-5 h-5" />
 };
 
 interface AIModel {
@@ -41,9 +49,12 @@ interface AIModel {
   version: string;
   active: boolean;
   capabilities: any;
+  compatibleWith?: string[];
+  verticalCapabilities?: any;
   configOptions: any;
   createdAt: string;
   updatedAt: string;
+  source?: string;
 }
 
 interface AIModelDetailsModalProps {
