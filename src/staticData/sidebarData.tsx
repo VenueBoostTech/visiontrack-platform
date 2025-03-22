@@ -1005,7 +1005,7 @@ export const adminSidebarData: Sidebar[] = [
       {
         id: "4-1",
         title: "ReadyGo Models",
-        path: "/admin/models/ready-models",
+        path: "/admin/models/ai/ready-go",
         icon: <Zap className="w-4 h-4" />
       },
       {
