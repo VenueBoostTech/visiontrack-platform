@@ -19,7 +19,8 @@ import {
   Route, 
   Users, 
   Calculator,
-  Building2
+  Building2,
+  Zap
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,13 @@ const modelIcons = {
   CUSTOMER_COUNTER: <Users className="w-5 h-5" />
 };
 
+// Define model sources
+const modelSources = {
+  ROBOFLOW: "RoboFlow (Adjusted)",
+  CUSTOM: "VisionTrack Team",
+  THIRD_PARTY: "Third Party"
+};
+
 interface AIModel {
   id: string;
   name: string;
@@ -56,6 +64,7 @@ interface AIModel {
   configOptions: any;
   createdAt: string;
   updatedAt: string;
+  source?: string;
 }
 
 interface BusinessCount {
@@ -335,14 +344,19 @@ const AIModelsList = () => {
     return baseOptions;
   };
 
+  // Get model source
+  const getModelSource = (model: AIModel) => {
+    return model.source ? modelSources[model.source as keyof typeof modelSources] || "VisionTrack Team" : "VisionTrack Team";
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl text-gray-700 font-bold">AI Models Administration</h1>
+          <h1 className="text-2xl text-gray-700 font-bold">ReadyGo Models Administration</h1>
           <p className="text-gray-700 mt-1">
-            Manage global AI models available to all businesses in the platform
+            Manage pre-built AI models that are ready for immediate deployment. Some models are sourced from RoboFlow and adjusted by our team, while others are custom-built by the VisionTrack development team.
           </p>
         </div>
         <Button onClick={handleAddNewModel} className="bg-primary text-white">
@@ -400,7 +414,7 @@ const AIModelsList = () => {
       {/* Model List */}
       <Card>
         <CardHeader>
-          <CardTitle>AI Models</CardTitle>
+          <CardTitle>ReadyGo AI Models</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
@@ -438,6 +452,7 @@ const AIModelsList = () => {
                       <tr className="border-b">
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Businesses</th>
@@ -465,6 +480,12 @@ const AIModelsList = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <Badge variant="outline" className="capitalize">
                               {model.type.toLowerCase().replace(/_/g, ' ')}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <Badge variant="secondary" className="flex items-center">
+                              {model.source === 'ROBOFLOW' ? <Zap className="w-3 h-3 mr-1" /> : null}
+                              {getModelSource(model)}
                             </Badge>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -533,6 +554,7 @@ const AIModelsList = () => {
                       <tr className="border-b">
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Businesses</th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -559,6 +581,12 @@ const AIModelsList = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <Badge variant="outline" className="capitalize">
                               {model.type.toLowerCase().replace(/_/g, ' ')}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <Badge variant="secondary" className="flex items-center">
+                              {model.source === 'ROBOFLOW' ? <Zap className="w-3 h-3 mr-1" /> : null}
+                              {getModelSource(model)}
                             </Badge>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -607,6 +635,7 @@ const AIModelsList = () => {
                       <tr className="border-b">
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -628,6 +657,12 @@ const AIModelsList = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <Badge variant="outline" className="capitalize">
                               {model.type.toLowerCase().replace(/_/g, ' ')}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <Badge variant="secondary" className="flex items-center">
+                              {model.source === 'ROBOFLOW' ? <Zap className="w-3 h-3 mr-1" /> : null}
+                              {getModelSource(model)}
                             </Badge>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
