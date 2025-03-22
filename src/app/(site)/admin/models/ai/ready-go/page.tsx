@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description: "Manage AI models for computer vision analysis in VisionTrack",
 };
 
-const AIModelsPage = () => {
+const AIReadyGoModelsPage = () => {
   return <AIModelsList />;
 };
 
-export default AIModelsPage;
+export default AIReadyGoModelsPage;

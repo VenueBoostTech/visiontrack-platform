@@ -84,7 +84,8 @@ import {
   Database,
   FileInput,
   Zap,
-  FolderClosed
+  FolderClosed,
+  Archive
 } from "lucide-react";
 
 /**
@@ -995,93 +996,114 @@ export const adminSidebarData: Sidebar[] = [
 		}
 	  ]
 	},
+  {
+    id: 4,
+    title: "AI Model Management",
+    path: "/admin/models",
+    icon: <BrainCircuit className="w-6 h-6" />,
+    // @ts-ignore
+    children: [
+      {
+        id: "4-1",
+        title: "ReadyGo Models",
+        path: "/admin/models/ai/ready-go",
+        icon: <Zap className="w-4 h-4" />
+      },
+      {
+        id: "4-2",
+        title: "Custom Models",
+        path: "/admin/models/custom-models",
+        icon: <BrainCircuit className="w-4 h-4" />
+      },
+      {
+        id: "4-3",
+        title: "Model Versions",
+        path: "/admin/models/versions",
+        icon: <Layers className="w-4 h-4" />
+      },
+      {
+        id: "4-4",
+        title: "Model Training",
+        path: "/admin/models/training",
+        icon: <LineChart className="w-4 h-4" />
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: "AI Data Management",
+    path: "/admin/data",
+    icon: <Database className="w-6 h-6" />,
+    // @ts-ignore
+    children: [
+      {
+        id: "5-1",
+        title: "Datasets",
+        path: "/admin/data/datasets",
+        icon: <Database className="w-4 h-4" />
+      },
+      {
+        id: "5-2",
+        title: "Raw Data",
+        path: "/admin/data/raw-data",
+        icon: <FileInput className="w-4 h-4" />
+      }
+    ]
+  },
+  {
+    id: 6,
+    title: "Infrastructure",
+    path: "/admin/infrastructure",
+    icon: <Server className="w-6 h-6" />,
+    // @ts-ignore
+    children: [
+      {
+        id: "6-1",
+        title: "Camera Deployments",
+        path: "/admin/infrastructure/cameras",
+        icon: <Camera className="w-4 h-4" />
+      },
+      {
+        id: "6-2",
+        title: "Edge Devices",
+        path: "/admin/infrastructure/edge-devices",
+        icon: <Boxes className="w-4 h-4" />
+      },
+      {
+        id: "6-3",
+        title: "Network Status",
+        path: "/admin/infrastructure/network",
+        icon: <Network className="w-4 h-4" />
+      },
+      {
+        id: "6-4",
+        title: "System Health",
+        path: "/admin/infrastructure/health",
+        icon: <HeartPulse className="w-4 h-4" />
+      }
+    ]
+  },
 	{
-	  id: 4,
-	  title: "AI Model Management",
-	  path: "/admin/models",
-	  icon: <BrainCircuit className="w-6 h-6" />,
-	  // @ts-ignore
-	  children: [
-		{
-		  id: "4-1",
-		  title: "AI Models",
-		  path: "/admin/models/ai",
-		  icon: <Cpu className="w-4 h-4" />
-		},
-		{
-		  id: "4-2",
-		  title: "Model Versions",
-		  path: "/admin/models/versions",
-		  icon: <Layers className="w-4 h-4" />
-		},
-		{
-		  id: "4-3",
-		  title: "Model Training",
-		  path: "/admin/models/training",
-		  icon: <LineChart className="w-4 h-4" />
-		},
-		{
-		  id: "4-4",
-		  title: "Model Performance",
-		  path: "/admin/models/performance",
-		  icon: <BarChart3 className="w-4 h-4" />
-		}
-	  ]
-	},
-	{
-	  id: 5,
-	  title: "Infrastructure",
-	  path: "/admin/infrastructure",
-	  icon: <Server className="w-6 h-6" />,
-	  // @ts-ignore
-	  children: [
-		{
-		  id: "5-1",
-		  title: "Camera Deployments",
-		  path: "/admin/infrastructure/cameras",
-		  icon: <Camera className="w-4 h-4" />
-		},
-		{
-		  id: "5-2",
-		  title: "Edge Devices",
-		  path: "/admin/infrastructure/edge-devices",
-		  icon: <Boxes className="w-4 h-4" />
-		},
-		{
-		  id: "5-3",
-		  title: "Network Status",
-		  path: "/admin/infrastructure/network",
-		  icon: <Network className="w-4 h-4" />
-		},
-		{
-		  id: "5-4",
-		  title: "System Health",
-		  path: "/admin/infrastructure/health",
-		  icon: <HeartPulse className="w-4 h-4" />
-		}
-	  ]
-	},
-	{
-	  id: 6,
+	  id: 7,
 	  title: "Integration & APIs",
 	  path: "/admin/integrations",
 	  icon: <Code className="w-6 h-6" />,
 	  // @ts-ignore
 	  children: [
 		{
-		  id: "6-1",
+		  id: "7-1",
 		  title: "API Management",
 		  path: "/admin/integrations/api",
 		  icon: <Globe className="w-4 h-4" />
 		},
 		{
-		  id: "6-2",
+		  id: "7-2",
 		  title: "Third-party Services",
 		  path: "/admin/integrations/services",
 		  icon: <Layers className="w-4 h-4" />
 		},
 		{
-		  id: "6-3",
+		  id: "7-3",
 		  title: "Webhooks",
 		  path: "/admin/integrations/webhooks",
 		  icon: <Network className="w-4 h-4" />
@@ -1089,86 +1111,113 @@ export const adminSidebarData: Sidebar[] = [
 	  ]
 	},
 	{
-	  id: 7,
-	  title: "Data Synchronization",
-	  path: "/admin/sync",
-	  icon: <FolderSync className="w-6 h-6" />,
-	  // @ts-ignore
-	  children: [
-		{
-		  id: "7-1",
-		  title: "Sync Status",
-		  path: "/admin/sync/status",
-		  icon: <LineChart className="w-4 h-4" />
-		},
-		{
-		  id: "7-2",
-		  title: "Sync History",
-		  path: "/admin/sync/history",
-		  icon: <ClipboardList className="w-4 h-4" />
-		},
-		{
-		  id: "7-3",
-		  title: "Manual Sync",
-		  path: "/admin/sync",
-		  icon: <FolderSync className="w-4 h-4" />
-		}
-	  ]
-	},
+    id: 8,
+    title: "Data Synchronization",
+    path: "/admin/sync",
+    icon: <FolderSync className="w-6 h-6" />,
+    // @ts-ignore
+    children: [
+      {
+        id: "8-1",
+        title: "Sync Status",
+        path: "/admin/sync/status",
+        icon: <LineChart className="w-4 h-4" />
+      },
+      {
+        id: "8-2",
+        title: "Sync History",
+        path: "/admin/sync/history",
+        icon: <ClipboardList className="w-4 h-4" />
+      },
+      {
+        id: "8-3",
+        title: "Manual Sync",
+        path: "/admin/sync",
+        icon: <FolderSync className="w-4 h-4" />
+      }
+    ]
+  },
 	{
-	  id: 8,
+	  id: 9,
 	  title: "Analytics & Reports",
 	  path: "/admin/analytics",
 	  icon: <BarChart3 className="w-6 h-6" />,
 	  // @ts-ignore
 	  children: [
 		{
-		  id: "8-1",
+		  id: "9-1",
 		  title: "System Analytics",
 		  path: "/admin/analytics/system",
 		  icon: <LineChart className="w-4 h-4" />
 		},
 		{
-		  id: "8-2",
+		  id: "9-2",
 		  title: "Usage Metrics",
 		  path: "/admin/analytics/usage",
 		  icon: <BarChart3 className="w-4 h-4" />
 		},
 		{
-		  id: "8-3",
+		  id: "9-3",
 		  title: "Detection Reports",
 		  path: "/admin/analytics/detection",
 		  icon: <FileText className="w-4 h-4" />
 		}
 	  ]
 	},
+  {
+    id: 10,
+    title: "Files Management",
+    path: "/admin/files",
+    icon: <FolderClosed className="w-6 h-6" />,
+    // @ts-ignore
+    children: [
+      {
+        id: "10-1",
+        title: "Documents",
+        path: "/admin/files/documents",
+        icon: <FileText className="w-4 h-4" />
+      },
+      {
+        id: "10-2",
+        title: "Contracts",
+        path: "/admin/files/contracts",
+        icon: <ScrollText className="w-4 h-4" />
+      },
+      {
+        id: "10-3",
+        title: "Archives",
+        path: "/admin/files/archives",
+        icon: <Archive className="w-4 h-4" />
+      }
+    ]
+  },
 	{
-	  id: 9,
+	  id: 11,
 	  title: "System Settings",
 	  path: "/admin/settings",
 	  icon: <Settings className="w-6 h-6" />,
 	  // @ts-ignore
 	  children: [
 		{
-		  id: "9-1",
+		  id: "11-1",
 		  title: "Global Configuration",
 		  path: "/admin/settings/global",
 		  icon: <Settings className="w-4 h-4" />
 		},
 		{
-		  id: "9-2",
+		  id: "11-2",
 		  title: "Notification Rules",
 		  path: "/admin/settings/notifications",
 		  icon: <BellRing className="w-4 h-4" />
 		},
 		{
-		  id: "9-3",
+		  id: "11-3",
 		  title: "Security Settings",
 		  path: "/admin/settings/security",
 		  icon: <Shield className="w-4 h-4" />
 		},
 		{
-		  id: "9-4",
+		  id: "11-4",
 		  title: "Billing Configuration",
 		  path: "/admin/settings/billing",
 		  icon: <CreditCard className="w-4 h-4" />

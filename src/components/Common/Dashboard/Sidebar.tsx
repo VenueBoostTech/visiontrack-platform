@@ -108,9 +108,21 @@ export default function Sidebar({
         )
       },
       {
-        title: "AI & Infrastructure",
+        title: "AI Computer Vision",
         items: sidebarData.filter(item => 
-          ["AI Model Management", "Infrastructure", "Data Synchronization"].includes(item.title)
+          ["AI Model Management", "AI Data Management"].includes(item.title)
+        )
+      },
+      {
+        title: "Infrastructure",
+        items: sidebarData.filter(item => 
+          ["Infrastructure", "Data Synchronization"].includes(item.title)
+        )
+      },
+      {
+        title: "Content",  // New group for Files Management 
+        items: sidebarData.filter(item => 
+          ["Files Management"].includes(item.title)
         )
       },
       {
