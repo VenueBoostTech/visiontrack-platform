@@ -84,7 +84,8 @@ import {
   Database,
   FileInput,
   Zap,
-  FolderClosed
+  FolderClosed,
+  Archive
 } from "lucide-react";
 
 /**
@@ -1163,33 +1164,60 @@ export const adminSidebarData: Sidebar[] = [
 		}
 	  ]
 	},
+  {
+    id: 10,
+    title: "Files Management",
+    path: "/admin/files",
+    icon: <FolderClosed className="w-6 h-6" />,
+    // @ts-ignore
+    children: [
+      {
+        id: "10-1",
+        title: "Documents",
+        path: "/admin/files/documents",
+        icon: <FileText className="w-4 h-4" />
+      },
+      {
+        id: "10-2",
+        title: "Contracts",
+        path: "/admin/files/contracts",
+        icon: <ScrollText className="w-4 h-4" />
+      },
+      {
+        id: "10-3",
+        title: "Archives",
+        path: "/admin/files/archives",
+        icon: <Archive className="w-4 h-4" />
+      }
+    ]
+  },
 	{
-	  id: 10,
+	  id: 11,
 	  title: "System Settings",
 	  path: "/admin/settings",
 	  icon: <Settings className="w-6 h-6" />,
 	  // @ts-ignore
 	  children: [
 		{
-		  id: "10-1",
+		  id: "11-1",
 		  title: "Global Configuration",
 		  path: "/admin/settings/global",
 		  icon: <Settings className="w-4 h-4" />
 		},
 		{
-		  id: "10-2",
+		  id: "11-2",
 		  title: "Notification Rules",
 		  path: "/admin/settings/notifications",
 		  icon: <BellRing className="w-4 h-4" />
 		},
 		{
-		  id: "10-3",
+		  id: "11-3",
 		  title: "Security Settings",
 		  path: "/admin/settings/security",
 		  icon: <Shield className="w-4 h-4" />
 		},
 		{
-		  id: "10-4",
+		  id: "11-4",
 		  title: "Billing Configuration",
 		  path: "/admin/settings/billing",
 		  icon: <CreditCard className="w-4 h-4" />
