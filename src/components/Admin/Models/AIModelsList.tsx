@@ -20,7 +20,11 @@ import {
   Users, 
   Calculator,
   Building2,
-  Zap
+  Zap,
+  AlertTriangle,
+  Scan,
+  Car,
+  HardHat
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,13 +41,16 @@ import InputSelect from "@/components/Common/InputSelect";
 
 // Define AI model types and their metadata
 const modelIcons = {
-  CUSTOMER_TRAFFIC: <Users className="w-5 h-5" />,
-  FOOTPATH_ANALYSIS: <Route className="w-5 h-5" />,
+  FOOTPATH_TRACKING: <Route className="w-5 h-5" />,
   DEMOGRAPHICS: <UserCheck className="w-5 h-5" />,
-  BEHAVIOR_ANALYSIS: <BarChart2 className="w-5 h-5" />,
-  HEATMAP: <Thermometer className="w-5 h-5" />,
-  CONVERSION_TRACKING: <Calculator className="w-5 h-5" />,
-  CUSTOMER_COUNTER: <Users className="w-5 h-5" />
+  FACE_DETECTION: <Eye className="w-5 h-5" />,
+  HEATMAP_GENERATION: <Thermometer className="w-5 h-5" />,
+  SHOPLIFTING_DETECTION: <AlertTriangle className="w-5 h-5" />,
+  PEOPLE_COUNTER: <Users className="w-5 h-5" />,
+  CHECKOUT_COUNTER: <Calculator className="w-5 h-5" />,
+  GENERAL_OBJECT_DETECTION: <Scan className="w-5 h-5" />,
+  VEHICLE_DETECTION: <Car className="w-5 h-5" />,
+  PPE_DETECTION: <HardHat className="w-5 h-5" />
 };
 
 // Define model sources
@@ -62,6 +69,8 @@ interface AIModel {
   active: boolean;
   capabilities: any;
   configOptions: any;
+  compatibleWith?: string[];
+  verticalCapabilities?: any;
   createdAt: string;
   updatedAt: string;
   source?: string;
@@ -91,6 +100,15 @@ const AIModelsList = () => {
   // Filter models
   const activeModels = models.filter(model => model.active);
   const inactiveModels = models.filter(model => !model.active);
+
+  // Business Type mapping for display
+  const businessTypeNames = {
+    RETAIL: "Retail",
+    COMMERCIAL_REAL_ESTATE: "Commercial Real Estate",
+    MULTI_FAMILY_RESIDENTIAL: "Multi-Family Residential",
+    MANUFACTURING_WAREHOUSING: "Manufacturing/Warehousing"
+  };
+
 
   useEffect(() => {
     fetchModels();
@@ -165,6 +183,22 @@ const AIModelsList = () => {
   const handleDeactivateModel = (model: AIModel) => {
     setSelectedModel(model);
     setShowDeactivateModal(true);
+  };
+
+  const getCompatibilityDisplay = (model: AIModel) => {
+    if (!model.compatibleWith || model.compatibleWith.length === 0) {
+      return <Badge variant="outline">Universal</Badge>;
+    }
+    
+    return (
+      <div className="flex flex-wrap gap-1">
+        {model.compatibleWith.map((type) => (
+          <Badge key={type} variant="outline" className="text-xs">
+            {businessTypeNames[type as keyof typeof businessTypeNames] || type}
+          </Badge>
+        ))}
+      </div>
+    );
   };
 
   const confirmDeleteModel = async () => {
@@ -453,6 +487,7 @@ const AIModelsList = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compatibility</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Businesses</th>
@@ -482,7 +517,10 @@ const AIModelsList = () => {
                               {model.type.toLowerCase().replace(/_/g, ' ')}
                             </Badge>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-6 py-4">
+                            {getCompatibilityDisplay(model)}
+                          </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
                             <Badge variant="secondary" className="flex items-center">
                               {model.source === 'ROBOFLOW' ? <Zap className="w-3 h-3 mr-1" /> : null}
                               {getModelSource(model)}
