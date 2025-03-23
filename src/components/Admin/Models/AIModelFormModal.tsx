@@ -252,6 +252,7 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
     >
+      <div className="max-h-[70vh] overflow-y-auto pr-2 -mr-2">
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
           <div className="p-3 text-sm bg-red-50 border border-red-200 text-red-600 rounded-md">
@@ -499,6 +500,7 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
           </Button>
         </div>
       </form>
+      </div>
     </Modal>
   );
 };
