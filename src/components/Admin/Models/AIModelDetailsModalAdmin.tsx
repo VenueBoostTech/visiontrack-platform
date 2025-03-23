@@ -266,6 +266,7 @@ const AIModelDetailsModalAdmin: React.FC<AIModelDetailsModalAdminProps> = ({
         <div className="flex justify-between pt-4 border-t">
           <Button 
             variant="destructive" 
+            className="bg-red-600 text-white hover:bg-red-700 "
             onClick={onDelete} 
             disabled={!canDelete}
             title={!canDelete ? "Cannot delete model in use by businesses" : "Delete this model"}
