@@ -93,7 +93,6 @@ export const useAiModels = () => {
     aiModels,
     totalItems,
     totalPages,
-    fetchAiModels,
     syncAiModels,
     isInitialized: !!api
   };

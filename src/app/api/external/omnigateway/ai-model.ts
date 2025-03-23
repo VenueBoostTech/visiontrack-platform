@@ -12,10 +12,6 @@ export const createOmniStackAiModelApi = (apiKey: string) => {
       const { data } = await api.post<SyncResponse>('/ai-models/sync', { models });
       return data;
     },
-    
-    updateNextJsId: async (id: string, nextJsId: string) => {
-      const { data } = await api.patch(`/ai-models/${id}/nextjs-id`, { nextJsId });
-      return data;
-    }
+
   };
 };

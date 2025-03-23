@@ -41,6 +41,8 @@ import DeleteModal from "@/components/Common/Modals/DeleteModal";
 import AreYouSureModal from "@/components/Common/Modals/AreYouSureModal";
 import InputSelect from "@/components/Common/InputSelect";
 import { SyncConfirmDialog } from "./SyncConfirmDialog";
+import { useAiModels } from '@/hooks/useAiModels';
+
 
 // Define AI model types and their metadata
 const modelIcons = {
@@ -99,11 +101,15 @@ const AIModelsList = () => {
   const [selectedModel, setSelectedModel] = useState<AIModel | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
+  // const [isSyncing, setIsSyncing] = useState(false);
   
   // This will store the selected action values for each model
   const [modelActions, setModelActions] = useState<{[key: string]: string}>({});
 
+  const {
+    syncAiModels,
+    isSyncing
+  } = useAiModels();
   // Filter models
   const activeModels = models.filter(model => model.active);
   const inactiveModels = models.filter(model => !model.active);
@@ -198,17 +204,13 @@ const AIModelsList = () => {
 
   const handleSyncConfirm = async () => {
     try {
-      setIsSyncing(true);
-      // This would call your sync API
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Mock delay
-      toast.success("Models synchronized successfully");
+      const result = await syncAiModels();
+      toast.success(`Sync completed: ${result.created} created, ${result.updated} updated, ${result.unchanged} unchanged`);
+      setSyncModalOpen(false);
       fetchModels(); // Refresh the models list
     } catch (error) {
       console.error("Error syncing models:", error);
       toast.error("Failed to sync models");
-    } finally {
-      setIsSyncing(false);
-      setSyncModalOpen(false);
     }
   };
 
