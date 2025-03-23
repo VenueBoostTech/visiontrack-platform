@@ -14,6 +14,9 @@ interface AIModel {
     updatedAt: string;
     source?: string;
     visionTrackId?: string;
+    omniStackId?: string;
+    model_id?: string; 
+    author?: string;
   }
   
   interface AIModelParams {
