@@ -1,7 +1,8 @@
 // components/AI/SyncConfirmDialog.tsx
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Cpu, RefreshCcw } from "lucide-react";
+import Modal from "@/components/Common/Modal";
 
 interface SyncConfirmDialogProps {
   open: boolean;
@@ -12,34 +13,28 @@ interface SyncConfirmDialogProps {
 
 export function SyncConfirmDialog({ open, onClose, onConfirm, isSyncing }: SyncConfirmDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Sync AI Models with VisionTrack</DialogTitle>
-          <DialogDescription>
-            This will synchronize all ReadyGo AI models from the NextJS platform to your VisionTrack backend.
-            New models will be added and existing ones will be updated.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="py-4">
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-amber-800 flex items-start gap-3">
-            <Cpu className="h-5 w-5 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium">Sync will:</p>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Import all ReadyGo AI models to VisionTrack</li>
-                <li>Update existing models if they've changed</li>
-                <li>Maintain proper references between platforms</li>
-                <li>Enable AI model deployment on your cameras</li>
-              </ul>
-            </div>
+    <Modal
+      title="Sync AI Models with VisionTrack/OmniStack Gateway"
+      description="This will synchronize all ReadyGo AI models from the NextJS platform to your VisionTrack/OmniStack Gateway backend. New models will be added and existing ones will be updated."
+      isOpen={open}
+      onClose={onClose}
+    >
+      <div className="space-y-6">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-amber-800 flex items-start gap-3">
+          <Cpu className="h-5 w-5 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium">Sync will:</p>
+            <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
+              <li>Sync all ReadyGo AI models to VisionTrack/OmniStack Gateway</li>
+              <li>Update existing models if they've changed</li>
+              <li>Maintain proper references between platforms</li>
+              <li>Enable AI model deployment on your cameras</li>
+            </ul>
           </div>
         </div>
 
-        <DialogFooter>
+        <div className="flex justify-end space-x-3 pt-4 border-t">
           <Button 
-            type="button" 
             variant="outline" 
             onClick={onClose}
             disabled={isSyncing}
@@ -47,10 +42,9 @@ export function SyncConfirmDialog({ open, onClose, onConfirm, isSyncing }: SyncC
             Cancel
           </Button>
           <Button 
-            type="button"
             onClick={onConfirm}
             disabled={isSyncing}
-            className="bg-primary"
+            className="bg-primary text-white"
           >
             {isSyncing ? (
               <>
@@ -64,8 +58,8 @@ export function SyncConfirmDialog({ open, onClose, onConfirm, isSyncing }: SyncC
               </>
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </Modal>
   );
 }

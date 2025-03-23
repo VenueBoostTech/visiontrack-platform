@@ -421,10 +421,6 @@ const AIModelsList = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={handleSyncModels} variant="outline" className="gap-2">
-            <ArrowUpDown className="h-4 w-4" />
-            Sync with OmniStack & VisionTrack
-          </Button>
           <Button onClick={handleAddNewModel} className="bg-primary text-white">
             <Plus className="h-4 w-4 mr-2" />
             New Model
