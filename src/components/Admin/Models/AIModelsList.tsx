@@ -24,7 +24,9 @@ import {
   AlertTriangle,
   Scan,
   Car,
-  HardHat
+  HardHat,
+  Server,
+  ArrowUpDown
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,6 +40,9 @@ import AIModelFormModal from "./AIModelFormModal";
 import DeleteModal from "@/components/Common/Modals/DeleteModal";
 import AreYouSureModal from "@/components/Common/Modals/AreYouSureModal";
 import InputSelect from "@/components/Common/InputSelect";
+import { SyncConfirmDialog } from "./SyncConfirmDialog";
+import { useAiModels } from '@/hooks/useAiModels';
+
 
 // Define AI model types and their metadata
 const modelIcons = {
@@ -74,6 +79,8 @@ interface AIModel {
   createdAt: string;
   updatedAt: string;
   source?: string;
+  visionTrackId?: string;
+  omniStackId?: string;
 }
 
 interface BusinessCount {
@@ -90,13 +97,19 @@ const AIModelsList = () => {
   const [showFormModal, setShowFormModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [showSyncModal, setSyncModalOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<AIModel | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  // const [isSyncing, setIsSyncing] = useState(false);
   
   // This will store the selected action values for each model
   const [modelActions, setModelActions] = useState<{[key: string]: string}>({});
 
+  const {
+    syncAiModels,
+    isSyncing
+  } = useAiModels();
   // Filter models
   const activeModels = models.filter(model => model.active);
   const inactiveModels = models.filter(model => !model.active);
@@ -183,6 +196,22 @@ const AIModelsList = () => {
   const handleDeactivateModel = (model: AIModel) => {
     setSelectedModel(model);
     setShowDeactivateModal(true);
+  };
+
+  const handleSyncModels = async () => {
+    setSyncModalOpen(true);
+  };
+
+  const handleSyncConfirm = async () => {
+    try {
+      const result = await syncAiModels();
+      toast.success(`Sync completed: ${result.created} created, ${result.updated} updated, ${result.unchanged} unchanged`);
+      setSyncModalOpen(false);
+      fetchModels(); // Refresh the models list
+    } catch (error) {
+      console.error("Error syncing models:", error);
+      toast.error("Failed to sync models");
+    }
   };
 
   const getCompatibilityDisplay = (model: AIModel) => {
@@ -386,18 +415,20 @@ const AIModelsList = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl text-gray-700 font-bold">ReadyGo Models Administration</h1>
-          <p className="text-gray-700 mt-1">
-            Manage pre-built AI models that are ready for immediate deployment. Some models are sourced from RoboFlow and adjusted by our team, while others are custom-built by the VisionTrack development team.
-          </p>
-        </div>
-        <Button onClick={handleAddNewModel} className="bg-primary text-white">
-          <Plus className="h-4 w-4 mr-2" />
-          New Model
-        </Button>
-      </div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 mb-6">
+  <div className="max-w-7xl">
+    <h1 className="text-2xl text-gray-700 font-bold">ReadyGo Models Administration</h1>
+    <p className="text-gray-700 mt-1">
+      Manage pre-built AI models that are ready for immediate deployment. Some models are sourced from RoboFlow and adjusted by our team, while others are custom-built by the VisionTrack development team.
+    </p>
+  </div>
+  <div className="flex items-center gap-3">
+    <Button onClick={handleAddNewModel} className="bg-primary text-white" size="lg">
+      <Plus className="h-4 w-4 mr-2" />
+      New Model
+    </Button>
+  </div>
+</div>
 
       {/* Stats Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -447,8 +478,18 @@ const AIModelsList = () => {
 
       {/* Model List */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>ReadyGo AI Models</CardTitle>
+          <div className="flex items-center gap-2">
+            <Button onClick={handleSyncModels} variant="outline" size="sm" className="gap-1">
+              <ArrowUpDown className="h-3.5 w-3.5" />
+              Sync Models
+            </Button>
+            <Button onClick={fetchModels} variant="outline" size="sm" className="gap-1">
+              <RefreshCw className="h-3.5 w-3.5" />
+              Refresh
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="p-0">
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
@@ -490,6 +531,7 @@ const AIModelsList = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compatibility</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sync Status</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Businesses</th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                       </tr>
@@ -518,7 +560,7 @@ const AIModelsList = () => {
                             </Badge>
                           </td>
                          
-                            <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-6 py-4 whitespace-nowrap">
                             <Badge variant="secondary" className="flex items-center">
                               {model.source === 'ROBOFLOW' ? <Zap className="w-3 h-3 mr-1" /> : null}
                               {getModelSource(model)}
@@ -542,6 +584,22 @@ const AIModelsList = () => {
                                 Inactive
                               </span>
                             )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-1 text-xs">
+                                <span className="font-medium text-muted-foreground w-16">OS Sync:</span>
+                                <Badge variant={model.omniStackId ? "default" : "secondary"} className="text-xs">
+                                  {model.omniStackId ? model.omniStackId.substring(0, 6) + '...' : '-'}
+                                </Badge>
+                              </div>
+                              <div className="flex items-center gap-1 text-xs">
+                                <span className="font-medium text-muted-foreground w-16">VT Sync:</span>
+                                <Badge variant={model.visionTrackId ? "default" : "secondary"} className="text-xs">
+                                  {model.visionTrackId ? model.visionTrackId.substring(0, 6) + '...' : '-'}
+                                </Badge>
+                              </div>
+                            </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <Badge variant={getBusinessCount(model.id) > 0 ? "default" : "secondary"}>
@@ -596,6 +654,7 @@ const AIModelsList = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compatibility</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sync Status</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Businesses</th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                       </tr>
@@ -635,6 +694,20 @@ const AIModelsList = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             v{model.version}
                           </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center gap-1 text-xs">
+                                <span className="font-medium text-muted-foreground w-16">OS Sync:</span>
+                                <Badge variant={model.omniStackId ? "default" : "secondary"} className="text-xs">
+                                  {model.omniStackId ? model.omniStackId.substring(0, 6) + '...' : '-'}
+                                </Badge>
+                                <div className="flex items-center gap-1 text-xs">
+                                  <span className="font-medium text-muted-foreground w-16">VT Sync:</span>
+                                  <Badge variant={model.visionTrackId ? "default" : "secondary"} className="text-xs">
+                                    {model.visionTrackId ? model.visionTrackId.substring(0, 6) + '...' : '-'}
+                                  </Badge>
+                                </div>
+                            </div>
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <Badge variant={getBusinessCount(model.id) > 0 ? "default" : "secondary"}>
                               {getBusinessCount(model.id)} {getBusinessCount(model.id) === 1 ? 'business' : 'businesses'}
@@ -664,147 +737,170 @@ const AIModelsList = () => {
                 </div>
               )}
             </TabsContent>
-
             {/* Inactive Models Tab */}
-            <TabsContent value="inactive" className="p-0">
-              {loadingModels ? (
-                <div className="flex justify-center items-center h-64">
-                  <RefreshCw className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              ) : inactiveModels.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compatibility</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {inactiveModels.map((model) => (
-                        <tr key={model.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="p-2 rounded-lg bg-gray-100 mr-3">
-                                {modelIcons[model.type as keyof typeof modelIcons] || <Cpu className="w-5 h-5" />}
-                              </div>
-                              <div className="font-medium text-gray-900 dark:text-white">
-                                {model.name}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <Badge variant="outline" className="capitalize">
-                              {model.type.toLowerCase().replace(/_/g, ' ')}
+        <TabsContent value="inactive" className="p-0">
+          {loadingModels ? (
+            <div className="flex justify-center items-center h-64">
+              <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : inactiveModels.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compatibility</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sync Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {inactiveModels.map((model) => (
+                    <tr key={model.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="p-2 rounded-lg bg-gray-100 mr-3">
+                            {modelIcons[model.type as keyof typeof modelIcons] || <Cpu className="w-5 h-5" />}
+                          </div>
+                          <div className="font-medium text-gray-900 dark:text-white">
+                            {model.name}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Badge variant="outline" className="capitalize">
+                          {model.type.toLowerCase().replace(/_/g, ' ')}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Badge variant="secondary" className="flex items-center">
+                          {model.source === 'ROBOFLOW' ? <Zap className="w-3 h-3 mr-1" /> : null}
+                          {getModelSource(model)}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-4">
+                        {getCompatibilityDisplay(model)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        v{model.version}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1 text-xs">
+                            <span className="font-medium text-muted-foreground w-16">OS Sync:</span>
+                            <Badge variant={model.omniStackId ? "default" : "secondary"} className="text-xs">
+                              {model.omniStackId ? model.omniStackId.substring(0, 6) + '...' : '-'}
                             </Badge>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <Badge variant="secondary" className="flex items-center">
-                              {model.source === 'ROBOFLOW' ? <Zap className="w-3 h-3 mr-1" /> : null}
-                              {getModelSource(model)}
+                          </div>
+                          <div className="flex items-center gap-1 text-xs">
+                            <span className="font-medium text-muted-foreground w-16">VT Sync:</span>
+                            <Badge variant={model.visionTrackId ? "default" : "secondary"} className="text-xs">
+                              {model.visionTrackId ? model.visionTrackId.substring(0, 6) + '...' : '-'}
                             </Badge>
-                          </td>
-                          <td className="px-6 py-4">
-                            {getCompatibilityDisplay(model)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            v{model.version}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <p className="text-sm text-gray-500 line-clamp-1">
-                              {model.description}
-                            </p>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <div className="w-40 ml-auto">
-                              <InputSelect
-                                name={`action-${model.id}`}
-                                label=""
-                                options={getActionOptions(model)}
-                                value={modelActions[model.id] || "Select Action"}
-                                onChange={(e) => handleActionChange(e, model)}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="py-12 text-center text-gray-500">
-                  <Check className="h-12 w-12 mx-auto text-green-500 mb-3" />
-                  <p className="text-lg font-medium">All models are active</p>
-                  <p className="text-sm">No inactive models found</p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <p className="text-sm text-gray-500 line-clamp-1">
+                          {model.description}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <div className="w-40 ml-auto">
+                          <InputSelect
+                            name={`action-${model.id}`}
+                            label=""
+                            options={getActionOptions(model)}
+                            value={modelActions[model.id] || "Select Action"}
+                            onChange={(e) => handleActionChange(e, model)}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="py-12 text-center text-gray-500">
+              <Check className="h-12 w-12 mx-auto text-green-500 mb-3" />
+              <p className="text-lg font-medium">All models are active</p>
+              <p className="text-sm">No inactive models found</p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </CardContent>
+  </Card>
 
-      {/* Model Details Modal */}
-      {selectedModel && (
-        <AIModelDetailsModalAdmin
-          isOpen={showDetailsModal}
-          onClose={() => setShowDetailsModal(false)}
-          model={selectedModel}
-          businessCount={getBusinessCount(selectedModel.id)}
-          onEdit={() => {
-            setShowDetailsModal(false);
-            handleEditModel(selectedModel);
-          }}
-          onToggleActive={() => {
-            setShowDetailsModal(false);
-            handleToggleActive(selectedModel);
-          }}
-          onDelete={() => {
-            setShowDetailsModal(false);
-            handleDeleteModel(selectedModel);
-          }}
-          canDelete={getBusinessCount(selectedModel.id) === 0}
-        />
-      )}
+  {/* Model Details Modal */}
+  {selectedModel && (
+    <AIModelDetailsModalAdmin
+      isOpen={showDetailsModal}
+      onClose={() => setShowDetailsModal(false)}
+      model={selectedModel}
+      businessCount={getBusinessCount(selectedModel.id)}
+      onEdit={() => {
+        setShowDetailsModal(false);
+        handleEditModel(selectedModel);
+      }}
+      onToggleActive={() => {
+        setShowDetailsModal(false);
+        handleToggleActive(selectedModel);
+      }}
+      onDelete={() => {
+        setShowDetailsModal(false);
+        handleDeleteModel(selectedModel);
+      }}
+      canDelete={getBusinessCount(selectedModel.id) === 0}
+    />
+  )}
 
-      {/* Add/Edit Model Form Modal */}
-      <AIModelFormModal
-        isOpen={showFormModal}
-        onClose={() => setShowFormModal(false)}
-        initialData={selectedModel}
-        isEditing={isEditing}
-        onSubmit={handleSaveModel}
-        isLoading={actionLoading}
-      />
+  {/* Add/Edit Model Form Modal */}
+  <AIModelFormModal
+    isOpen={showFormModal}
+    onClose={() => setShowFormModal(false)}
+    initialData={selectedModel}
+    isEditing={isEditing}
+    onSubmit={handleSaveModel}
+    isLoading={actionLoading}
+  />
 
-      {/* Delete Confirmation Modal */}
-      <DeleteModal
-        showDeleteModal={showDeleteModal}
-        setShowDeleteModal={setShowDeleteModal}
-        deleteText={`Delete ${selectedModel?.name}`}
-        message={`Are you sure you want to delete the "${selectedModel?.name}" AI model? This action cannot be undone.`}
-        handleDelete={confirmDeleteModel}
-        loading={actionLoading}
-      />
-
-     {/* Deactivate Confirmation Modal */}
-{selectedModel && (
-  <AreYouSureModal
-    showAreYouSureModal={showDeactivateModal}
-    setShowAreYouSureModal={setShowDeactivateModal}
-    areYouSureText={`Deactivate ${selectedModel.name}`}
-    message={`Are you sure you want to deactivate "${selectedModel.name}"? This model will no longer be available to businesses in the platform.`}
-    handleAreYouSure={() => toggleModelActiveStatus(selectedModel)}
+  {/* Delete Confirmation Modal */}
+  <DeleteModal
+    showDeleteModal={showDeleteModal}
+    setShowDeleteModal={setShowDeleteModal}
+    deleteText={`Delete ${selectedModel?.name}`}
+    message={`Are you sure you want to delete the "${selectedModel?.name}" AI model? This action cannot be undone.`}
+    handleDelete={confirmDeleteModel}
     loading={actionLoading}
   />
-)}
 
+  {/* Deactivate Confirmation Modal */}
+  {selectedModel && (
+    <AreYouSureModal
+      showAreYouSureModal={showDeactivateModal}
+      setShowAreYouSureModal={setShowDeactivateModal}
+      areYouSureText={`Deactivate ${selectedModel.name}`}
+      message={`Are you sure you want to deactivate "${selectedModel.name}"? This model will no longer be available to businesses in the platform.`}
+      handleAreYouSure={() => toggleModelActiveStatus(selectedModel)}
+      loading={actionLoading}
+    />
+  )}
+
+  {/* Sync Confirmation Dialog */}
+  <SyncConfirmDialog
+    open={showSyncModal}
+    onClose={() => setSyncModalOpen(false)}
+    onConfirm={handleSyncConfirm}
+    isSyncing={isSyncing}
+  />
 </div>
-  );
-};
 
+);
+};
 export default AIModelsList;
