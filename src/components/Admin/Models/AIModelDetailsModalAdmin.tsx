@@ -138,6 +138,7 @@ const AIModelDetailsModalAdmin: React.FC<AIModelDetailsModalAdminProps> = ({
       isOpen={isOpen}
       onClose={onClose}
     >
+       <div className="max-h-[70vh] overflow-y-auto pr-2 -mr-2">
       <div className="space-y-6">
         {/* Model header */}
         <div className="flex items-start justify-between">
@@ -206,24 +207,24 @@ const AIModelDetailsModalAdmin: React.FC<AIModelDetailsModalAdminProps> = ({
   {model.verticalCapabilities ? (
     <div className="mt-4 grid gap-4">
       {Object.entries(model.verticalCapabilities).map(([vertical, data]: [string, any]) => (
-        <Card key={vertical}>
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-md">
-                {businessTypeNames[vertical as keyof typeof businessTypeNames] || vertical}
-              </CardTitle>
-              <Badge>{data.name}</Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <h4 className="text-sm font-medium mb-2">Features</h4>
-            <ul className="pl-5 list-disc space-y-1">
-              {data.features.map((feature: string, index: number) => (
-                <li key={index} className="text-sm text-gray-600">{feature}</li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+       <Card key={vertical}>
+       <CardHeader className="pb-2">
+         <div className="flex items-center justify-between w-full">
+           <CardTitle className="text-md">
+             {businessTypeNames[vertical as keyof typeof businessTypeNames] || vertical}
+           </CardTitle>
+           <Badge className="ml-auto">{data.name}</Badge>
+         </div>
+       </CardHeader>
+       <CardContent>
+         <h4 className="text-sm font-medium mb-2">Features</h4>
+         <ul className="pl-5 list-disc space-y-1">
+           {data.features.map((feature: string, index: number) => (
+             <li key={index} className="text-sm text-gray-600">{feature}</li>
+           ))}
+         </ul>
+       </CardContent>
+     </Card>
       ))}
     </div>
   ) : (
@@ -294,6 +295,7 @@ const AIModelDetailsModalAdmin: React.FC<AIModelDetailsModalAdminProps> = ({
             </Button>
           </div>
         </div>
+      </div>
       </div>
     </Modal>
   );

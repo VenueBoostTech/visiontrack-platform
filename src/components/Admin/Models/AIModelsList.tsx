@@ -415,20 +415,20 @@ const AIModelsList = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl text-gray-700 font-bold">ReadyGo Models Administration</h1>
-          <p className="text-gray-700 mt-1">
-            Manage pre-built AI models that are ready for immediate deployment. Some models are sourced from RoboFlow and adjusted by our team, while others are custom-built by the VisionTrack development team.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button onClick={handleAddNewModel} className="bg-primary text-white">
-            <Plus className="h-4 w-4 mr-2" />
-            New Model
-          </Button>
-        </div>
-      </div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 mb-6">
+  <div className="max-w-7xl">
+    <h1 className="text-2xl text-gray-700 font-bold">ReadyGo Models Administration</h1>
+    <p className="text-gray-700 mt-1">
+      Manage pre-built AI models that are ready for immediate deployment. Some models are sourced from RoboFlow and adjusted by our team, while others are custom-built by the VisionTrack development team.
+    </p>
+  </div>
+  <div className="flex items-center gap-3">
+    <Button onClick={handleAddNewModel} className="bg-primary text-white" size="lg">
+      <Plus className="h-4 w-4 mr-2" />
+      New Model
+    </Button>
+  </div>
+</div>
 
       {/* Stats Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
