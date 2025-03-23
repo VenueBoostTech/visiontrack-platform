@@ -58,6 +58,10 @@ interface AIModel {
   createdAt: string;
   updatedAt: string;
   source?: string;
+  visionTrackId?: string;
+  omniStackId?: string;
+  model_id?: string;
+  author?: string;
 }
 
 interface AIModelDetailsModalAdminProps {

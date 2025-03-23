@@ -24,6 +24,10 @@ interface AIModel {
   createdAt: string;
   updatedAt: string;
   source?: string;
+  visionTrackId?: string;
+  omniStackId?: string;
+  model_id?: string;
+  author?: string;
 }
 
 interface AIModelFormModalProps {
@@ -80,7 +84,6 @@ const Checkbox = ({ label, checked, onChange }: CheckboxProps) => (
   </label>
 );
 
-
 const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
   isOpen,
   onClose,
@@ -102,7 +105,9 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
       metrics: []
     },
     configOptions: {},
-    source: 'CUSTOM'
+    source: 'CUSTOM',
+    model_id: "",
+    author: ""
   });
 
   const [capabilitiesText, setCapabilitiesText] = useState("");
@@ -122,7 +127,9 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
         configOptions: initialData.configOptions || {},
         compatibleWith: initialData.compatibleWith || [],
         verticalCapabilities: initialData.verticalCapabilities || null,
-        source: initialData.verticalCapabilities || 'CUSTOM'
+        source: initialData.verticalCapabilities || 'CUSTOM',
+        model_id: initialData.model_id || "",
+        author: initialData.author || "" 
       });
 
       // Convert arrays to text for editing
@@ -152,7 +159,9 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
         configOptions: {},
         compatibleWith: [],
         verticalCapabilities: null,
-        source: 'CUSTOM'
+        source: 'CUSTOM',
+        model_id: "",
+        author: ""
       });
       setCapabilitiesText("");
       setMetricsText("");
@@ -374,66 +383,97 @@ const AIModelFormModal: React.FC<AIModelFormModalProps> = ({
           <div className="space-y-4 mt-4">
   <h3 className="text-md font-medium">Business Compatibility</h3>
   <div className="grid grid-cols-2 gap-3">
-    <div className="flex items-center space-x-2">
-      <Checkbox 
-        id="retail" 
-        checked={formData.compatibleWith?.includes('RETAIL')} 
-        onCheckedChange={(checked) => {
-          const newCompatible = checked 
-            ? [...(formData.compatibleWith || []), 'RETAIL']
-            : (formData.compatibleWith || []).filter(v => v !== 'RETAIL');
-          setFormData({...formData, compatibleWith: newCompatible});
-        }}
-      />
-      <label htmlFor="retail" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        Retail
-      </label>
-    </div>
-    <div className="flex items-center space-x-2">
-      <Checkbox 
-        id="cre" 
-        checked={formData.compatibleWith?.includes('COMMERCIAL_REAL_ESTATE')} 
-        onCheckedChange={(checked) => {
-          const newCompatible = checked 
-            ? [...(formData.compatibleWith || []), 'COMMERCIAL_REAL_ESTATE']
-            : (formData.compatibleWith || []).filter(v => v !== 'COMMERCIAL_REAL_ESTATE');
-          setFormData({...formData, compatibleWith: newCompatible});
-        }}
-      />
-      <label htmlFor="cre" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        Commercial Real Estate
-      </label>
-    </div>
-    <div className="flex items-center space-x-2">
-      <Checkbox 
-        id="residential" 
-        checked={formData.compatibleWith?.includes('MULTI_FAMILY_RESIDENTIAL')} 
-        onCheckedChange={(checked) => {
-          const newCompatible = checked 
-            ? [...(formData.compatibleWith || []), 'MULTI_FAMILY_RESIDENTIAL']
-            : (formData.compatibleWith || []).filter(v => v !== 'MULTI_FAMILY_RESIDENTIAL');
-          setFormData({...formData, compatibleWith: newCompatible});
-        }}
-      />
-      <label htmlFor="residential" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        Multi-Family Residential
-      </label>
-    </div>
-    <div className="flex items-center space-x-2">
-      <Checkbox 
-        id="manufacturing" 
-        checked={formData.compatibleWith?.includes('MANUFACTURING_WAREHOUSING')} 
-        onCheckedChange={(checked) => {
-          const newCompatible = checked 
-            ? [...(formData.compatibleWith || []), 'MANUFACTURING_WAREHOUSING']
-            : (formData.compatibleWith || []).filter(v => v !== 'MANUFACTURING_WAREHOUSING');
-          setFormData({...formData, compatibleWith: newCompatible});
-        }}
-      />
-      <label htmlFor="manufacturing" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        Manufacturing & Warehousing
-      </label>
-    </div>
+  <div className="flex items-center space-x-2">
+    <input
+      type="checkbox"
+      id="retail"
+      checked={formData.compatibleWith?.includes('RETAIL')}
+      onChange={(e) => {
+        const newCompatible = e.target.checked 
+          ? [...(formData.compatibleWith || []), 'RETAIL']
+          : (formData.compatibleWith || []).filter(v => v !== 'RETAIL');
+        setFormData({...formData, compatibleWith: newCompatible});
+      }}
+      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+    />
+    <label htmlFor="retail" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+      Retail
+    </label>
+  </div>
+  <div className="flex items-center space-x-2">
+    <input
+      type="checkbox"
+      id="cre"
+      checked={formData.compatibleWith?.includes('COMMERCIAL_REAL_ESTATE')}
+      onChange={(e) => {
+        const newCompatible = e.target.checked 
+          ? [...(formData.compatibleWith || []), 'COMMERCIAL_REAL_ESTATE']
+          : (formData.compatibleWith || []).filter(v => v !== 'COMMERCIAL_REAL_ESTATE');
+        setFormData({...formData, compatibleWith: newCompatible});
+      }}
+      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+    />
+    <label htmlFor="cre" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+      Commercial Real Estate
+    </label>
+  </div>
+  <div className="flex items-center space-x-2">
+    <input
+      type="checkbox"
+      id="residential"
+      checked={formData.compatibleWith?.includes('MULTI_FAMILY_RESIDENTIAL')}
+      onChange={(e) => {
+        const newCompatible = e.target.checked 
+          ? [...(formData.compatibleWith || []), 'MULTI_FAMILY_RESIDENTIAL']
+          : (formData.compatibleWith || []).filter(v => v !== 'MULTI_FAMILY_RESIDENTIAL');
+        setFormData({...formData, compatibleWith: newCompatible});
+      }}
+      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+    />
+    <label htmlFor="residential" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+      Multi-Family Residential
+    </label>
+  </div>
+  <div className="flex items-center space-x-2">
+    <input
+      type="checkbox"
+      id="manufacturing"
+      checked={formData.compatibleWith?.includes('MANUFACTURING_WAREHOUSING')}
+      onChange={(e) => {
+        const newCompatible = e.target.checked 
+          ? [...(formData.compatibleWith || []), 'MANUFACTURING_WAREHOUSING']
+          : (formData.compatibleWith || []).filter(v => v !== 'MANUFACTURING_WAREHOUSING');
+        setFormData({...formData, compatibleWith: newCompatible});
+      }}
+      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+    />
+    <label htmlFor="manufacturing" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+      Manufacturing & Warehousing
+    </label>
+  </div>
+</div>
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div>
+    <Label htmlFor="model_id">External Model ID</Label>
+    <Input
+      id="model_id"
+      name="model_id"
+      value={formData.model_id}
+      onChange={handleInputChange}
+      placeholder="e.g. external-model-123"
+    />
+  </div>
+  <div>
+    <Label htmlFor="author">Author</Label>
+    <Input
+      id="author"
+      name="author"
+      value={formData.author}
+      onChange={handleInputChange}
+      placeholder="e.g. John Doe"
+    />
   </div>
 </div>
         </div>
